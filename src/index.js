@@ -5,6 +5,9 @@ import cors from 'cors';
 // use "require" to import JSON files
 const admins = require('./data/admins.json');
 
+// use "require" to import router
+const members = require('./resources/member');
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -20,6 +23,8 @@ app.get('/admins', (req, res) => {
     data: admins,
   });
 });
+
+app.use(members);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
