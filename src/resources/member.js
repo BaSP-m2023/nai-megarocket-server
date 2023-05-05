@@ -28,4 +28,16 @@ router.put('/members/:id', (req, res) => {
   }
 });
 
+router.delete('/members/:id', (req, res) => {
+  const memberId = parseInt(req.params.id, 10);
+  const members = JSON.parse(fs.readFileSync('src/data/member.json', 'utf8'));
+  const filteredMembers = members.filter((member) => member.id !== memberId);
+  if (filteredMembers.length < members.length) {
+    fs.writeFileSync('src/data/member.json', JSON.stringify(filteredMembers));
+    res.json(filteredMembers);
+  } else {
+    res.status(404).json({ message: 'Member not found' });
+  }
+});
+
 module.exports = router;
