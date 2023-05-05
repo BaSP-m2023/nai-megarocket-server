@@ -38,9 +38,7 @@ router.get('/members/:id', (req, res) => {
 router.post('/members', (req, res) => {
   const id = membersData.length + 1;
   const body = { id, ...req.body };
-  if (body.first_name !== '' && body.last_name !== '' && body.email !== ''
-  && body.password !== '' && body.phone !== '' && body.dni !== '' && body.dob !== ''
-  && body.address !== '' && body.location !== '' && body.zipcode !== '') {
+  if (Object.values(body).every((el) => el !== '')) {
     const memberEmail = membersData.find((m) => m.email === body.email);
     const memberDni = membersData.find((m) => m.dni === body.dni);
     if (memberEmail) {
