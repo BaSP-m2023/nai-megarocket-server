@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 const membersData = require('../data/member.json');
 
-router.put('/members/:id', (req, res) => {
+router.put('/members/update/:id', (req, res) => {
   const memberId = parseInt(req.params.id, 10);
   const updatedMember = req.body;
   const members = JSON.parse(fs.readFileSync('src/data/member.json', 'utf8'));
@@ -28,7 +28,7 @@ router.put('/members/:id', (req, res) => {
   }
 });
 
-router.delete('/members/:id', (req, res) => {
+router.delete('/members/delete/:id', (req, res) => {
   const memberId = parseInt(req.params.id, 10);
   const members = JSON.parse(fs.readFileSync('src/data/member.json', 'utf8'));
   const filteredMembers = members.filter((member) => member.id !== memberId);
