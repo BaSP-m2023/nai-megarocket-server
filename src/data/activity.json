@@ -1,0 +1,81 @@
+[
+  {
+    "id": 1,
+    "description": "Cardiovascular exercise is any vigorous activity that increases heart rate and respiration and raises oxygen and blood flow throughout the body while using large muscle groups of the body repetitively and rhythmically",
+    "name": "cardio",
+    "trainers": [
+      {
+        "name": "Billy",
+        "lastname": "Grisley"
+      },
+      {
+        "name": "Fredericka",
+        "lastname": "Catterill"
+      },
+      {
+        "name": "Dionysus",
+        "lastname": "Reinard"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "description": "Strength and conditioning workout that is made up of functional movement performed at a high intensity level",
+    "name": "crossfit",
+    "trainers": [
+      {
+        "name": "Sky",
+        "lastname": "Dawber"
+      },
+      {
+        "name": "Erhart",
+        "lastname": "Stutt"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "description": "High-intensity workout that takes place inside an indoor cycling studio",
+    "name": "spinning",
+    "trainers": [
+      {
+        "name": "Kettie",
+        "lastname": "Preece"
+      },
+      {
+        "name": "Catlin",
+        "lastname": "Sallans"
+      },
+      {
+        "name": "Ronda",
+        "lastname": "Creak"
+      },
+      {
+        "name": "Odetta",
+        "lastname": "Frantz"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "description": "Boxing is a sport that involves strategically punching an opponent while defending yourself from their return punches",
+    "name": "boxing",
+    "trainers": [
+      {
+        "name": "Arielle",
+        "lastname": "Allain"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "description": "involves the performance of physical exercises that are designed to improve strength and endurance",
+    "name": "musculation",
+    "trainers": [
+      {
+        "name": "Gib",
+        "lastname": "Guiness"
+      }
+    ]
+  }
+]
