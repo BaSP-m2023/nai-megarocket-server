@@ -6,7 +6,8 @@ import cors from 'cors';
 const admins = require('./data/admins.json');
 
 // use "require" to import router
-const members = require('./resources/member');
+const memberRoute = require('./resources/member');
+const superAdminRoute = require('./resources/super-admins');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -24,7 +25,8 @@ app.get('/admins', (req, res) => {
   });
 });
 
-app.use(members);
+app.use('/members', memberRoute);
+app.use('/superAdmins', superAdminRoute);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
