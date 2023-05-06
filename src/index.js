@@ -2,6 +2,8 @@
 import express from 'express';
 import cors from 'cors';
 
+const admins2 = require('./resources/admins');
+
 // use "require" to import JSON files
 const admins = require('./data/admins.json');
 
@@ -25,3 +27,5 @@ app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Example app listening on port ${port}`);
 });
+
+app.use(admins2);

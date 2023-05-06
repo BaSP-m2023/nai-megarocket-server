@@ -1,6 +1,23 @@
-{
-    "name": "esteban",
-    "lastName": "frare",
-    "email": "esteban.frare@radiumrocket.com"
-
-}
+[
+  {
+    "id": 1,
+    "name": "Tamra",
+    "lastName": "Partington",
+    "email": "tpartington0@economist.com",
+    "password": "LvRtXL3m"
+  },
+  {
+    "id": 2,
+    "name": "Charlotte",
+    "lastName": "Klehyn",
+    "email": "cklehyn1@reverbnation.com",
+    "password": "OHV2iK2FvC4"
+  },
+  {
+    "id": 3,
+    "name": "Aleece",
+    "lastName": "Stoad",
+    "email": "astoad2@facebook.com",
+    "password": "NhnRWVwl8"
+  }
+]
