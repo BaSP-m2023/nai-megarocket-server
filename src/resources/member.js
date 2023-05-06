@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 const membersData = require('../data/member.json');
 
-router.get('/members', (req, res) => {
+router.get('/get', (req, res) => {
   const { firstName, lastName, location } = req.query;
   let filteredMembers = membersData;
   if (firstName) {
@@ -23,19 +23,27 @@ router.get('/members', (req, res) => {
       (member) => member.location === location,
     );
   }
-  res.json(filteredMembers);
+  if (filteredMembers.length === 0) {
+    return res.status(404).json({ message: 'Member not found' });
+  }
+  return res.json(filteredMembers);
 });
 
-router.get('/members/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  const member = membersData.find((m) => m.id === id);
+router.get('/getById/:id?', (req, res) => {
+  if (!req.params.id) {
+    return res.status(404).json({ message: 'Id is required' });
+  }
+  if (Number.isNaN(Number(req.params.id))) {
+    return res.status(404).json({ message: 'Id must be a number' });
+  }
+  const member = membersData.find((m) => m.id.toString() === req.params.id);
   if (!member) {
     return res.status(404).json({ message: 'Member not found' });
   }
   return res.json(member);
 });
 
-router.post('/members', (req, res) => {
+router.post('/post', (req, res) => {
   const id = membersData.length + 1;
   const body = { id, ...req.body };
   if (Object.values(body).every((el) => el !== '')) {
@@ -45,7 +53,8 @@ router.post('/members', (req, res) => {
       return res
         .status(404)
         .json({ message: 'A member with that email already exists' });
-    } if (memberDni) {
+    }
+    if (memberDni) {
       return res
         .status(404)
         .json({ message: 'A member with that dni already exists' });
