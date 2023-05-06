@@ -5,44 +5,56 @@ const express = require('express');
 const router = express.Router();
 const superAdminsData = require('../data/super-admins.json');
 
-router.put('/superAdmins/update/:id', (req, res) => {
+router.put('/update/:id', (req, res) => {
   const superAdminsId = parseInt(req.params.id, 10);
   const updatedSuperAdmins = req.body;
-  const superAdmins = JSON.parse(fs.readFileSync('src/data/member.json', 'utf8'));
-  const superAdminsIndex = superAdmins.findIndex((member) => member.id === superAdminsId);
-  const superAdminsEmail = superAdminsData.find((m) => m.email === updatedSuperAdmins.email);
+  const superAdminsIndex = superAdminsData
+    .findIndex((member) => member.id === superAdminsId);
+  const superAdminsEmail = superAdminsData
+    .find((m) => m.email === updatedSuperAdmins.email);
+  if (!superAdminsId) {
+    return res.status(400).json({ message: 'ID is required' });
+  }
+  if (!req.body) {
+    return res.status(400).json({ message: 'Request body is required' });
+  }
   if (superAdminsIndex >= 0) {
     if (!superAdminsEmail) {
-      superAdmins[superAdminsIndex] = {
-        ...superAdmins[superAdminsIndex],
+      superAdminsData[superAdminsIndex] = {
+        ...superAdminsData[superAdminsIndex],
         ...updatedSuperAdmins,
       };
-      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdmins));
-      res.json(superAdmins);
-    } else if (superAdminsEmail.id === superAdminsId) {
-      superAdmins[superAdminsIndex] = {
-        ...superAdmins[superAdminsIndex],
-        ...updatedSuperAdmins,
-      };
-      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdmins));
-      res.json(superAdmins);
-    } else {
-      res.status(404).json({ message: 'Email already exist on the database' });
+      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdminsData));
+      return res.json(superAdminsData);
     }
-  } else {
-    res.status(404).json({ message: 'Super Admin not found' });
+    if (superAdminsEmail.id === superAdminsId) {
+      superAdminsData[superAdminsIndex] = {
+        ...superAdminsData[superAdminsIndex],
+        ...updatedSuperAdmins,
+      };
+      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdminsData));
+      return res.json(superAdminsData);
+    }
+    return res
+      .status(404)
+      .json({ message: 'Email already exist on the database' });
   }
+  return res.status(404).json({ message: 'Super Admin not found' });
 });
 
-router.delete('/superAdmins/delete/:id', (req, res) => {
+router.delete('/delete/:id', (req, res) => {
   const superAdminsId = parseInt(req.params.id, 10);
-  const superAdmins = JSON.parse(fs.readFileSync('src/data/super-admins.json', 'utf8'));
-  const filteredSuperAdmins = superAdmins.filter((superAdmin) => superAdmin.id !== superAdminsId);
-  if (filteredSuperAdmins.length < superAdmins.length) {
-    fs.writeFileSync('src/data/super-admins.json', JSON.stringify(filteredSuperAdmins));
-    res.json(filteredSuperAdmins);
+  const filteredSuperAdmins = superAdminsData
+    .filter((superAdmin) => superAdmin.id !== superAdminsId);
+  if (req.params.id) {
+    if (filteredSuperAdmins.length < superAdminsData.length) {
+      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(filteredSuperAdmins));
+      res.json(filteredSuperAdmins);
+    } else {
+      res.status(404).json({ message: 'Super Admin not found' });
+    }
   } else {
-    res.status(404).json({ message: 'Member not found' });
+    res.json({ message: 'Id needed to delete a Supe-admin' });
   }
 });
 
