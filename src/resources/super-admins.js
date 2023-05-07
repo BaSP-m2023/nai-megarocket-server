@@ -3,59 +3,52 @@ const fs = require('fs');
 const express = require('express');
 
 const router = express.Router();
-const superAdminsData = require('../data/super-admins.json');
+const sAdminsData = require('../data/super-admins.json');
 
-router.put('/update/:id', (req, res) => {
-  const superAdminsId = parseInt(req.params.id, 10);
-  const updatedSuperAdmins = req.body;
-  const superAdminsIndex = superAdminsData
-    .findIndex((member) => member.id === superAdminsId);
-  const superAdminsEmail = superAdminsData
-    .find((m) => m.email === updatedSuperAdmins.email);
-  if (!superAdminsId) {
-    return res.status(400).json({ message: 'ID is required' });
+router.put('/update/:id?', (req, res) => {
+  const sAIdExist = sAdminsData.some((sAdmin) => sAdmin.id.toString() === req.params.id);
+  const sAdminsId = req.params.id;
+  const updatedSAdmins = req.body;
+  const sAdminsIndex = sAdminsData.findIndex((member) => member.id.toString() === sAdminsId);
+  const sAdminsEmail = sAdminsData.find((m) => m.email === updatedSAdmins.email);
+  if (!sAIdExist) {
+    return res
+      .status(400)
+      .json({ message: `Super Admin with id: ${req.params.id} was not found` });
   }
   if (!req.body) {
     return res.status(400).json({ message: 'Request body is required' });
   }
-  if (superAdminsIndex >= 0) {
-    if (!superAdminsEmail) {
-      superAdminsData[superAdminsIndex] = {
-        ...superAdminsData[superAdminsIndex],
-        ...updatedSuperAdmins,
-      };
-      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdminsData));
-      return res.json(superAdminsData);
-    }
-    if (superAdminsEmail.id === superAdminsId) {
-      superAdminsData[superAdminsIndex] = {
-        ...superAdminsData[superAdminsIndex],
-        ...updatedSuperAdmins,
-      };
-      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdminsData));
-      return res.json(superAdminsData);
-    }
-    return res
-      .status(404)
-      .json({ message: 'Email already exist on the database' });
+  if (!sAdminsEmail) {
+    sAdminsData[sAdminsIndex] = {
+      ...sAdminsData[sAdminsIndex],
+      ...updatedSAdmins,
+    };
+    fs.writeFileSync('src/data/super-admins.json', JSON.stringify(sAdminsData));
+    return res.json(sAdminsData);
   }
-  return res.status(404).json({ message: 'Super Admin not found' });
+  if (sAdminsEmail.id === sAdminsId) {
+    sAdminsData[sAdminsIndex] = {
+      ...sAdminsData[sAdminsIndex],
+      ...updatedSAdmins,
+    };
+    fs.writeFileSync('src/data/super-admins.json', JSON.stringify(sAdminsData));
+    return res.json(sAdminsData);
+  }
+  return res
+    .status(404)
+    .json({ message: 'Email already exist on the database' });
 });
 
-router.delete('/delete/:id', (req, res) => {
-  const superAdminsId = parseInt(req.params.id, 10);
-  const filteredSuperAdmins = superAdminsData
-    .filter((superAdmin) => superAdmin.id !== superAdminsId);
-  if (req.params.id) {
-    if (filteredSuperAdmins.length < superAdminsData.length) {
-      fs.writeFileSync('src/data/super-admins.json', JSON.stringify(filteredSuperAdmins));
-      res.json(filteredSuperAdmins);
-    } else {
-      res.status(404).json({ message: 'Super Admin not found' });
-    }
-  } else {
-    res.json({ message: 'Id needed to delete a Supe-admin' });
+router.delete('/delete/:id?', (req, res) => {
+  const sAIdExist = sAdminsData.some((sAdmin) => sAdmin.id.toString() === req.params.id);
+  const sAdminsId = parseInt(req.params.id, 10);
+  const filteredSAdmins = sAdminsData.filter((sAdmin) => sAdmin.id !== sAdminsId);
+  if (!sAIdExist) {
+    return res.json({ message: `Super Admin with id: ${req.params.id} was not found` });
   }
+  fs.writeFileSync('src/data/super-admins.json', JSON.stringify(filteredSAdmins));
+  return res.json(filteredSAdmins);
 });
 
 module.exports = router;
