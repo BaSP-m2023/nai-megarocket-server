@@ -10,7 +10,7 @@ router.put('/update/:id', (req, res) => {
   const adminID = req.params.id;
   const adminToUpdate = admins.find((admin) => admin.id.toString() === adminID);
   if (!adminToUpdate) {
-    res.send('Admin not found');
+    res.send('The id doesn\'t match to any Admin');
     return;
   }
   adminToUpdate.name = req.body.name || adminToUpdate.name;
@@ -29,10 +29,15 @@ router.put('/update/:id', (req, res) => {
 
 router.delete('/delete/:id', (req, res) => {
   const adminID = req.params.id;
+  const adminToUpdate = admins.find((admin) => admin.id.toString() === adminID);
+  if (!adminToUpdate) {
+    res.send('The id doesn\'t match to any Admin');
+    return;
+  }
   const filteredAdmins = admins.filter((admin) => admin.id.toString() !== adminID);
   fs.writeFile('src/data/admins.json', JSON.stringify(filteredAdmins, null, 2), (err) => {
     if (err) {
-      res.send('ERROR User can\'t be deleted!');
+      res.send('ERROR: User can\'t be deleted!');
     } else {
       res.send('User deleted');
     }
