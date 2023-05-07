@@ -5,7 +5,6 @@ import cors from 'cors';
 // use 'require' to import JSON files
 const admins = require('./data/admins.json');
 const memberRouter = require('./resources/member');
-const superAdminsRouter = require('./resources/super-admins');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -13,7 +12,6 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 app.use('/members', memberRouter);
-app.use('/superAdmins', superAdminsRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
