@@ -5,12 +5,12 @@ const router = express.Router();
 
 const data = require('../data/activity.json');
 
-router.get('/', (req, res) => {
+router.get('/get', (req, res) => {
   if (data.length === 0) return res.status(404).json({ msg: 'There arent any activities' });
   return res.json(data);
 });
 
-router.get('/:id', (req, res) => {
+router.get('/getById/:id', (req, res) => {
   const { id } = req.params;
   if (Number.isNaN(parseInt(id, 10))) {
     return res.status(400).json({ success: false, msg: 'id must be a number.' });
@@ -22,7 +22,7 @@ router.get('/:id', (req, res) => {
   return res.status(200).json({ success: true, activity: activityToSend });
 });
 
-router.post('/', (req, res) => {
+router.post('/post', (req, res) => {
   let newActivity = req.body;
   if (Object.entries(newActivity).length === 0) {
     return res.status(400).json({ success: false, msg: 'you need to specify the new activity.' });
