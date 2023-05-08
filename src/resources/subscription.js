@@ -4,9 +4,7 @@ const fs = require('fs');
 const subscription = require('../data/subscription.json');
 
 const router = express.Router();
-router.get('/get', (req, res) => {
-  res.json(subscription);
-});
+
 function isValidDate(date) {
   const today = new Date();
   const actualDay = today.getDate();
@@ -41,13 +39,6 @@ function isValidHour(hour) {
   return (isOnlyNumbers(hours) && hours <= 23 && isOnlyNumbers(minutes) && minutes <= 59 && hour[2] === ':');
 }
 
-router.get('/getById/:id', (req, res) => {
-  const found = subscription.some((sub) => sub.id.toString() === req.params.id);
-
-  if (found) {
-    res.json(subscription.find((sub) => sub.id.toString() === req.params.id));
-  } else res.status(400).json({ msg: `This id doesn't exist (${req.params.id})` });
-});
 router.put('/update/:id', (req, res) => {
   const subID = req.params.id;
   const subUpdate = subscription.find((sub) => sub.id.toString() === subID);
