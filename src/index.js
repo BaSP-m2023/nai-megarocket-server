@@ -2,7 +2,6 @@
 import express from 'express';
 import cors from 'cors';
 
-// use 'require' to import JSON files
 const admins = require('./data/admins.json');
 const memberRouter = require('./resources/member');
 const superAdminsRouter = require('./resources/super-admins');
