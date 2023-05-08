@@ -27,7 +27,7 @@ router.put('/update/:id?', (req, res) => {
     fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdmins, null, 2));
     return res.json(superAdmins);
   }
-  if (sAdminsEmail.id === sAdminsId) {
+  if (sAdminsEmail.id.toString() === sAdminsId) {
     superAdmins[sAdminsIndex] = {
       ...superAdmins[sAdminsIndex],
       ...updatedSAdmins,
