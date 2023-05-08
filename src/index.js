@@ -5,6 +5,8 @@ import cors from 'cors';
 // use "require" to import JSON files
 const admins = require('./data/admins.json');
 
+const classRouter = require('./resources/class');
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -20,6 +22,8 @@ app.get('/admins', (req, res) => {
     data: admins,
   });
 });
+
+app.use('/class', classRouter);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
