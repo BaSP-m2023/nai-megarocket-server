@@ -5,6 +5,7 @@ import cors from 'cors';
 // use 'require' to import JSON files
 const admins = require('./data/admins.json');
 const memberRouter = require('./resources/member');
+const classRouter = require('./resources/class');
 
 // use "require" to import router
 const memberRoute = require('./resources/member');
@@ -27,6 +28,7 @@ app.get('/admins', (req, res) => {
 });
 
 app.use('/members', memberRoute);
+app.use('/class', classRouter);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
