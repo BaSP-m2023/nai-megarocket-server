@@ -25,19 +25,23 @@ router.get('/getById/:id', (req, res) => {
   }
 });
 
-router.post('/addAdmin', (req, res) => {
-  const newAdmin = req.body;
-  admins.push(newAdmin);
-  if (Object.entries(newAdmin).length === 0) {
-    res.send('Admin is required');
-  } else {
-    fs.writeFile('src/data/admins.json', JSON.stringify(admins, null, 2), (err) => {
-      if (err) {
-        res.send('Error! User cannot not be created');
-      } else {
-        res.send('Admin created!');
-      }
-    });
+router.post('/post', (req, res) => {
+  const id = admins.length + 1;
+  const body = { id, ...req.body };
+  if (Object.values(body).every((el) => el !== '')) {
+    const adminEmail = admins.find((m) => m.email === body.email);
+    const adminId = admins.find((m) => m.id === body.id);
+    if (adminEmail) {
+      return res.status(400).json('that email already exists');
+    }
+    if (adminId) {
+      return res.status(400).json('that ID already exists');
+    }
+    admins.push(body);
+    fs.writeFileSync('src/data/admins.json', JSON.stringify(admins, null, 2));
+    return res.status(200).json('Admin created!');
   }
+  return res.status(400).json('data is required!');
 });
+
 module.exports = router;
