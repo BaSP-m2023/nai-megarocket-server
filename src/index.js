@@ -7,6 +7,9 @@ const admins = require('./data/admins.json');
 const memberRouter = require('./resources/member');
 const superAdminsRouter = require('./resources/super-admins');
 
+// use "require" to import router
+const memberRoute = require('./resources/member');
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -24,6 +27,8 @@ app.get('/admins', (req, res) => {
     data: admins,
   });
 });
+
+app.use('/members', memberRoute);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
