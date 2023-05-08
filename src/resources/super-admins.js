@@ -3,14 +3,14 @@ const fs = require('fs');
 const express = require('express');
 
 const router = express.Router();
-const sAdminsData = require('../data/super-admins.json');
+const superAdmins = require('../data/super-admins.json');
 
 router.put('/update/:id?', (req, res) => {
-  const sAIdExist = sAdminsData.some((sAdmin) => sAdmin.id.toString() === req.params.id);
+  const sAIdExist = superAdmins.some((sAdmin) => sAdmin.id.toString() === req.params.id);
   const sAdminsId = req.params.id;
   const updatedSAdmins = req.body;
-  const sAdminsIndex = sAdminsData.findIndex((member) => member.id.toString() === sAdminsId);
-  const sAdminsEmail = sAdminsData.find((m) => m.email === updatedSAdmins.email);
+  const sAdminsIndex = superAdmins.findIndex((member) => member.id.toString() === sAdminsId);
+  const sAdminsEmail = superAdmins.find((m) => m.email === updatedSAdmins.email);
   if (!sAIdExist) {
     return res
       .status(400)
@@ -20,20 +20,20 @@ router.put('/update/:id?', (req, res) => {
     return res.status(400).json({ message: 'Request body is required' });
   }
   if (!sAdminsEmail) {
-    sAdminsData[sAdminsIndex] = {
-      ...sAdminsData[sAdminsIndex],
+    superAdmins[sAdminsIndex] = {
+      ...superAdmins[sAdminsIndex],
       ...updatedSAdmins,
     };
-    fs.writeFileSync('src/data/super-admins.json', JSON.stringify(sAdminsData));
-    return res.json(sAdminsData);
+    fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdmins, null, 2));
+    return res.json(superAdmins);
   }
   if (sAdminsEmail.id === sAdminsId) {
-    sAdminsData[sAdminsIndex] = {
-      ...sAdminsData[sAdminsIndex],
+    superAdmins[sAdminsIndex] = {
+      ...superAdmins[sAdminsIndex],
       ...updatedSAdmins,
     };
-    fs.writeFileSync('src/data/super-admins.json', JSON.stringify(sAdminsData));
-    return res.json(sAdminsData);
+    fs.writeFileSync('src/data/super-admins.json', JSON.stringify(superAdmins, null, 2));
+    return res.json(superAdmins);
   }
   return res
     .status(404)
@@ -41,13 +41,13 @@ router.put('/update/:id?', (req, res) => {
 });
 
 router.delete('/delete/:id?', (req, res) => {
-  const sAIdExist = sAdminsData.some((sAdmin) => sAdmin.id.toString() === req.params.id);
-  const sAdminsId = parseInt(req.params.id, 10);
-  const filteredSAdmins = sAdminsData.filter((sAdmin) => sAdmin.id !== sAdminsId);
+  const sAIdExist = superAdmins.some((sAdmin) => sAdmin.id.toString() === req.params.id);
+  const sAdminsId = req.params.id;
+  const filteredSAdmins = superAdmins.filter((sAdmin) => sAdmin.id.toString() !== sAdminsId);
   if (!sAIdExist) {
     return res.json({ message: `Super Admin with id: ${req.params.id} was not found` });
   }
-  fs.writeFileSync('src/data/super-admins.json', JSON.stringify(filteredSAdmins));
+  fs.writeFileSync('src/data/super-admins.json', JSON.stringify(filteredSAdmins, null, 2));
   return res.json(filteredSAdmins);
 });
 
