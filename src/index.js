@@ -1,11 +1,14 @@
-// use "import" to import libraries
+// use 'import' to import libraries
 import express from 'express';
 import cors from 'cors';
 
-// use "require" to import JSON files
+// use 'require' to import JSON files
 const admins = require('./data/admins.json');
 const trainer = require('./data/trainer.json');
-// routers
+
+// use "require" to import router
+
+const memberRouter = require('./resources/member');
 const trainerRouter = require('./resources/trainer');
 
 const app = express();
@@ -13,6 +16,7 @@ const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/members', memberRouter);
 
 app.use('/trainer', trainerRouter);
 
