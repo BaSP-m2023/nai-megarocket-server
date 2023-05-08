@@ -5,11 +5,15 @@ import cors from 'cors';
 // use "require" to import JSON files
 const admins = require('./data/admins.json');
 
+const userSubscription = require('./resources/subscription');
+
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/subscription', userSubscription);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
