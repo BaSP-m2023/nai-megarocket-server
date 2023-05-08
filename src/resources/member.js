@@ -67,7 +67,7 @@ router.put('/update/:id?', (req, res) => {
     fs.writeFileSync('src/data/member.json', JSON.stringify(membersData));
     return res.json(membersData);
   }
-  if (memberemail.id === memberId) {
+  if (memberemail.id.toString() === memberId) {
     membersData[memberIndex] = {
       ...membersData[memberIndex],
       ...updatedMember,
