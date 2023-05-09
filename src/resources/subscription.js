@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const subs = require('../data/subscription.json');
 
 const router = express.Router();
@@ -62,7 +63,8 @@ router.post('/post', (req, res) => {
       res.send({ msg: 'Schedule format: hh:mm. 24hs format' });
     }
     subs.push(newSub);
-    res.json(subs);
+    fs.writeFileSync('src/data/subscription.json', JSON.stringify(subs, null, 2));
+    res.json({ msg: 'Subscrition created successfully' });
   } else {
     res.send({ msg: 'All fields are required' });
   }
