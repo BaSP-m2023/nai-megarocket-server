@@ -37,8 +37,6 @@ function isValidHour(hour) {
   return (isOnlyNumbers(hours) && hours <= 23 && isOnlyNumbers(minutes) && minutes <= 59 && hour[2] === ':');
 }
 
-isValidHour(123456);
-
 router.get('/get', (req, res) => {
   if (subs) {
     res.json(subs);
