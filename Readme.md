@@ -46,6 +46,7 @@ npm run lint:fix
 <img src="https://avatars.githubusercontent.com/u/20587232?v=4" height="50" width="50">| Esteban Frare | esteban.frare@radiumrocket.com | [@estefrare](https://github.com/estefrare)
 <img src="https://avatars.githubusercontent.com/u/118134054?v=4" height="50" width="50">| Federico Cavallo | fcmde1995@gmail.com | [@CavalloFede](https://github.com/CavalloFede)
 <img src="https://avatars.githubusercontent.com/u/99512277?v=4" height="50" width="50">| Ignacio Galcerán | igna.galceran@gmail.com | [@IgnacioGalceran](https://github.com/IgnacioGalceran)
+<img src="https://avatars.githubusercontent.com/u/127536596?v=4" height="50" width="50">| Micaela A. Rossi | micaelarrossi@gmail.com | [@Micaela-Rossi](https://github.com/Micaela-Rossi)
 
 
 
