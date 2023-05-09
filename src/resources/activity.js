@@ -8,18 +8,26 @@ const router = express.Router();
 router.put('/update/:id', (req, res) => {
   const activityId = req.params.id;
   const { name, description } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ success: false, msg: 'Please send data into the request.' });
+  }
   // eslint-disable-next-line no-shadow
-  const activity = activities.find((activity) => activity.id === Number(activityId));
-  if (!activity) {
+  const activityIndex = activities.findIndex((activity) => activity.id === Number(activityId));
+  if (activityIndex === -1) {
     return res.status(404).json({ success: false, msg: 'Activity not found.' });
   }
-  activity.name = name || activity.name;
-  activity.description = description || activity.description;
-  fs.writeFile('src/data/activity.json', JSON.stringify(activities, null, 2), (err) => {
+  const updatedActivity = {
+    ...activities[activityIndex],
+    name: name || activities[activityIndex].name,
+    description: description || activities[activityIndex].description,
+  };
+  const updatedActivities = [...activities.slice(0, activityIndex),
+    updatedActivity, ...activities.slice(activityIndex + 1)];
+  fs.writeFile('src/data/activity.json', JSON.stringify(updatedActivities, null, 2), (err) => {
     if (err) {
       return res.status(500).json({ success: false, msg: 'The activity could not be modified.' });
     }
-    return res.status(200).json({ success: true, activity });
+    return res.status(200).json({ success: true, updatedActivity });
   });
 });
 
