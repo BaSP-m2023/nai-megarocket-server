@@ -11,9 +11,9 @@ router.get('/getbyid/:id', (req, res) => {
   }
   const trainerToSend = data.find((trainer) => trainer.id.toString() === id);
   if (!trainerToSend) {
-    return res.status(404).json({ success: false, msg: 'activity not found.' });
+    return res.status(404).json({ success: false, msg: 'trainer not found.' });
   }
-  return res.status(200).json({ success: true, activity: trainerToSend });
+  return res.status(200).json({ success: true, trainer: trainerToSend });
 });
 
 module.exports = router;
