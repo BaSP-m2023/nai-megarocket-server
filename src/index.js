@@ -5,7 +5,7 @@ const adminRouter = require('./resources/admins');
 const memberRouter = require('./resources/member');
 const superAdminsRouter = require('./resources/super-admins');
 
-const userSubscription = require('./resources/subscription');
+const subsRouter = require('./resources/subscription');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -16,7 +16,7 @@ app.use('/members', memberRouter);
 app.use('/admins', adminRouter);
 app.use('/superAdmins', superAdminsRouter);
 
-app.use('/subscription', userSubscription);
+app.use('/subscription', subsRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
