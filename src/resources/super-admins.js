@@ -27,11 +27,16 @@ router.get('/getById/:id?', (req, res) => {
 });
 
 router.post('/post', (req, res) => {
-  const id = superAdmins.length + 1;
+  let id;
+  if (superAdmins.length === 0) {
+    id = 0;
+  } else {
+    id = superAdmins[superAdmins.length - 1].id;
+  }
   if (Object.entries(req.body).length === 0) {
     return res.status(400).json({ message: 'you have to specify email and password' });
   }
-  const body = { id, ...req.body };
+  const body = { id: id + 1, ...req.body };
   if (Object.values(body).every((el) => el !== '')) {
     const superAEmail = superAdmins.find((s) => s.email === body.email);
     if (superAEmail) {
