@@ -47,5 +47,19 @@
     "trainer": "Wes",
     "room": "hendrerit",
     "duration_hours": 1
+  },
+  {
+    "id": 8,
+    "class": "holis",
+    "trainer": "Wes",
+    "room": "hendrerit",
+    "duration_hours": 1
+  },
+  {
+    "id": 9,
+    "class": "asdasdas",
+    "trainer": "Wes",
+    "room": "hendrerit",
+    "duration_hours": 1
   }
 ]
