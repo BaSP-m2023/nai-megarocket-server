@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 
-const subscription = require('../data/subscription.json');
+const subs = require('../data/subscription.json');
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ function isValidHour(hour) {
 
 router.put('/update/:id', (req, res) => {
   const subID = req.params.id;
-  const subUpdate = subscription.find((sub) => sub.id.toString() === subID);
+  const subUpdate = subs.find((sub) => sub.id.toString() === subID);
   if (!subUpdate) {
     res.send('The id is not a valid subscription');
     return;
@@ -54,7 +54,7 @@ router.put('/update/:id', (req, res) => {
     res.send({ msg: 'Schedule format: hh:mm. 24hs format' });
   } else subUpdate.schedule = req.body.schedule || subUpdate.schedule;
 
-  fs.writeFile('src/data/subscription.json', JSON.stringify(subscription, null, 2), (err) => {
+  fs.writeFile('src/data/subscription.json', JSON.stringify(subs, null, 2), (err) => {
     if (err) {
       res.send('ERROR subscription can\'t be updated!');
     } else {
@@ -64,12 +64,12 @@ router.put('/update/:id', (req, res) => {
 });
 router.delete('/delete/:id', (req, res) => {
   const subID = req.params.id;
-  const subUpdate = subscription.find((sub) => sub.id.toString() === subID);
+  const subUpdate = subs.find((sub) => sub.id.toString() === subID);
   if (!subUpdate) {
     res.send('The id is not a valid subscription');
     return;
   }
-  const filterSub = subscription.filter((sub) => sub.id.toString() !== subID);
+  const filterSub = subs.filter((sub) => sub.id.toString() !== subID);
   fs.writeFile('src/data/subscription.json', JSON.stringify(filterSub, null, 2), (err) => {
     if (err) {
       res.send('ERROR Subscription can\'t be deleted!');
