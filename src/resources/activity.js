@@ -34,16 +34,19 @@ router.put('/update/:id', (req, res) => {
 // eslint-disable-next-line consistent-return
 router.delete('/delete/:id', (req, res) => {
   const activityId = req.params.id;
-  const index = activities.findIndex((activity) => activity.id === Number(activityId));
-  if (index === -1) {
+  const activityIndex = activities.findIndex((activity) => activity.id === Number(activityId));
+  if (activityIndex === -1) {
     return res.status(404).json({ success: false, msg: 'Activity not found.' });
   }
-  const deletedActivity = activities.splice(index, 1);
-  fs.writeFile('src/data/activity.json', JSON.stringify(activities, null, 2), (err) => {
+
+  const deletedActivity = activities.find((activity) => activity.id === Number(activityId));
+  const updatedActivities = activities.filter((activity) => activity.id !== Number(activityId));
+
+  fs.writeFile('src/data/activity.json', JSON.stringify(updatedActivities, null, 2), (err) => {
     if (err) {
       return res.status(500).json({ success: false, msg: 'The activity could not be deleted.' });
     }
-    return res.status(200).json({ success: true, msg: `Activity ${activityId} deleted successfully`, data: deletedActivity[0] });
+    return res.status(200).json({ success: true, msg: `Activity ${activityId} deleted successfully`, data: deletedActivity });
   });
 });
 
