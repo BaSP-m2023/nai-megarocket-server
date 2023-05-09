@@ -4,8 +4,6 @@ import cors from 'cors';
 const adminRouter = require('./resources/admins');
 const memberRouter = require('./resources/member');
 const superAdminsRouter = require('./resources/super-admins');
-
-// Routes
 const activities = require('./resources/activity');
 
 const app = express();
