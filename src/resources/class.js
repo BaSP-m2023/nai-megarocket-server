@@ -24,14 +24,14 @@ router.get('/getById/:id', (req, res) => {
   if (!classAvailable) {
     return res.status(404).json({ message: 'The requested class does not exist ' });
   }
-  return res.status(200).json({ message: 'Class found successful ' });
+  return res.status(200).json(classAvailable);
 });
 
 router.post('/post', (req, res) => {
   const newId = Object.keys(classes).length + 1;
   const newClass = (req.body);
   if (Object.entries(newClass).length === 0) {
-    return res.status(400).json({ message: ' You have to choose a class ' });
+    return res.status(400).json({ message: 'Fields are required ' });
   }
   const classBe = classes.find((c) => c.class === req.body.class);
   if (classBe) {
