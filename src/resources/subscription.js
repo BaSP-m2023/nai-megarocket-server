@@ -41,6 +41,8 @@ function isValidHour(hour) {
 router.get('/get', (req, res) => {
   if (subs) {
     res.json(subs);
+  } else {
+    res.json({ msg: "There's no data to show" });
   }
 });
 
