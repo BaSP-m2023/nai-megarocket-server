@@ -110,5 +110,12 @@
     "memberId": 2,
     "date": "06/07/2023",
     "schedule": "00:59"
+  },
+  {
+    "id": 17,
+    "classId": 5,
+    "memberId": 2,
+    "date": "06/07/2023",
+    "schedule": "00:59"
   }
 ]

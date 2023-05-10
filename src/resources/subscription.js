@@ -39,11 +39,10 @@ function isValidHour(hour) {
 }
 
 router.get('/get', (req, res) => {
-  if (subs) {
-    res.json(subs);
-  } else {
-    res.json({ msg: "There's no data to show" });
+  if (subs.length === 0) {
+    return res.json({ message: 'Subscriptions data is empty' });
   }
+  return res.send(subs);
 });
 
 router.get('/getById/:id', (req, res) => {
@@ -51,12 +50,19 @@ router.get('/getById/:id', (req, res) => {
 
   if (foundSubs) {
     res.send(foundSubs);
-  } else res.status(400).send({ msg: `This id doesn't exist (${req.params.id})` });
+  } else {
+    res.send({ msg: `This id doesn't exist (${req.params.id})` });
+  }
 });
 
 router.post('/post', (req, res) => {
-  const id = subs.length + 1;
-  const newSub = { id, ...req.body };
+  let id;
+  if (subs.length === 0) {
+    id = 0;
+  } else {
+    id = subs[subs.length - 1].id;
+  }
+  const newSub = { id: id + 1, ...req.body };
   if (newSub.classId && newSub.memberId && newSub.date && newSub.schedule) {
     if (!isValidDate(newSub.date)) {
       res.send({ msg: 'Date format: mm/dd/yyyy and has to be between today and the end of the year' });
