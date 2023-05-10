@@ -4,7 +4,7 @@ import cors from 'cors';
 const adminRouter = require('./resources/admins');
 const memberRouter = require('./resources/member');
 const superAdminsRouter = require('./resources/super-admins');
-
+const trainerRouter = require('./resources/trainer');
 const subsRouter = require('./resources/subscription');
 
 const app = express();
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use('/members', memberRouter);
 app.use('/admins', adminRouter);
 app.use('/superAdmins', superAdminsRouter);
-
+app.use('/trainer', trainerRouter);
 app.use('/subscription', subsRouter);
 
 app.get('/', (req, res) => {
