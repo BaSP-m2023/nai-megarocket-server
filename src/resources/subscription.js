@@ -78,4 +78,43 @@ router.post('/post', (req, res) => {
   }
 });
 
+router.put('/update/:id', (req, res) => {
+  const subID = req.params.id;
+  const subUpdate = subs.find((sub) => sub.id.toString() === subID);
+  if (!subUpdate) {
+    res.send('The id is not a valid subscription');
+    return;
+  }
+  subUpdate.classId = req.body.classId || subUpdate.classId;
+  if (!isValidDate(req.body.date)) {
+    res.send({ msg: 'Date format: mm/dd/yyyy and has to be between today and the end of the year' });
+  } else subUpdate.date = req.body.date || subUpdate.date;
+  if (!isValidHour(req.body.schedule)) {
+    res.send({ msg: 'Schedule format: hh:mm. 24hs format' });
+  } else subUpdate.schedule = req.body.schedule || subUpdate.schedule;
+
+  fs.writeFile('src/data/subscription.json', JSON.stringify(subs, null, 2), (err) => {
+    if (err) {
+      res.send('ERROR subscription can\'t be updated!');
+    } else {
+      res.send('Subscription updated');
+    }
+  });
+});
+router.delete('/delete/:id', (req, res) => {
+  const subID = req.params.id;
+  const subUpdate = subs.find((sub) => sub.id.toString() === subID);
+  if (!subUpdate) {
+    res.send('The id is not a valid subscription');
+    return;
+  }
+  const filterSub = subs.filter((sub) => sub.id.toString() !== subID);
+  fs.writeFile('src/data/subscription.json', JSON.stringify(filterSub, null, 2), (err) => {
+    if (err) {
+      res.send('ERROR Subscription can\'t be deleted!');
+    } else {
+      res.send('Subscription deleted');
+    }
+  });
+});
 module.exports = router;
