@@ -10,15 +10,15 @@ router.delete('/delete/:id', (req, res) => {
   const trainerId = req.params.id;
   const trainerFiltered = trainers.find((trainer) => trainer.id.toString() === trainerId);
   if (!trainerFiltered) {
-    res.send('The id doesn\'t match to any Trainer');
+    res.status(400).send('The id doesn\'t match to any Trainer');
     return;
   }
   const trainerFilteredToDelete = trainers.filter((trainer) => trainer.id.toString() !== trainerId);
   fs.writeFile('src/data/trainer.json', JSON.stringify(trainerFilteredToDelete, null, 2), (err) => {
     if (err) {
-      res.send('ERROR:This trainer can\'t be deleted!');
+      res.status(400).send('ERROR:This trainer can\'t be deleted!');
     } else {
-      res.send('Trainer deleted!');
+      res.status(200).send('Trainer deleted!');
     }
   });
 });
