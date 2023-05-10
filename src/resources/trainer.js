@@ -1,10 +1,16 @@
-const express = require('express');
-
 const fs = require('fs');
 
-const trainers = require('../data/trainer.json');
+const express = require('express');
 
 const router = express.Router();
+const trainers = require('../data/trainer.json');
+
+router.get('/get', (req, res) => {
+  if (trainers.length === 0) {
+    return res.status(400).json({ message: 'No existing trainer. ' });
+  }
+  return res.send(trainers);
+});
 
 router.delete('/delete/:id', (req, res) => {
   const trainerId = req.params.id;
