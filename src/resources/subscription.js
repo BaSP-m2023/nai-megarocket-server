@@ -1,6 +1,5 @@
 const express = require('express');
 const fs = require('fs');
-
 const subs = require('../data/subscription.json');
 
 const router = express.Router();
@@ -38,6 +37,46 @@ function isValidHour(hour) {
   const minutes = hour.toString().substring(3, 5);
   return (isOnlyNumbers(hours) && hours <= 23 && isOnlyNumbers(minutes) && minutes <= 59 && hour[2] === ':');
 }
+
+router.get('/get', (req, res) => {
+  if (subs.length === 0) {
+    return res.json({ message: 'Subscriptions data is empty' });
+  }
+  return res.send(subs);
+});
+
+router.get('/getById/:id', (req, res) => {
+  const foundSubs = subs.find((sub) => sub.id.toString() === req.params.id);
+
+  if (foundSubs) {
+    res.send(foundSubs);
+  } else {
+    res.send({ msg: `This id doesn't exist (${req.params.id})` });
+  }
+});
+
+router.post('/post', (req, res) => {
+  let id;
+  if (subs.length === 0) {
+    id = 0;
+  } else {
+    id = subs[subs.length - 1].id;
+  }
+  const newSub = { id: id + 1, ...req.body };
+  if (newSub.classId && newSub.memberId && newSub.date && newSub.schedule) {
+    if (!isValidDate(newSub.date)) {
+      res.send({ msg: 'Date format: mm/dd/yyyy and has to be between today and the end of the year' });
+    }
+    if (!isValidHour(newSub.schedule)) {
+      res.send({ msg: 'Schedule format: hh:mm. 24hs format' });
+    }
+    subs.push(newSub);
+    fs.writeFileSync('src/data/subscription.json', JSON.stringify(subs, null, 2));
+    res.json({ msg: 'Subscrition created successfully' });
+  } else {
+    res.send({ msg: 'All fields are required' });
+  }
+});
 
 router.put('/update/:id', (req, res) => {
   const subID = req.params.id;

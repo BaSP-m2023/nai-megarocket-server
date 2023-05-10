@@ -1,12 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 
+const subsRouter = require('./resources/subscription');
 const adminRouter = require('./resources/admins');
 const memberRouter = require('./resources/member');
 const superAdminsRouter = require('./resources/super-admins');
 const classRouter = require('./resources/class');
 const trainerRouter = require('./resources/trainer');
-const subsRouter = require('./resources/subscription');
 const activitiesRouter = require('./resources/activity');
 
 const app = express();
