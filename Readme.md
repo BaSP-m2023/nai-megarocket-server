@@ -1,10 +1,10 @@
-# BaSP 2023 - [app name]
+# BaSP 2023 - [MegaRocket - Backend]
 
 ## Week-08
 ## Java Script.
 ## ES6, NPM y Express.js
 
-For the assignment of the Week-08, the project is going to be developed in a shared repository with all the team. For which it should be created a NPM project to then create a web server by using the Express library. This web server will be the 'backend' of our MegaRocket system in which it would be developing all the necessary functionalities so that the system acchieve the requirements of the week 01.  
+For the assignment of the Week-08, the project is going to be developed in a shared repository with all the team. For which it should be created an NPM project to then create a web server by using the Express library. This web server will be the 'backend' of our MegaRocket system in which it would be developing all the necessary functionalities so that the system acchieve the requirements of the week 01.  
 
 In order to move on with the project. The team developed the different entities or resources that the project requires.
 such as;
