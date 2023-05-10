@@ -1,5 +1,21 @@
 [
   {
+<<<<<<< HEAD
+    "id": 1,
+    "name": "Nadiya",
+    "lastname": "Shieldon",
+    "email": "nshieldon0@canalblog.com",
+    "password": "cw6Ia5SW",
+    "dni": 27423864,
+    "phone": "263-613-5609",
+    "hourlyWage": "$28.76",
+    "activities": [
+      {
+        "id": 5
+      },
+      {
+        "id": 4
+=======
     "id":1,
     "name":"Nadiya",
     "lastname":"Shieldon",
@@ -14,6 +30,7 @@
       },
       {
           "id":4
+>>>>>>> master
       }
     ]
   },
