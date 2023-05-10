@@ -27,8 +27,13 @@ router.get('/getById/:id?', (req, res) => {
 });
 
 router.post('/post', (req, res) => {
-  const id = membersData.length + 1;
-  const body = { id, ...req.body };
+  let id;
+  if (membersData.length === 0) {
+    id = 0;
+  } else {
+    id = membersData[membersData.length - 1].id;
+  }
+  const body = { id: id + 1, ...req.body };
   if (Object.values(body).every((el) => el !== '')) {
     const memberEmail = membersData.find((m) => m.email === body.email);
     const memberDni = membersData.find((m) => m.dni === body.dni);
