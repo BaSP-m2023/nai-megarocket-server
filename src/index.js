@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 
+const admins = require('./data/admins.json');
 const adminRouter = require('./resources/admins');
 const memberRouter = require('./resources/member');
 const superAdminsRouter = require('./resources/super-admins');
@@ -24,7 +25,16 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+app.get('/admins', (req, res) => {
+  res.status(200).json({
+    data: admins,
+  });
+});
+
+app.use('/admins', adminRouter);
+
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Example app listening on port ${port}`);
 });
+app.use(adminRouter);
