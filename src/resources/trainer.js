@@ -1,9 +1,8 @@
 const fs = require('fs');
-
 const express = require('express');
+const trainers = require('../data/trainer.json');
 
 const router = express.Router();
-const trainers = require('../data/trainer.json');
 
 router.get('/get', (req, res) => {
   if (trainers.length === 0) {
@@ -24,6 +23,28 @@ router.get('/getbyid/:id', (req, res) => {
   return res.status(200).json({ success: true, trainer: trainerToSend });
 });
 
+router.post('/post', (req, res) => {
+  let newData = req.body;
+  if (Object.entries(newData).length === 0) {
+    return res.status(400).json({ success: false, msg: 'Please send data into the request.' });
+  }
+  const exist = trainers.some((train) => newData.id === train.id);
+  if (exist) {
+    return res.status(400).json({ success: false, msg: 'A trainer with this ID already exists.' });
+  }
+  const fields = Object.values(newData).every((field) => field !== '');
+  if (!fields) {
+    return res.status(400).json({ success: false, msg: 'You must specify all the fields for the new trainer.' });
+  }
+  const lastId = trainers[trainers.length - 1].id;
+  newData = { id: lastId + 1, ...newData };
+  trainers.push(newData);
+  fs.writeFile('src/data/trainer.json', JSON.stringify(trainers, null, 2), (err) => {
+    if (err) throw err;
+  });
+  return res.status(200).json({ success: true, msg: 'Trainer created', trainer: newData });
+});
+
 router.put('/update/:id', (req, res) => {
   const toUpdate = req.body;
   if (Object.entries(toUpdate).length === 0) {
@@ -31,7 +52,7 @@ router.put('/update/:id', (req, res) => {
   }
   const trainerToUpdate = trainers.find((trainer) => trainer.id.toString() === req.params.id);
   if (!trainerToUpdate) {
-    return res.status(400).json({ sucess: false, msg: 'trainer not found' });
+    return res.status(400).json({ success: false, msg: 'trainer not found' });
   }
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of Object.entries(toUpdate)) {
