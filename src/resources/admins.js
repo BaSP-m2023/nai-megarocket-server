@@ -35,12 +35,8 @@ router.post('/post', (req, res) => {
   const body = { id: id + 1, ...req.body };
   if (Object.values(body).every((el) => el !== '')) {
     const adminEmail = admins.find((m) => m.email === body.email);
-    const adminId = admins.find((m) => m.id === body.id);
     if (adminEmail) {
       return res.status(400).json('that email already exists');
-    }
-    if (adminId) {
-      return res.status(400).json('that ID already exists');
     }
     admins.push(body);
     fs.writeFileSync('src/data/admins.json', JSON.stringify(admins, null, 2));

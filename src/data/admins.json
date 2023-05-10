@@ -58,7 +58,7 @@
   {
     "id": 9,
     "name": "Estel",
-    "lastName": "Otteridge",
+    "last_name": "Otteridge",
     "email": "eotteridge8@wikispaces.com",
     "password": "rXh0IIZ"
   },
@@ -70,3 +70,5 @@
     "password": "c7lhxd"
   }
 ]
+
+
