@@ -5,6 +5,25 @@ const express = require('express');
 const router = express.Router();
 const trainers = require('../data/trainer.json');
 
+router.get('/get', (req, res) => {
+  if (trainers.length === 0) {
+    return res.status(400).json({ message: 'No existing trainer. ' });
+  }
+  return res.send(trainers);
+});
+
+router.get('/getbyid/:id', (req, res) => {
+  const { id } = req.params;
+  if (Number.isNaN(parseInt(id, 10))) {
+    return res.status(400).json({ success: false, msg: 'id must be a number.' });
+  }
+  const trainerToSend = trainers.find((trainer) => trainer.id.toString() === id);
+  if (!trainerToSend) {
+    return res.status(404).json({ success: false, msg: 'trainer not found.' });
+  }
+  return res.status(200).json({ success: true, trainer: trainerToSend });
+});
+
 router.put('/update/:id', (req, res) => {
   const toUpdate = req.body;
   if (Object.entries(toUpdate).length === 0) {
@@ -22,13 +41,6 @@ router.put('/update/:id', (req, res) => {
   trainers[index] = trainerToUpdate;
   fs.writeFileSync('src/trainers/trainer.json', JSON.stringify(trainers, null, 2));
   return res.status(200).json({ success: true, msg: 'trainer updated', trainer: trainerToUpdate });
-});
-
-router.get('/get', (req, res) => {
-  if (trainers.length === 0) {
-    return res.status(400).json({ message: 'No existing trainer. ' });
-  }
-  return res.send(trainers);
 });
 
 router.delete('/delete/:id', (req, res) => {
