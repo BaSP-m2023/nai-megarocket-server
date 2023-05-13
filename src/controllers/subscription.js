@@ -3,15 +3,21 @@ const Subscription = require('../models/subscription');
 const updateSubscription = (req, res) => {
   const { id } = req.params;
   const { classes, member, date } = req.body;
-  Subscription.findByIdAndUpdate(
-    id,
-    {
-      classes,
-      member,
-      date,
-    },
-    { new: true },
-  )
+  Subscription.findOne({ classes, member, date })
+    .then((sub) => {
+      if (sub) {
+        throw new Error('Subscription data already exists');
+      }
+      return Subscription.findByIdAndUpdate(
+        id,
+        {
+          classes,
+          member,
+          date,
+        },
+        { new: true },
+      );
+    })
     .then((result) => {
       if (!result) {
         return res.status(404).json({
@@ -24,7 +30,7 @@ const updateSubscription = (req, res) => {
         error: false,
       });
     })
-    .catch((error) => res.status(400).json(error));
+    .catch((error) => res.status(400).json({ msg: error.message, error: true }));
 };
 
 const deleteSubscription = (req, res) => {
