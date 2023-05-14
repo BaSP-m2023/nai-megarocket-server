@@ -8,3 +8,5 @@ router
   .get('/', trainersController.getAllTrainers)
   .get('/:id', trainersController.getTrainerById)
   .post('/', validations.validateCreation, trainersController.createTrainer);
+
+module.exports = router;
