@@ -15,11 +15,11 @@ const updateSubscription = (req, res) => {
     .then((sub) => {
       const subObj = sub.toObject();
       const bodyObj = req.body;
-      const areEquals = Object.entries(subObj).every(([key, value]) => {
+      const areEquals = Object.entries(bodyObj).every(([key]) => {
         if (key !== 'date' && key !== '_id' && key !== '__v') {
-          return (bodyObj[key] === value.toString());
+          return (bodyObj[key] === subObj[key].toString());
         } if ((key === 'date' && key !== '_id' && key !== '__v')) {
-          return (bodyObj[key] === value.toISOString().substring(0, 10));
+          return (bodyObj[key] === subObj[key].toISOString().substring(0, 10));
         }
         return true;
       });
