@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Subscription = require('../models/subscription');
 
 const applyResponse = (res, status, msg, data, error) => {
@@ -11,7 +12,10 @@ const applyResponse = (res, status, msg, data, error) => {
 const updateSubscription = (req, res) => {
   const { id } = req.params;
   const { classes, member, date } = req.body;
-  Subscription.findById(id)
+  if (!mongoose.isValidObjectId(id)) {
+    return applyResponse(res, 404, 'Id is invalid', undefined, true);
+  }
+  return Subscription.findById(id)
     .then((sub) => {
       if (sub === null) {
         return applyResponse(res, 404, `Subscription with id: ${id} not found`, undefined, true);
@@ -57,7 +61,10 @@ const updateSubscription = (req, res) => {
 
 const deleteSubscription = (req, res) => {
   const { id } = req.params;
-  Subscription.findByIdAndDelete(id)
+  if (!mongoose.isValidObjectId(id)) {
+    return applyResponse(res, 404, 'Id is invalid', undefined, true);
+  }
+  return Subscription.findByIdAndDelete(id)
     .then((result) => {
       if (result === null) {
         return applyResponse(res, 404, `Subscription with id: ${id} was not found`, undefined, true);
