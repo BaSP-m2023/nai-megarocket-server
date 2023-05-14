@@ -13,6 +13,9 @@ const updateSuperAdmin = (req, res) => {
   const { firstName, email, password } = req.body;
   SuperAdmin.findById(id)
     .then((superA) => {
+      if (superA === null) {
+        return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
+      }
       const superAObj = superA.toObject();
       const bodyObj = req.body;
       const isEqual = Object.entries(bodyObj).every(([key]) => {
@@ -39,12 +42,13 @@ const updateSuperAdmin = (req, res) => {
             },
             { new: true },
           )
-            .then((result) => {
-              if (!result) {
-                return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
-              }
-              return applyResponse(res, 200, `Super Admin ${result.firstName} was updated successfully`, result, false);
-            });
+            .then((result) => applyResponse(
+              res,
+              200,
+              `Super Admin ${result.firstName} was updated successfully`,
+              result,
+              false,
+            ));
         });
     })
     .catch((error) => res.status(400).json({ msg: error.message, error: true }));
