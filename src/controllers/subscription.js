@@ -17,7 +17,7 @@ const updateSubscription = (req, res) => {
   }
   return Subscription.findById(id)
     .then((sub) => {
-      if (sub === null) {
+      if (!sub) {
         return applyResponse(res, 404, `Subscription with id: ${id} not found`, undefined, true);
       }
       const subObj = sub.toObject();
@@ -66,7 +66,7 @@ const deleteSubscription = (req, res) => {
   }
   return Subscription.findByIdAndDelete(id)
     .then((result) => {
-      if (result === null) {
+      if (!result) {
         return applyResponse(res, 404, `Subscription with id: ${id} was not found`, undefined, true);
       }
       return applyResponse(res, 200, `Subscription with id ${id} was deleted`, result, false);
