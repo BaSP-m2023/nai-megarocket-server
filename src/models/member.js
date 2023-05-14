@@ -22,17 +22,21 @@ const membersSchema = new Schema({
     required: true,
   },
   phone: {
-    type: Number,
+    type: String,
+    minLength: 10,
+    maxLength: 10,
     required: true,
   },
   email: {
     type: String,
     minLength: 8,
+    maxLength: 25,
     required: true,
   },
   password: {
     type: String,
     minLength: 8,
+    maxLength: 20,
     required: true,
   },
   city: {
