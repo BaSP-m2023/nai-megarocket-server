@@ -44,10 +44,10 @@ const updateSuperAdmin = (req, res) => {
                 return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
               }
               return applyResponse(res, 200, `Super Admin ${result.firstName} was updated successfully`, result, false);
-            })
-            .catch((error) => res.status(400).json({ msg: error.message, error: true }));
+            });
         });
-    });
+    })
+    .catch((error) => res.status(400).json({ msg: error.message, error: true }));
 };
 
 const deleteSuperAdmin = (req, res) => {
