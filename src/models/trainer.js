@@ -57,4 +57,4 @@ const trainersSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('Activity', trainersSchema);
+module.exports = mongoose.model('Trainers', trainersSchema);
