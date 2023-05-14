@@ -6,7 +6,7 @@ const validateCreation = (req, res, next) => {
     lastName: Joi.string().min(3).max(20).required(),
     dni: Joi.string().min(7).max(9).required(),
     phone: Joi.string().length(10).required(),
-    email: Joi.string().email().min(8).max(20)
+    email: Joi.string().email().min(8).max(25)
       .required(),
     city: Joi.string().min(5).max(20).required(),
     password: Joi.string().min(4).max(25).required(),

@@ -31,7 +31,7 @@ const trainersSchema = new Schema({
   email: {
     type: String,
     minLength: 8,
-    maxLength: 20,
+    maxLength: 25,
     required: true,
     unique: true,
   },
