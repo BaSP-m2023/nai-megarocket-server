@@ -13,22 +13,18 @@ const updateSubscription = (req, res) => {
   const { classes, member, date } = req.body;
   Subscription.findById(id)
     .then((sub) => {
-      let propsEqual = true;
-      for (let i = 1; i < Object.entries(sub.toJSON()).length - 1; i += 1) {
-        const subObj = sub.toJSON();
-        if (!(Object.keys(subObj)[i].toString() === 'date')) {
-          if (Object.values(subObj)[i].toString() !== Object.values(req.body)[i - 1]) {
-            propsEqual = false;
-            break;
-          }
-        } else if (Object.values(subObj)[i].toISOString()
-          .substring(0, 10) !== Object.values(req.body)[i - 1]) {
-          propsEqual = false;
-          break;
+      const subObj = sub.toObject();
+      const bodyObj = req.body;
+      const areEquals = Object.entries(subObj).every(([key, value]) => {
+        if (key !== 'date' && key !== '_id' && key !== '__v') {
+          return (bodyObj[key] === value.toString());
+        } if ((key === 'date' && key !== '_id' && key !== '__v')) {
+          return (bodyObj[key] === value.toISOString().substring(0, 10));
         }
-      }
-      if (propsEqual) {
-        return applyResponse(res, 404, 'No changes were made. Body data is already in the db', undefined, true);
+        return true;
+      });
+      if (areEquals) {
+        return applyResponse(res, 400, 'Data in request body and in db instance are identical', undefined, true);
       }
       return Subscription.findOne({ classes, member, date })
         .then((subRepeated) => {
