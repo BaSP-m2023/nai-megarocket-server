@@ -779,7 +779,7 @@
 							"port": "4000",
 							"path": [
 								"api",
-								"trainer"
+								"trainers"
 							]
 						}
 					},
@@ -799,7 +799,7 @@
 							"port": "4000",
 							"path": [
 								"api",
-								"trainer",
+								"trainers",
 								":id"
 							],
 							"variable": [
@@ -826,7 +826,7 @@
 							"port": "4000",
 							"path": [
 								"api",
-								"trainer",
+								"trainers",
 								":id"
 							],
 							"variable": [
@@ -853,7 +853,7 @@
 							"port": "4000",
 							"path": [
 								"api",
-								"trainer"
+								"trainers"
 							]
 						}
 					},
@@ -873,7 +873,7 @@
 							"port": "4000",
 							"path": [
 								"api",
-								"trainer",
+								"trainers",
 								":id"
 							],
 							"variable": [
