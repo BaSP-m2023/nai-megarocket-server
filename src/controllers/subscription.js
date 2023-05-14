@@ -13,6 +13,9 @@ const updateSubscription = (req, res) => {
   const { classes, member, date } = req.body;
   Subscription.findById(id)
     .then((sub) => {
+      if (sub === null) {
+        return applyResponse(res, 404, `Subscription with id: ${id} not found`, undefined, true);
+      }
       const subObj = sub.toObject();
       const bodyObj = req.body;
       const areEquals = Object.entries(bodyObj).every(([key]) => {
@@ -41,12 +44,13 @@ const updateSubscription = (req, res) => {
             { new: true },
           );
         })
-        .then((result) => {
-          if (!result) {
-            return applyResponse(res, 404, `Subscription with id: ${id} was not found`, undefined, true);
-          }
-          return applyResponse(res, 200, `Subscription with id: ${id} was updated successfully`, result, false);
-        });
+        .then((result) => applyResponse(
+          res,
+          200,
+          `Subscription with id: ${id} was updated successfully`,
+          result,
+          false,
+        ));
     })
     .catch((error) => res.status(400).json({ msg: error.message, error: true }));
 };
