@@ -46,9 +46,9 @@ const updateSubscription = (req, res) => {
             return applyResponse(res, 404, `Subscription with id: ${id} was not found`, undefined, true);
           }
           return applyResponse(res, 200, `Subscription with id: ${id} was updated successfully`, result, false);
-        })
-        .catch((error) => res.status(400).json({ msg: error.message, error: true }));
-    });
+        });
+    })
+    .catch((error) => res.status(400).json({ msg: error.message, error: true }));
 };
 
 const deleteSubscription = (req, res) => {
