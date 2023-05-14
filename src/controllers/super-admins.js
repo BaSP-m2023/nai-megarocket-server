@@ -17,7 +17,7 @@ const updateSuperAdmin = (req, res) => {
   }
   return SuperAdmin.findById(id)
     .then((superA) => {
-      if (superA === null) {
+      if (!superA) {
         return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
       }
       const superAObj = superA.toObject();
@@ -33,7 +33,7 @@ const updateSuperAdmin = (req, res) => {
       }
       return SuperAdmin.findOne({ email })
         .then((repeatedMail) => {
-          if ((repeatedMail !== null)
+          if ((repeatedMail)
           && (Object.values(repeatedMail.toObject())[0].toString() !== id)) {
             return applyResponse(res, 404, 'Email already exists', undefined, true);
           }
@@ -65,7 +65,7 @@ const deleteSuperAdmin = (req, res) => {
   }
   return SuperAdmin.findByIdAndDelete(id)
     .then((result) => {
-      if (result === null) {
+      if (!result) {
         return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
       }
       return applyResponse(res, 200, `Super Admin ${result.firstName} was deleted`, result, false);
