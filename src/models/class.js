@@ -9,7 +9,7 @@ const classSchema = new Schema(
       require: true,
     },
     hour: {
-      type: Date,
+      type: String,
       require: true,
     },
     trainer: {

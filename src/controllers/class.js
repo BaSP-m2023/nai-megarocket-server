@@ -2,11 +2,20 @@ const Class = require('../models/class');
 
 const getAllClasses = (req, res) => {
   Class.find()
-    .then((classes) => res.status(200).json({
-      message: 'Complete list of classes.',
-      data: classes,
-      error: false,
-    }))
+    .then((classes) => {
+      if (classes.length > 0) {
+        res.status(200).json({
+          message: 'Complete list of classes.',
+          data: classes,
+          error: false,
+        });
+      } else {
+        res.status(404).json({
+          message: 'List of classes empty.',
+          error: true,
+        });
+      }
+    })
     .catch((error) => res.status(500).json({
       message: 'Cannot get all classes, an error has occurred',
       error,
@@ -16,11 +25,20 @@ const getAllClasses = (req, res) => {
 const getClassId = (req, res) => {
   const { id } = req.params;
   Class.findById(id)
-    .then((classes) => res.status(200).json({
-      message: `Class ${classes.id} obtained.`,
-      data: classes,
-      error: false,
-    }))
+    .then((classes) => {
+      if (classes) {
+        res.status(200).json({
+          message: `Class ${classes.id} obtained.`,
+          data: classes,
+          error: false,
+        });
+      } else {
+        res.status(404).json({
+          message: 'Class not found.',
+          error: true,
+        });
+      }
+    })
     .catch((error) => res.status(500).json({
       message: 'Cannot get the class',
       error,
@@ -31,7 +49,6 @@ const createClass = (req, res) => {
   const {
     day, hour, trainer, activity, slots,
   } = req.body;
-
   Class.create({
     day,
     hour,
