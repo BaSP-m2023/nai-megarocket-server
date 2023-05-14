@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const SuperAdmin = require('../models/super-admins');
 
 const applyResponse = (res, status, msg, data, error) => {
@@ -11,7 +12,10 @@ const applyResponse = (res, status, msg, data, error) => {
 const updateSuperAdmin = (req, res) => {
   const { id } = req.params;
   const { firstName, email, password } = req.body;
-  SuperAdmin.findById(id)
+  if (!mongoose.isValidObjectId(id)) {
+    return applyResponse(res, 404, 'Id is invalid', undefined, true);
+  }
+  return SuperAdmin.findById(id)
     .then((superA) => {
       if (superA === null) {
         return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
@@ -56,7 +60,10 @@ const updateSuperAdmin = (req, res) => {
 
 const deleteSuperAdmin = (req, res) => {
   const { id } = req.params;
-  SuperAdmin.findByIdAndDelete(id)
+  if (!mongoose.isValidObjectId(id)) {
+    return applyResponse(res, 404, 'Id is invalid', undefined, true);
+  }
+  return SuperAdmin.findByIdAndDelete(id)
     .then((result) => {
       if (result === null) {
         return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);

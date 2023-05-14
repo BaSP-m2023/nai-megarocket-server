@@ -1,15 +1,13 @@
 const Joi = require('joi');
 
 const validate = (req, res, next) => {
-  const { id } = req.params;
   const superAdminsValidation = Joi.object({
-    id: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
     firstName: Joi.string().min(3).max(25),
     email: Joi.string().email().min(8).max(25),
     password: Joi.string().min(8).max(16).alphanum(),
   });
 
-  const validation = superAdminsValidation.validate({ id, ...req.body });
+  const validation = superAdminsValidation.validate({ ...req.body });
   if (Object.entries(req.body).length === 0) {
     validation.error = true;
     return res.status(400).json({
