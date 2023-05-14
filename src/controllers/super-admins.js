@@ -15,7 +15,7 @@ const updateSuperAdmin = (req, res) => {
     .then((superA) => {
       const superAObj = superA.toObject();
       const bodyObj = req.body;
-      const isEqual = Object.entries(superAObj).every(([key]) => {
+      const isEqual = Object.entries(bodyObj).every(([key]) => {
         if (key !== '_id' && key !== '__v') {
           return (bodyObj[key] === superAObj[key]);
         }
