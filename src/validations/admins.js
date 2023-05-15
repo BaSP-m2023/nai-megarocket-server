@@ -37,8 +37,6 @@ const validateAdminCreate = (req, res, next) => {
     phone: Joi
       .number()
       .integer()
-      .min(10)
-      .max(10)
       .messages({
         'number.base': 'the phone number must be a number',
         'number.min': 'the phone number is invalid',
