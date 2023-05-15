@@ -6,7 +6,7 @@ const getAllActivities = (req, res) => {
     .then((activities) => {
       if (activities.length === 0) {
         return res.status(404).json({
-          message: 'There is no activities',
+          message: 'There are no activities',
           error: false,
         });
       }
@@ -32,6 +32,7 @@ const getActivitiesById = (req, res) => {
       if (activity == null) {
         return res.status(404).json({
           message: `There is no activity with id: ${id}`,
+          data: activity,
           error: false,
         });
       }
@@ -53,7 +54,11 @@ const createActivities = async (req, res) => {
       description,
       isActive,
     })
-      .then((result) => res.status(201).json(result))
+      .then((result) => res.status(201).json({
+        message: 'New activity added correctly',
+        data: result,
+        error: false,
+      }))
       .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
   }
   return res.status(409).json({
