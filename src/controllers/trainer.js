@@ -32,6 +32,7 @@ const getTrainerById = (req, res) => {
       if (trainer == null) {
         return res.status(404).json({
           message: `There is no trainer with id: ${id}`,
+          data: trainer,
           error: false,
         });
       }
@@ -44,8 +45,8 @@ const getTrainerById = (req, res) => {
     .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
 };
 const createTrainer = async (req, res) => {
-  const existingTrainerDni = await Trainer.findOne({ name: req.body.dni });
-  const existingTrainerEmail = await Trainer.findOne({ name: req.body.email });
+  const existingTrainerDni = await Trainer.findOne({ dni: req.body.dni });
+  const existingTrainerEmail = await Trainer.findOne({ email: req.body.email });
   if (existingTrainerDni) {
     return res.status(409).json({
       message: 'Trainer with that DNI already exists',
@@ -80,7 +81,11 @@ const createTrainer = async (req, res) => {
     salary,
     isActive,
   })
-    .then((result) => res.status(201).json(result))
+    .then((result) => res.status(201).json({
+      message: 'New trainer added correctly',
+      data: result,
+      error: false,
+    }))
     .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
 };
 
