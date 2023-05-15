@@ -45,10 +45,19 @@ const getClassId = (req, res) => {
     }));
 };
 
+// eslint-disable-next-line consistent-return
 const createClass = (req, res) => {
   const {
     day, hour, trainer, activity, slots,
   } = req.body;
+
+  if (day && hour && trainer && Class.exists({ day, hour, trainer })) {
+    return res.status(400).json({
+      message: 'Trainer has another class scheduled at that time.',
+      error: true,
+    });
+  }
+
   Class.create({
     day,
     hour,
