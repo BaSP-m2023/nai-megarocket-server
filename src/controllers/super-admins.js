@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const SuperAdmin = require('../models/super-admins');
 
 const getAllSuperAdmins = (req, res) => {
@@ -21,8 +22,15 @@ const getAllSuperAdmins = (req, res) => {
 
 const getSuperAdminsById = (req, res) => {
   const { id } = req.params;
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({
+      message: 'The ID is not valid',
+      data: id,
+      error: true,
+    });
+  }
 
-  SuperAdmin.findById(id)
+  return SuperAdmin.findById(id)
     .then((superAdmins) => {
       if (superAdmins !== null) {
         res.status(200).json({
@@ -48,7 +56,7 @@ const createSuperAdmins = (req, res) => {
       if (existingSuperAdmin) {
         return res.status(400).json({
           message: 'Error!',
-          error: 'This email exist in database for another Super Admin, please check.',
+          error: 'This email is used by another super admin.',
         });
       }
 

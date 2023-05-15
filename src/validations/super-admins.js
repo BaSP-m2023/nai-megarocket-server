@@ -14,7 +14,7 @@ const validateSuperAdminsCreation = (req, res, next) => {
       .label('Password')
       .required()
       .messages({
-        'string.pattern.base': 'Password must have at least 1 special character, 1 uppercase letter, and 1 lowercase letter',
+        'string.pattern.base': 'Password must have at least 1 special character (>, <, @, *, _, -, /, %, &), 1 uppercase letter, and 1 lowercase letter',
       }),
   });
 
