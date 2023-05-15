@@ -5,7 +5,7 @@ const subscriptionValidation = require('../validations/subscription');
 const router = express.Router();
 
 router
-  .put('/:id?', subscriptionValidation.validate, subscriptionController.updateSubscription)
+  .put('/:id?', subscriptionValidation.validateUpdate, subscriptionController.updateSubscription)
   .delete('/:id?', subscriptionController.deleteSubscription);
 
 module.exports = router;

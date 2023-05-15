@@ -1,13 +1,25 @@
 const Joi = require('joi');
+const mongoose = require('mongoose');
 
-const validate = (req, res, next) => {
-  const subscriptionValidation = Joi.object({
-    classes: Joi.string().regex(/^[0-9a-fA-F]{24}$/),
-    member: Joi.string().regex(/^[0-9a-fA-F]{24}$/),
+const isObjectId = (value, helpers) => {
+  if (!mongoose.Types.ObjectId.isValid(value)) {
+    return helpers.error('invalid');
+  }
+  return value;
+};
+
+const validateUpdate = (req, res, next) => {
+  const subscriptionUpdateValidation = Joi.object({
+    classes: Joi.string().custom(isObjectId).messages({
+      invalid: 'The classes id must be a valid ObjectId',
+    }),
+    member: Joi.string().custom(isObjectId).messages({
+      invalid: 'The member id must be a valid ObjectId',
+    }),
     date: Joi.date().max(Date.now()).min('1923-01-01'),
   });
 
-  const validation = subscriptionValidation.validate({ ...req.body });
+  const validation = subscriptionUpdateValidation.validate({ ...req.body });
   if (Object.entries(req.body).length === 0) {
     validation.error = true;
     return res.status(400).json({
@@ -27,5 +39,5 @@ const validate = (req, res, next) => {
 };
 
 module.exports = {
-  validate,
+  validateUpdate,
 };
