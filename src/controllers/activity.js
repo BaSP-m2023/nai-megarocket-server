@@ -14,7 +14,7 @@ const updateActivities = (req, res) => {
     { new: true },
   )
     .then((activity) => {
-      if (activity !== null) {
+      if (!activity) {
         res.status(200).json({
           message: 'Activity updated correctly',
           data: activity,
@@ -23,6 +23,7 @@ const updateActivities = (req, res) => {
       } else {
         res.status(404).json({
           message: `There is no activity with id:${id}`,
+          data: undefined,
           error: false,
         });
       }
@@ -45,11 +46,13 @@ const deleteActivities = (req, res) => {
       if (activity !== null) {
         res.status(200).json({
           message: 'Activity deleted',
+          data: activity,
           error: false,
         });
       } else {
         res.status(404).json({
           message: `There is no activity with id:${id}`,
+          data: undefined,
           error: false,
         });
       }
