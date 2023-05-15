@@ -5,9 +5,15 @@ const { Schema } = mongoose;
 const adminSchema = new Schema({
   firstName: {
     type: String,
+    required: true,
+    minLength: 3,
+    maxLength: 10
   },
   lastName: {
     type: String,
+    required: true,
+    minLength:3,
+    maxLength: 20,
   },
   dni: {
     type: Number,
