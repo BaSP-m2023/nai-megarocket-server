@@ -9,13 +9,8 @@ const validateMembersCreation = (req, res, next) => {
     dni: Joi.number().integer().min(1000000).max(99999999)
       .label('D.N.I')
       .required(),
-    phone: Joi.string().regex(/^\d{10}$/).label('Phone')
-      .required()
-      .messages({
-        'string.base': 'Phone must be a string',
-        'string.empty': 'Phone cannot be empty',
-        'string.pattern.base': 'Phone must only contain numbers and 10 characters',
-      }),
+    phone: Joi.number().integer().label('Phone')
+      .required(),
     email: Joi.string().min(8).max(25).regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/)
       .label('Email')
       .required(),

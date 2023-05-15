@@ -22,7 +22,7 @@ const membersSchema = new Schema({
     required: true,
   },
   phone: {
-    type: String,
+    type: Number,
     minLength: 10,
     maxLength: 10,
     required: true,
