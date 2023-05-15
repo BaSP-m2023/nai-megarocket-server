@@ -45,7 +45,6 @@ const getClassId = (req, res) => {
     }));
 };
 
-// eslint-disable-next-line consistent-return
 const createClass = (req, res) => {
   const {
     day, hour, trainer, activity, slots,
@@ -58,7 +57,7 @@ const createClass = (req, res) => {
     });
   }
 
-  Class.create({
+  return Class.create({
     day,
     hour,
     trainer,

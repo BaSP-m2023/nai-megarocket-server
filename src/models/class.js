@@ -15,10 +15,14 @@ const classSchema = new Schema(
     trainer: {
       type: String,
       require: true,
+      minLength: 3,
+      maxLength: 20,
     },
     activity: {
       type: String,
       require: true,
+      minLength: 3,
+      maxLength: 20,
     },
     slots: {
       type: Number,
