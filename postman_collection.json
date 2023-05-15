@@ -341,7 +341,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4000/api/classes",
+							"raw": "http://localhost:4000/api/class",
 							"protocol": "http",
 							"host": [
 								"localhost"
