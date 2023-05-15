@@ -31,7 +31,7 @@ const getTrainerById = (req, res) => {
     .then((trainer) => {
       if (trainer == null) {
         return res.status(404).json({
-          message: `There is no trainer with id: ${id}`,
+          message: `There are no trainer with id: ${id}`,
           data: trainer,
           error: false,
         });
