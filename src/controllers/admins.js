@@ -1,7 +1,7 @@
 const { default: mongoose } = require('mongoose');
 const Admin = require('../models/admins');
 
-const updateAdmin = (req, res) => {
+const updateAdmin = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return res.status(400).json({
@@ -10,9 +10,41 @@ const updateAdmin = (req, res) => {
       error: true,
     });
   }
+
   const {
-    firstName, lastName, dni, phone, email, city, password,
+    firstName,
+    lastName,
+    dni,
+    phone,
+    email,
+    city,
+    password,
   } = req.body;
+
+  const adminToUpdate = await Admin.findById(id);
+
+  if (!adminToUpdate) {
+    return res.status(404).json({
+      message: `Admin with the id (${id}) was not found.`,
+      data: undefined,
+      error: true,
+    });
+  }
+
+  const adminProps = Object.keys(adminToUpdate.toObject()).slice(1, -1);
+  let changes = false;
+  adminProps.forEach((prop) => {
+    if (req.body[prop] && req.body[prop] !== adminToUpdate[prop]) {
+      changes = true;
+    }
+  });
+  if (!changes) {
+    return res.status(400).json({
+      message: 'There is nothing to change',
+      data: adminToUpdate,
+      error: false,
+    });
+  }
   return Admin.findByIdAndUpdate(
     id,
     {
@@ -26,20 +58,11 @@ const updateAdmin = (req, res) => {
     },
     { new: true },
   )
-    .then((adminUpdated) => {
-      if (!adminUpdated) {
-        return res.status(404).json({
-          message: `Admin with the id (${id}) was not found.`,
-          data: undefined,
-          error: true,
-        });
-      }
-      return res.status(200).json({
-        message: 'Admin updated',
-        data: adminUpdated,
-        error: false,
-      });
-    })
+    .then((adminUpdated) => res.status(200).json({
+      message: 'Admin updated',
+      data: adminUpdated,
+      error: false,
+    }))
     .catch((error) => res.status(500).json({
       message: 'There was an error',
       data: undefined,

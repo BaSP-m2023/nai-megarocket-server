@@ -5,6 +5,7 @@ const validateUpdate = (req, res, next) => {
     firstName: Joi
       .string()
       .trim()
+      .alphanum()
       .min(4)
       .max(10)
       .messages({
@@ -15,6 +16,7 @@ const validateUpdate = (req, res, next) => {
     lastName: Joi
       .string()
       .trim()
+      .alphanum()
       .min(5)
       .max(25)
       .messages({
@@ -37,7 +39,7 @@ const validateUpdate = (req, res, next) => {
       .integer()
       .min(10)
       .max(10)
-      .message({
+      .messages({
         'number.base': 'the phone number must be a number',
         'number.min': 'the phone number is invalid',
         'number.max': 'the phone number is invalid',
@@ -52,6 +54,7 @@ const validateUpdate = (req, res, next) => {
     city: Joi
       .string()
       .trim()
+      .alphanum()
       .min(5)
       .max(25)
       .messages({
@@ -62,7 +65,7 @@ const validateUpdate = (req, res, next) => {
       .string()
       .trim()
       .min(4)
-      .message({
+      .messages({
         'string.empty': 'the password can not be empty',
         'string.min': 'the password is too short',
       }),

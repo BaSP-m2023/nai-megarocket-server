@@ -7,14 +7,14 @@ const adminSchema = new Schema(
     firstName: {
       type: String,
       required: true,
-      minLength: 5,
+      minLength: 4,
       maxLength: 10,
     },
     lastName: {
       type: String,
       required: true,
       minLength: 5,
-      maxLength: 10,
+      maxLength: 25,
     },
     dni: {
       type: Number,
