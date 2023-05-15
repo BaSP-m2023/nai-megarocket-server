@@ -6,7 +6,7 @@ const validateAdminCreate = (req, res, next) => {
       .string()
       .trim()
       .alphanum()
-      .min(4)
+      .min(3)
       .max(10)
       .messages({
         'string.base': 'first name must be a string',
