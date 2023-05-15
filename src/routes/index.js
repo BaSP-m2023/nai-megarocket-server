@@ -2,6 +2,9 @@ const express = require('express');
 
 const router = express.Router();
 
+// const subscriptions = require('.subscription');
+// const admins = require('./admins');
+const members = require('./member');
 // const subscriptions = require('../controllers/subscription');
 // const admins = require('../controllers/admins');
 // const members = require('../controllers/member');
@@ -10,7 +13,7 @@ const classes = require('./class');
 // const trainers = require('../controllers/trainer');
 // const activities = require('../controllers/activity');
 
-// router.use('/members', members);
+router.use('/members', members);
 // router.use('/admins', admins);
 // router.use('/super-admins', superAdmins);
 router.use('/classes', classes);
