@@ -50,27 +50,40 @@ const createClass = (req, res) => {
     day, hour, trainer, activity, slots,
   } = req.body;
 
-  if (day && hour && trainer && Class.exists({ day, hour, trainer })) {
+  if (!day || !hour || !trainer) {
     return res.status(400).json({
-      message: 'Trainer has another class scheduled at that time.',
+      message: 'Missing required fields.',
       error: true,
     });
   }
 
-  return Class.create({
-    day,
-    hour,
-    trainer,
-    activity,
-    slots,
-  })
-    .then((classes) => res.status(201).json({
-      message: 'Class created.',
-      data: classes,
-      error: false,
-    }))
-    .catch((error) => res.status(400).json({
-      message: 'Cannot create class, unexpected error',
+  return Class.findOne({ day, hour, trainer })
+    .then((existingClass) => {
+      if (existingClass) {
+        return res.status(400).json({
+          message: 'Trainer has another class scheduled at that time.',
+          error: true,
+        });
+      }
+      return Class.create({
+        day,
+        hour,
+        trainer,
+        activity,
+        slots,
+      })
+        .then((createdClass) => res.status(201).json({
+          message: 'Class created.',
+          data: createdClass,
+          error: false,
+        }))
+        .catch((error) => res.status(500).json({
+          message: 'Cannot create class, unexpected error',
+          error,
+        }));
+    })
+    .catch((error) => res.status(500).json({
+      message: 'Cannot check class existence, unexpected error',
       error,
     }));
 };
