@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
-const validateClass = (req, res, next) => {
-  const validationClass = Joi.object({
+const validationUpdateClass = (req, res, next) => {
+  const classUpdate = Joi.object({
     id: Joi.Number(),
     class: Joi.String(),
     trainer: Joi.String(),
@@ -10,15 +10,15 @@ const validateClass = (req, res, next) => {
     hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required(),
   });
 
-  const validation = validationClass.validate(req.body);
-  if (!validation.error) return next();
+  const validationsClass = classUpdate.validate(req.body);
+  if (!validationsClass.error) return next();
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `There was an error: ${validationsClass.error.details[0].message}`,
     data: undefined,
     error: true,
   });
 };
 
 module.exports = {
-  validateClass,
+  validationUpdateClass,
 };

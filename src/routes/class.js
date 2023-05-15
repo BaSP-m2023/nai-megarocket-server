@@ -1,10 +1,10 @@
 const express = require('express');
 const classController = require('../controllers/class');
-const validations = require('../validations/class');
+const validationsClass = require('../validations/class');
 
 const router = express.Router();
 
 router
-  .put('/:id', validations.validationClass, classController.updateclass)
-  .delete('/:id', classController.deleteclass);
+  .put('/:id', validationsClass.validationUpdateClass, classController.updateClass)
+  .delete('/:id', classController.deleteClass);
 module.exports = router;
