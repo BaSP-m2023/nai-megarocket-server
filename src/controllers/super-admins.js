@@ -1,6 +1,82 @@
 const mongoose = require('mongoose');
 const SuperAdmin = require('../models/super-admins');
 
+const getAllSuperAdmins = (req, res) => {
+  SuperAdmin.find()
+    .then((superAdmins) => {
+      if (superAdmins.length > 0) {
+        res.status(200).json({
+          message: 'Super Admins list: ',
+          data: superAdmins,
+          error: false,
+        });
+      } else {
+        res.status(404).json({
+          message: 'Cannot find any Super Admin, please create one.',
+          error: true,
+        });
+      }
+    })
+    .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
+};
+
+const getSuperAdminsById = (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({
+      message: 'The ID is not valid',
+      data: id,
+      error: true,
+    });
+  }
+
+  return SuperAdmin.findById(id)
+    .then((superAdmins) => {
+      if (superAdmins !== null) {
+        res.status(200).json({
+          message: `Super Admin Found! ${superAdmins.firstName}`,
+          data: superAdmins,
+          error: false,
+        });
+      } else {
+        res.status(404).json({
+          message: `Super Admin not found with this id: ${id}`,
+          error: true,
+        });
+      }
+    })
+    .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
+};
+
+const createSuperAdmins = (req, res) => {
+  const { firstName, email, password } = req.body;
+
+  SuperAdmin.findOne({ email })
+    .then((existingSuperAdmin) => {
+      if (existingSuperAdmin) {
+        return res.status(400).json({
+          message: 'Error!',
+          error: 'This email is used by another super admin.',
+        });
+      }
+
+      return SuperAdmin.create({
+        firstName,
+        email,
+        password,
+      });
+    })
+    .then((result) => res.status(201).json({
+      message: 'Super Admin Created!',
+      data: result,
+      error: false,
+    }))
+    .catch((error) => res.status(400).json({
+      message: 'Error!',
+      error,
+    }));
+};
+
 const applyResponse = (res, status, msg, data, error) => {
   res.status(status).json({
     msg,
@@ -73,4 +149,10 @@ const deleteSuperAdmin = (req, res) => {
     .catch((error) => applyResponse(res, 500, error.message, undefined, true));
 };
 
-module.exports = { updateSuperAdmin, deleteSuperAdmin };
+module.exports = {
+  getAllSuperAdmins,
+  getSuperAdminsById,
+  createSuperAdmins,
+  updateSuperAdmin,
+  deleteSuperAdmin,
+};
