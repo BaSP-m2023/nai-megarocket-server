@@ -55,9 +55,9 @@ const updateSubscription = (req, res) => {
           result,
           false,
         ))
-        .catch((error) => res.status(400).json({ msg: error.message, error: true }));
+        .catch((error) => applyResponse(res, 500, error.message, undefined, true));
     })
-    .catch((error) => res.status(500).json({ message: error, error: true }));
+    .catch((error) => applyResponse(res, 500, error.message, undefined, true));
 };
 
 const deleteSubscription = (req, res) => {
@@ -72,7 +72,7 @@ const deleteSubscription = (req, res) => {
       }
       return applyResponse(res, 200, `Subscription with id ${id} was deleted`, result, false);
     })
-    .catch((error) => res.status(500).json({ message: error, error: true }));
+    .catch((error) => applyResponse(res, 500, error.message, undefined, true));
 };
 
 module.exports = { updateSubscription, deleteSubscription };
