@@ -31,13 +31,14 @@ const updateAdmin = async (req, res) => {
     });
   }
 
-  const adminProps = Object.keys(adminToUpdate.toObject()).slice(1, -1);
+  const adminProps = Object.keys(adminToUpdate.toObject()).slice(1, -3);
   let changes = false;
   adminProps.forEach((prop) => {
     if (req.body[prop] && req.body[prop] !== adminToUpdate[prop]) {
       changes = true;
     }
   });
+
   if (!changes) {
     return res.status(400).json({
       message: 'There is nothing to change',
@@ -45,6 +46,17 @@ const updateAdmin = async (req, res) => {
       error: false,
     });
   }
+
+  const anAdminAlreadyHas = await Admin.findOne({ $or: [{ dni }, { email }] });
+
+  if (anAdminAlreadyHas) {
+    return res.status(400).json({
+      message: 'There is another admin with that data.',
+      data: req.body,
+      error: true,
+    });
+  }
+
   return Admin.findByIdAndUpdate(
     id,
     {
@@ -80,15 +92,19 @@ const deleteAdmin = (req, res) => {
     });
   }
   return Admin.findByIdAndDelete(id)
-    .then((result) => {
-      if (!result) {
+    .then((adminDeleted) => {
+      if (!adminDeleted) {
         return res.status(404).json({
           message: `Admin with ID (${id}) was not found`,
           data: undefined,
           error: true,
         });
       }
-      return res.status(204).json({});
+      return res.status(200).json({
+        message: 'Admin deleted',
+        data: adminDeleted,
+        error: false,
+      });
     })
     .catch((error) => res.status(500).json({
       message: 'An error has ocurred',

@@ -6,8 +6,8 @@ const validateUpdate = (req, res, next) => {
       .string()
       .trim()
       .alphanum()
-      .min(4)
-      .max(10)
+      .min(3)
+      .max(25)
       .messages({
         'string.base': 'first name must be a string',
         'string.min': 'first name too short',
@@ -17,7 +17,7 @@ const validateUpdate = (req, res, next) => {
       .string()
       .trim()
       .alphanum()
-      .min(5)
+      .min(3)
       .max(25)
       .messages({
         'string.base': 'last name mus be a string',
@@ -37,8 +37,6 @@ const validateUpdate = (req, res, next) => {
     phone: Joi
       .number()
       .integer()
-      .min(10)
-      .max(10)
       .messages({
         'number.base': 'the phone number must be a number',
         'number.min': 'the phone number is invalid',
@@ -64,10 +62,13 @@ const validateUpdate = (req, res, next) => {
     password: Joi
       .string()
       .trim()
-      .min(4)
+      .min(8)
+      .max(20)
+      .regex(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])/)
       .messages({
         'string.empty': 'the password can not be empty',
         'string.min': 'the password is too short',
+        'string.pattern.base': 'Password must contain at least 1 number, 1 uppercase letter, and 1 lowercase letter',
       }),
   });
   const validation = adminValidation.validate(req.body);
