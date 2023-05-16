@@ -103,7 +103,7 @@ To conclude, a Smoke Test must be completed. It is based on reviewing all the fu
 
 <br>
 
-### Members
+### This proyect was developed by:
 
 |Photo | Name  | Mail | Github
 | :-----: | :-----: | :-----: | :-----: |
@@ -117,7 +117,6 @@ To conclude, a Smoke Test must be completed. It is based on reviewing all the fu
 <img src="https://avatars.githubusercontent.com/u/127452350?v=4" height="50" width="50">| Daniel Lezama | dlezama0796@gmail.com | [@Dannylez](https://github.com/Dannylez)
 <img src="https://avatars.githubusercontent.com/u/67287153?v=4" height="50" width="50">| Gianluca Agrano | gianlucka1@gmail.com | [@Gianluca27](https://github.com/Gianluca27)
 <img src="https://avatars.githubusercontent.com/u/70290650?v=4" height="50" width="50">| Juan Manuel Lantermo | juanmlantermo@gmail.com | [@juanlantermo](https://github.com/juanlantermo)
-
 
 
 <br>
