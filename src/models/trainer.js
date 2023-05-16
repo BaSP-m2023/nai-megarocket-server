@@ -16,14 +16,14 @@ const trainersSchema = new Schema({
     required: true,
   },
   dni: {
-    type: String,
+    type: Number,
     required: true,
-    minLength: 7,
+    minLength: 6,
     maxLength: 9,
     unique: true,
   },
   phone: {
-    type: String,
+    type: Number,
     minLength: 10,
     maxLength: 10,
     required: true,
