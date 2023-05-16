@@ -14,7 +14,7 @@ app.use(express.json());
 mongoose.connect(DB_URL)
 // eslint-disable-next-line no-console
   .then(() => console.log('CONNECTED DB'))
-// eslint-disable-next-line no-console
+  // eslint-disable-next-line no-console
   .catch((error) => console.log('Error: ', error));
 app.use('/api', router);
 
