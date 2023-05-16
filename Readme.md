@@ -2,7 +2,7 @@
 
 ## Week-08
 ## Java Script.
-## ES6, NPM y Express.js
+## ES6, NPM and Express.js
 
 For the assignment of the Week-08, the project is going to be developed in a shared repository with all the team. For which it should be created an NPM project to then create a web server by using the Express library. This web server will be the 'backend' of our MegaRocket system in which it would be developing all the necessary functionalities so that the system acchieve the requirements of the week 01.
 
@@ -50,7 +50,6 @@ Start the server:
 ```
 
  View the server at: http://localhost:4000
-
 <br>
 
  ### Running Linters
@@ -69,7 +68,7 @@ npm run lint:fix
 
 ## Week-09
 ## Java Script.
-## API Rest y MongoDB
+## API Rest and MongoDB
 
 The assignment of Week-09 consists on implement a MongoDB database into a server created the previous week-08.
 
@@ -78,7 +77,7 @@ In order to do that, a NoSQL database must be integrated through the use of Mong
 In addition to this, validations must be added to PUT and POST endpoints by using the JOI library, passed as Middleware in their routes definitions.
 
 The files structure must be reorganized.
-- The folder named 'resources', which contained all endpoints logic on Week-08, is now updated to 'controllers'. Whose files inside that folder, remains as they are.
+- The folder named 'resources', which contained all endpoints logic on Week-08, its name is now updated to 'controllers'. Whose files inside that folder, remains as they are.
 
 - A new folder called 'routes' is created within an index.js file inside it, where the routes of each entity are defined.
 
@@ -103,7 +102,7 @@ To conclude, a Smoke Test must be completed. It is based on reviewing all the fu
 
 <br>
 
-### This proyect was developed by:
+### This project was developed by:
 
 |Photo | Name  | Mail | Github
 | :-----: | :-----: | :-----: | :-----: |
