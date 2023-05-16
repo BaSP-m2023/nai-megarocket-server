@@ -1,12 +1,15 @@
 const express = require('express');
-const membersController = require('../controllers/member');
-const validations = require('../validations/member');
+
+const memberController = require('../controllers/member');
+const validateMember = require('../validations/member');
 
 const router = express.Router();
 
 router
-  .get('/', membersController.getAllMembers)
-  .get('/:id', membersController.getMembersById)
-  .post('/', validations.validateMembersCreation, membersController.createMembers);
+  .put('/:id', validateMember.validateMembersUpdate, memberController.updateMember)
+  .delete('/:id', memberController.deleteMember)
+  .get('/', memberController.getAllMembers)
+  .get('/:id', memberController.getMembersById)
+  .post('/', validateMember.validateMembersCreation, memberController.createMembers);
 
 module.exports = router;

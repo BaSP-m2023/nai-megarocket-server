@@ -2,27 +2,36 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const classSchema = new Schema({
-  day: {
-    type: Date,
-    required: true,
+const classSchema = new Schema(
+  {
+    day: {
+      type: Date,
+      require: true,
+    },
+    hour: {
+      type: String,
+      require: true,
+    },
+    trainer: {
+      type: String,
+      require: true,
+      minLength: 3,
+      maxLength: 20,
+    },
+    activity: {
+      type: String,
+      require: true,
+      minLength: 3,
+      maxLength: 20,
+    },
+    slots: {
+      type: Number,
+      require: true,
+    },
   },
-  hour: {
-    type: String,
-    required: true,
+  {
+    timestamps: true,
   },
-  trainer: {
-    type: String,
-    required: true,
-  },
-  activity: {
-    type: String,
-    required: true,
-  },
-  slots: {
-    type: Number,
-    required: true,
-  },
+);
 
-});
 module.exports = mongoose.model('Class', classSchema);
