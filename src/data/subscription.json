@@ -1,15 +1,15 @@
 [
   {
     "id": 1,
-    "classId": 13,
-    "memberId": 7,
+    "class": 13,
+    "members": 7,
     "date": "7/11/2023",
     "schedule": "8:23"
   },
   {
     "id": 2,
-    "classId": 30,
-    "memberId": 13,
+    "class": 30,
+    "members": 13,
     "date": "12/10/23",
     "schedule": "22:00"
   },
