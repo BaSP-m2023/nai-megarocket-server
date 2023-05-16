@@ -1,5 +1,43 @@
 const Joi = require('joi');
 
+const isOnlyLetters = (value, helpers) => {
+  for (let i = 0; i < value.length; i += 1) {
+    const code = value.charCodeAt(i);
+    if (!(((code >= 65 && code <= 90)
+            || (code >= 97 && code <= 122)
+            || code === 32
+            || code === 164
+            || code === 165))
+    ) {
+      return helpers.error('error');
+    }
+  }
+  return value;
+};
+
+const validateMembersUpdate = (req, res, next) => {
+  const membersUpdate = Joi.object({
+    firstName: Joi.string().min(3).max(25).custom(isOnlyLetters),
+    lastName: Joi.string().min(3).max(25).custom(isOnlyLetters),
+    dni: Joi.number().min(1000000).max(99999999),
+    phone: Joi.number(),
+    email: Joi.string().min(8).max(25).regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/),
+    password: Joi.string().min(8).max(20).regex(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])/),
+    city: Joi.string().min(4).max(25),
+    birthDay: Joi.date().max('now'),
+    postalCode: Joi.number().integer().min(1000).max(99999),
+    isActive: Joi.boolean(),
+    membership: Joi.string(),
+  });
+
+  const validateMember = membersUpdate.validate(req.body);
+
+  if (!validateMember.error) return next();
+  return res.status(400).json({
+    message: `Error: ${validateMember.error.details[0].message}`,
+  });
+};
+
 const validateMembersCreation = (req, res, next) => {
   const membersValidation = Joi.object({
     firstName: Joi.string().min(3).max(25).required()
@@ -41,4 +79,4 @@ const validateMembersCreation = (req, res, next) => {
   });
 };
 
-module.exports = { validateMembersCreation };
+module.exports = { validateMembersUpdate, validateMembersCreation };
