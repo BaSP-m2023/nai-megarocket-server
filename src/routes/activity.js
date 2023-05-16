@@ -7,6 +7,8 @@ const router = express.Router();
 router
   .get('/', activitiesController.getAllActivities)
   .get('/:id', activitiesController.getActivitiesById)
-  .post('/', validations.validateCreation, activitiesController.createActivities);
+  .post('/', validations.validateCreation, activitiesController.createActivities)
+  .put('/:id', validations.validateUpdate, activitiesController.updateActivities)
+  .delete('/:id', activitiesController.deleteActivities);
 
 module.exports = router;
