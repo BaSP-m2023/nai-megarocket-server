@@ -55,7 +55,7 @@ const updateSuperAdmin = (req, res) => {
             ));
         });
     })
-    .catch((error) => res.status(400).json({ msg: error.message, error: true }));
+    .catch((error) => res.status(500).json({ msg: error.message, error: true }));
 };
 
 const deleteSuperAdmin = (req, res) => {
@@ -70,7 +70,7 @@ const deleteSuperAdmin = (req, res) => {
       }
       return applyResponse(res, 200, `Super Admin ${result.firstName} was deleted`, result, false);
     })
-    .catch((error) => res.status(400).json({ msg: error.message, error: true }));
+    .catch((error) => res.status(500).json({ msg: error.message, error: true }));
 };
 
 module.exports = { updateSuperAdmin, deleteSuperAdmin };
