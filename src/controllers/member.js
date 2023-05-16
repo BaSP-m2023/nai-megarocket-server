@@ -32,7 +32,7 @@ const updateMember = (req, res) => {
         .then((repeatedMail) => {
           if (repeatedMail) {
             // eslint-disable-next-line
-        if (repeatedMail.toObject()._id.toString() !== id){
+          if (repeatedMail.toObject()._id.toString() !== id){
               return res.status(400).json({
                 msg: `Email: ${repeatedMail.toObject().email} already exists.`,
                 data: undefined,
@@ -73,7 +73,7 @@ const updateMember = (req, res) => {
             });
         });
     })
-    .catch((error) => res.status(400).json(error));
+    .catch((error) => res.status(500).json(error));
 };
 
 const deleteMember = (req, res) => {
@@ -93,7 +93,7 @@ const deleteMember = (req, res) => {
         error: false,
       });
     })
-    .catch((error) => res.status(400).json({
+    .catch((error) => res.status(500).json({
       message: error,
       data: undefined,
       error: true,
@@ -174,7 +174,7 @@ const createMembers = (req, res) => {
       data: result,
       error: false,
     }))
-    .catch((error) => res.status(400).json({
+    .catch((error) => res.status(500).json({
       message: 'Error!',
       error,
     }));
