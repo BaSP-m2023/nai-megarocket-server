@@ -7,12 +7,13 @@ const activitySchema = new Schema({
     type: String,
     minLength: 3,
     maxLength: 20,
+    unique: true,
     required: true,
   },
   description: {
     type: String,
     minLength: 5,
-    maxLength: 50,
+    maxLength: 250,
     required: true,
   },
   isActive: {
