@@ -11,7 +11,7 @@ const getAllAdmins = (req, res) => {
         });
       }
       return res.status(200).json({
-        message: 'Complete trainers list',
+        message: 'Complete admins list',
         data: admins,
         error: false,
       });
@@ -22,7 +22,7 @@ const getAdminById = (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({
-      message: `Invalid trainer id: ${id}`,
+      message: `Invalid admin id: ${id}`,
       error: true,
     });
   }
@@ -77,7 +77,7 @@ const createNewAdmin = async (req, res) => {
     password,
   })
     .then((result) => res.status(201).json({
-      message: 'New trainer added correctly',
+      message: 'New admin added correctly',
       data: result,
       error: false,
     }))
