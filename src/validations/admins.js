@@ -10,8 +10,6 @@ const validateUpdate = (req, res, next) => {
       .max(25)
       .messages({
         'string.base': 'first name must be a string',
-        'string.min': 'first name too short',
-        'string.max': 'the first name is invalid',
       }),
     lastName: Joi
       .string()
@@ -21,8 +19,6 @@ const validateUpdate = (req, res, next) => {
       .max(25)
       .messages({
         'string.base': 'last name mus be a string',
-        'string.min': 'last name too short',
-        'string.max': 'last name can be only 25 caracters long',
       }),
     dni: Joi
       .number()
