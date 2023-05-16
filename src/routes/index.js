@@ -7,8 +7,6 @@ const router = express.Router();
 const members = require('./member');
 // const superAdmins = require('./super-admins');
 // const classes = require('./class');
-// const trainers = require('./trainer');
-// const activities = require('./activity');
 const trainers = require('./trainer');
 const activities = require('./activity');
 
