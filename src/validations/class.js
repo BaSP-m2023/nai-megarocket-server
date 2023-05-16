@@ -2,11 +2,10 @@ const Joi = require('joi');
 
 const validationUpdateClass = (req, res, next) => {
   const classUpdate = Joi.object({
-    id: Joi.Number(),
-    class: Joi.String(),
-    trainer: Joi.String(),
-    room: Joi.String(),
-    durationHours: Joi.Number(),
+    activity: Joi.string(),
+    trainer: Joi.string(),
+    day: Joi.string(),
+    slots: Joi.number(),
     hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required(),
   });
 

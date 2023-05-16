@@ -6,32 +6,41 @@ const updateClass = (req, res) => {
   const {
     day, hour, trainer, activity, slots,
   } = req.body;
-  Class.findByIdAndUpdate(
-    id,
-    {
-      day,
-      hour,
-      trainer,
-      activity,
-      slots,
-    },
-    { new: true },
-  )
-    .then((result) => {
-      if (!result) {
-        res.status(200).json({
-          message: 'Class updated correctly',
-          error: false,
-          data: result,
-        });
-      } else {
-        res.status(404).json({
-          message: `ID: ${id} not found`,
+
+  return Class.findOne({ day, hour, trainer })
+    .then((repeatClass) => {
+      if ((repeatClass && repeatClass._id.toString() !== id)) {
+        return res.status(404).json({
+          message: 'Class data already exists',
           error: false,
         });
       }
-    })
-    .catch((error) => res.status(400).json(error));
+      return Class.findByIdAndUpdate(
+        id,
+        {
+          day,
+          hour,
+          trainer,
+          activity,
+          slots,
+        },
+        { new: true },
+      )
+        .then((result) => {
+          if (!result) {
+            return res.status(200).json({
+              message: 'Class updated correctly',
+              error: false,
+              data: result,
+            });
+          }
+          return res.status(404).json({
+            message: `ID: ${id} not found`,
+            error: false,
+          });
+        })
+        .catch((error) => res.status(400).json(error));
+    });
 };
 
 const deleteClass = (req, res) => {
