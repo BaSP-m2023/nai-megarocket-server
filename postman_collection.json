@@ -653,7 +653,7 @@
               "port": "4000",
               "path": [
                 "api",
-                "superAdmins"
+                "super-admins"
               ]
             }
           },
@@ -673,7 +673,7 @@
               "port": "4000",
               "path": [
                 "api",
-                "superAdmins",
+                "super-admins",
                 ":id"
               ],
               "variable": [
@@ -700,7 +700,7 @@
               "port": "4000",
               "path": [
                 "api",
-                "superAdmins",
+                "super-admins",
                 ":id"
               ],
               "variable": [
@@ -727,7 +727,7 @@
               "port": "4000",
               "path": [
                 "api",
-                "superAdmins"
+                "super-admins"
               ]
             }
           },
@@ -747,7 +747,7 @@
               "port": "4000",
               "path": [
                 "api",
-                "superAdmins",
+                "super-admins",
                 ":id"
               ],
               "variable": [
