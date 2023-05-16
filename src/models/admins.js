@@ -6,43 +6,45 @@ const adminSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: true,
       minLength: 3,
-      maxLength: 10,
+      maxLength: 25,
+      required: true,
     },
     lastName: {
       type: String,
-      required: true,
       minLength: 3,
-      maxLength: 20,
+      maxLength: 25,
+      required: true,
     },
     dni: {
       type: Number,
+      minLength: 7,
+      maxLength: 8,
       required: true,
-      min: 10000000,
-      max: 99999999,
     },
     phone: {
       type: Number,
+      minLength: 10,
+      maxLength: 10,
       required: true,
-      min: 10,
-      max: 10,
     },
     email: {
       type: String,
+      lowercase: true,
+      match: /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/,
       required: true,
-      lowecase: true,
     },
     city: {
       type: String,
-      required: true,
       minLength: 5,
       maxLength: 25,
+      required: true,
     },
     password: {
       type: String,
+      minLength: 8,
+      maxLength: 20,
       required: true,
-      min: 4,
     },
   },
   {
@@ -50,4 +52,4 @@ const adminSchema = new Schema(
   },
 );
 
-module.exports = mongoose.model('admin', adminSchema);
+module.exports = mongoose.model('Admin', adminSchema);

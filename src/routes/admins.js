@@ -1,12 +1,12 @@
 const express = require('express');
-const adminController = require('../controllers/admins');
-const validation = require('../validations/admins');
+const adminsController = require('../controllers/admins');
+const validations = require('../validations/admins');
 
 const router = express.Router();
 
 router
-  .get('/', adminController.getAllAdmins)
-  .get('/:id', adminController.getAdminById)
-  .post('/', validation.validateAdminCreate, adminController.createNewAdmin);
+  .get('/', adminsController.getAllAdmins)
+  .get('/:id', adminsController.getAdminById)
+  .post('/', validations.validateCreate, adminsController.createNewAdmin);
 
 module.exports = router;
