@@ -12,7 +12,7 @@ const activities = require('./activity');
 
 router.use('/members', members);
 // router.use('/admins', admins);
-router.use('/superAdmins', superAdmins);
+router.use('/super-admins', superAdmins);
 // router.use('/classes', classes);
 router.use('/trainers', trainers);
 // router.use('/subscriptions', subscriptions);

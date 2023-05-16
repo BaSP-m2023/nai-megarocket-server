@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 const SuperAdmin = require('../models/super-admins');
 
 const getAllSuperAdmins = (req, res) => {
