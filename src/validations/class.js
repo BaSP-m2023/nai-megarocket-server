@@ -1,5 +1,20 @@
 const Joi = require('joi');
 
+const validationUpdateClass = (req, res, next) => {
+  const classUpdate = Joi.object({
+    activity: Joi.string(),
+    trainer: Joi.string(),
+    day: Joi.string(),
+    slots: Joi.number(),
+    hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required(),
+  });
+
+  const validationsClass = classUpdate.validate(req.body);
+  if (!validationsClass.error) return next();
+  return res.status(400).json({
+    message: `There was an error: ${validationsClass.error.details[0].message}`,
+  });
+};
 const validateCreation = (req, res, next) => {
   const classValidation = Joi.object({
     day: Joi.date().min('now').required().messages({
@@ -50,5 +65,6 @@ const validateCreation = (req, res, next) => {
 };
 
 module.exports = {
+  validationUpdateClass,
   validateCreation,
 };
