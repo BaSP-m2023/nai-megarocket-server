@@ -1,11 +1,15 @@
 const express = require('express');
-const subscriptionController = require('../controllers/subscription');
-const subscriptionValidation = require('../validations/subscription');
+
+const subscriptionControllers = require('../controllers/subscription');
+const validateSubscription = require('../validations/subscription');
 
 const router = express.Router();
 
 router
-  .put('/:id?', subscriptionValidation.validateUpdate, subscriptionController.updateSubscription)
-  .delete('/:id?', subscriptionController.deleteSubscription);
+  .get('/', subscriptionControllers.getAllSubscriptions)
+  .get('/:id', subscriptionControllers.getSubscriptionById)
+  .post('/', validateSubscription.validateCreation, subscriptionControllers.createSubscription)
+  .put('/:id?', validateSubscription.validateUpdate, subscriptionControllers.updateSubscription)
+  .delete('/:id?', subscriptionControllers.deleteSubscription);
 
 module.exports = router;

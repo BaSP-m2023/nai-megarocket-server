@@ -1,6 +1,57 @@
 const mongoose = require('mongoose');
 const Subscription = require('../models/subscription');
 
+const getAllSubscriptions = (req, res) => {
+  Subscription.find()
+    .then((subscription) => res.status(200).json({
+      message: 'Complete subscription list.',
+      data: subscription,
+      error: false,
+    }))
+    .catch((error) => res.status(404).json({
+      message: 'Subscription not found.',
+      error,
+    }));
+};
+
+const getSubscriptionById = (req, res) => {
+  const { id } = req.params;
+  Subscription.findById(id).then((subscription) => res.status(200).json({
+    message: `Subscription found: ${subscription.id}`,
+    data: subscription,
+    error: false,
+  }))
+    .catch((error) => res.status(404).json({
+      message: 'Subscription not found.',
+      error,
+    }));
+};
+
+const createSubscription = async (req, res) => {
+  const { classes, member, date } = req.body;
+  const existingSubscription = await Subscription.findOne({ classes, member, date });
+  if (existingSubscription) {
+    return res.status(400).json({
+      message: 'Subscription already exists!',
+      error: true,
+    });
+  }
+  return Subscription.create({
+    classes,
+    member,
+    date,
+  })
+    .then((result) => res.status(201).json({
+      message: 'Subscription created succesfully',
+      data: result,
+      error: false,
+    }))
+    .catch((error) => res.status(500).json({
+      message: 'An error ocurred.',
+      error,
+    }));
+};
+
 const applyResponse = (res, status, msg, data, error) => {
   res.status(status).json({
     msg,
@@ -75,4 +126,10 @@ const deleteSubscription = (req, res) => {
     .catch((error) => applyResponse(res, 500, error.message, undefined, true));
 };
 
-module.exports = { updateSubscription, deleteSubscription };
+module.exports = {
+  updateSubscription,
+  deleteSubscription,
+  getAllSubscriptions,
+  getSubscriptionById,
+  createSubscription,
+};
