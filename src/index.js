@@ -20,6 +20,5 @@ mongoose.connect(DB_URL)
 app.use('/api', router);
 
 app.listen(port, () => {
-  // eslint-disable-next-line no-console
   console.log(`Example app listening on port ${port}`);
 });
