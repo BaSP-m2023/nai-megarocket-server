@@ -44,6 +44,7 @@ const getTrainerById = (req, res) => {
     })
     .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
 };
+
 const createTrainer = async (req, res) => {
   const existingTrainerDni = await Trainer.findOne({ dni: req.body.dni });
   const existingTrainerEmail = await Trainer.findOne({ email: req.body.email });
@@ -89,8 +90,88 @@ const createTrainer = async (req, res) => {
     .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
 };
 
+const updateTrainers = (req, res) => {
+  const { id } = req.params;
+  Trainer.findOne({ $or: [{ dni: req.body.dni }, { email: req.body.email }] })
+    .then((repeated) => {
+      if (repeated && Object.values(repeated.toObject())[0].toString() !== id) {
+        return res.status(400).json({
+          message: 'Email or Dni already exists',
+          error: true,
+        });
+      }
+      const {
+        firstName, lastName, dni, phone, email, city, password, salary, isActive,
+      } = req.body;
+      return Trainer.findByIdAndUpdate(
+        id,
+        {
+          firstName,
+          lastName,
+          dni,
+          phone,
+          email,
+          city,
+          password,
+          salary,
+          isActive,
+        },
+        { new: true },
+      )
+        .then((trainer) => {
+          if (!trainer) {
+            res.status(404).json({
+              message: `There is no trainer with id:${id}`,
+              data: undefined,
+              error: false,
+            });
+          }
+          res.status(200).json({
+            message: 'Trainer updated correctly',
+            data: trainer,
+            error: false,
+          });
+        });
+    })
+    .catch((error) => res.status(500).json({
+      message: 'An error occurred', error,
+    }));
+};
+
+const deleteTrainers = (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400).json({
+      message: 'Invalid id format',
+      error: true,
+    });
+  }
+  Trainer.findByIdAndDelete(id)
+    .then((trainer) => {
+      if (!trainer) {
+        res.status(404).json({
+          message: `There is no trainer with id:${id}`,
+          error: false,
+        });
+      } else {
+        res.status(200).json({
+          message: 'Trainer deleted',
+          data: trainer,
+          error: false,
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: 'An error occurred', error,
+      });
+    });
+};
+
 module.exports = {
   getAllTrainers,
   getTrainerById,
   createTrainer,
+  updateTrainers,
+  deleteTrainers,
 };
