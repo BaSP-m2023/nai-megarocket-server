@@ -12,10 +12,10 @@ const validateCreation = (req, res, next) => {
   const subscriptionValidation = Joi.object({
     classes: Joi.string().custom(isObjectId).messages({
       invalid: 'The classes id must be a valid ObjectId',
-    }),
+    }).required(),
     member: Joi.string().custom(isObjectId).messages({
       invalid: 'The member id must be a valid ObjectId',
-    }),
+    }).required(),
     date: Joi.date().max(Date.now()).min('1923-01-01').required(),
   });
 
