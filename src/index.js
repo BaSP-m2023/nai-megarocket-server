@@ -12,7 +12,6 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 mongoose.connect(DB_URL)
-// eslint-disable-next-line no-console
   // eslint-disable-next-line no-console
   .then(() => console.log('CONNECTED DB'))
   // eslint-disable-next-line no-console
