@@ -1,21 +1,26 @@
-import express from 'express';
-import cors from 'cors';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import app from './app';
 
-const mongoose = require('mongoose');
-const router = require('./routes');
+dotenv.config();
 
-const DB_URL = 'mongodb+srv://nai-team:PgpbRyhiB3ct4zVR@megarocket-databases.inpprte.mongodb.net/nai-database';
+mongoose.connect(process.env.MONGO_DB_CONNECT_URL)
+// eslint-disable-next-line no-console
+  .then(() => console.log('MongoDB connected'))
+// eslint-disable-next-line no-console
+  .catch((e) => console.log(e));
 
-const app = express();
-const port = process.env.PORT || 4000;
-
-app.use(cors());
-app.use(express.json());
-mongoose.connect(DB_URL)
-  .then(() => console.log('CONNECTED DB'))
-  .catch((error) => console.log('Error: ', error));
-app.use('/api', router);
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
+
+try {
+  app.listen(process.env.PORT, (err) => {
+    if (err) throw err;
+    // eslint-disable-next-line no-console
+    console.log(`server listening on port: ${process.env.PORT}`);
+  });
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.log('There was an error starting the server: ', err);
+}
