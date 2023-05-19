@@ -1,9 +1,21 @@
 const Joi = require('joi');
+const mongoose = require('mongoose');
+
+const isObjectId = (value, helpers) => {
+  if (!mongoose.Types.ObjectId.isValid(value)) {
+    return helpers.error('invalid');
+  }
+  return value;
+};
 
 const validationUpdateClass = (req, res, next) => {
   const classUpdate = Joi.object({
-    activity: Joi.string(),
-    trainer: Joi.string(),
+    activity: Joi.string().custom(isObjectId).messages({
+      invalid: 'The member id must be a valid ObjectId',
+    }),
+    trainer: Joi.string().custom(isObjectId).messages({
+      invalid: 'The member id must be a valid ObjectId',
+    }),
     day: Joi.string(),
     slots: Joi.number(),
     hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required(),
@@ -25,24 +37,12 @@ const validateCreation = (req, res, next) => {
       'string.pattern.base': 'Hour format must be HH:MM',
       'any.required': 'Hour is required',
     }),
-    activity: Joi.string().pattern(/^[^\d]+$/).min(3).max(20)
-      .required()
-      .messages({
-        'string.pattern.base': 'Activity cannot contain numbers',
-        'string.empty': 'Activity cannot be empty',
-        'any.required': 'Activity is required',
-        'string.min': 'Activity must have at least {#limit} characters',
-        'string.max': 'Activity must have at most {#limit} characters',
-      }),
-    trainer: Joi.string().pattern(/^[^\d]+$/).min(3).max(20)
-      .required()
-      .messages({
-        'string.pattern.base': 'Trainer cannot contain numbers',
-        'string.empty': 'Trainer cannot be empty',
-        'any.required': 'Trainer is required',
-        'string.min': 'Trainer must have at least {#limit} characters',
-        'string.max': 'Trainer must have at most {#limit} characters',
-      }),
+    activity: Joi.string().custom(isObjectId).messages({
+      invalid: 'The member id must be a valid ObjectId',
+    }).required(),
+    trainer: Joi.string().custom(isObjectId).messages({
+      invalid: 'The member id must be a valid ObjectId',
+    }).required(),
     slots: Joi.number().min(0).max(25).required()
       .messages({
         'number.min': 'Slots cannot be negative',
