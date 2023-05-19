@@ -81,19 +81,18 @@ const updateActivities = (req, res) => {
   )
     .then((activity) => {
       if (!activity) {
-        res.status(404).json({
+        return res.status(404).json({
           message: `There is no activity with id:${id}`,
           data: undefined,
           error: false,
 
         });
-      } else {
-        res.status(200).json({
-          message: 'Activity updated correctly',
-          data: activity,
-          error: false,
-        });
       }
+      return res.status(200).json({
+        message: 'Activity updated correctly',
+        data: activity,
+        error: false,
+      });
     })
     .catch((error) => res.status(500).json({
       message: 'An error occurred', error,
