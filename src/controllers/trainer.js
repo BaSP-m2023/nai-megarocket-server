@@ -120,13 +120,13 @@ const updateTrainers = (req, res) => {
       )
         .then((trainer) => {
           if (!trainer) {
-            res.status(404).json({
+            return res.status(404).json({
               message: `There is no trainer with id:${id}`,
               data: undefined,
               error: false,
             });
           }
-          res.status(200).json({
+          return res.status(200).json({
             message: 'Trainer updated correctly',
             data: trainer,
             error: false,
