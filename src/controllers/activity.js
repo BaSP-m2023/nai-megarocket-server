@@ -46,9 +46,9 @@ const getActivitiesById = (req, res) => {
 };
 
 const createActivities = async (req, res) => {
+  const { name, description, isActive } = req.body;
   const existingActivity = await Activity.findOne({ name: req.body.name });
   if (!existingActivity) {
-    const { name, description, isActive } = req.body;
     return Activity.create({
       name,
       description,
