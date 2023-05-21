@@ -7,7 +7,7 @@ const getAllActivities = (req, res) => {
       if (activities.length === 0) {
         return res.status(404).json({
           message: 'There are no activities',
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
@@ -33,7 +33,7 @@ const getActivitiesById = (req, res) => {
         return res.status(404).json({
           message: `There is no activity with id: ${id}`,
           data: activity,
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
@@ -84,7 +84,7 @@ const updateActivities = (req, res) => {
         res.status(404).json({
           message: `There is no activity with id:${id}`,
           data: undefined,
-          error: false,
+          error: true,
 
         });
       } else {
@@ -114,7 +114,7 @@ const deleteActivities = (req, res) => {
         res.status(404).json({
           message: `There is no activity with id:${id}`,
           data: undefined,
-          error: false,
+          error: true,
         });
       } else {
         res.status(200).json({

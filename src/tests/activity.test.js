@@ -33,8 +33,19 @@ const mockLessIsActive = {
   isActive: '',
 };
 
-beforeAll(async () => {
+let firstActivityId;
+
+beforeEach(async () => {
   await activity.collection.insertMany(activitySeed);
+  const foundFirstId = await activity.find();
+  if (foundFirstId.length > 0) {
+    // eslint-disable-next-line no-underscore-dangle
+    firstActivityId = foundFirstId[0]._id;
+  }
+});
+
+afterEach(async () => {
+  await activity.collection.deleteMany();
 });
 
 describe('GET /api/activities', () => {
@@ -42,44 +53,51 @@ describe('GET /api/activities', () => {
     const response = await request(app).get('/api/activities').send();
     expect(response.body.data.length).toBeGreaterThan(0);
     expect(response.status).toBe(200);
-    expect(response.error).toBeFalsy();
+    expect(response.body.error).toBeFalsy();
+    expect(response.body).toBeDefined();
+    expect(response.body.message).toMatch('Complete activities list');
   });
   test('The status must be 404, if the url is wrong', async () => {
     const response = await request(app).get('/activities').send();
     expect(response.status).toBe(404);
     expect(response.error).toBeTruthy();
   });
-  test('If are activities, data must said "Complete activities list" ', async () => {
-    const response = await request(app).get('/api/activities').send();
-    expect(response.body.message).toMatch(/Complete activities list/);
-    expect(response.error).toBeFalsy();
+  describe('GET /api/activities', () => {
+    test('The database must return 404 if it\'s empty of activities. An said There are no activities', async () => {
+      await activity.collection.deleteMany({});
+      const response = await request(app).get('/api/activities').send();
+      expect(response.body.data).toBe(undefined);
+      expect(response.status).toBe(404);
+      expect(response.body.message).toMatch(/There are no activities/);
+    });
   });
 });
 
 describe('GET BY ID /api/activities/:id', () => {
   test('The database must return 200 if the id exist', async () => {
-    const response = await request(app).get('/api/activities/64677fdefc13ae39f1753b24').send();
+    const response = await request(app).get(`/api/activities/${firstActivityId}`).send();
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
     expect(response.body.data).toHaveProperty('_id');
     expect(response.body.data).toHaveProperty('name');
     expect(response.body.data).toHaveProperty('description');
     expect(response.body.data).toHaveProperty('isActive');
-    expect(response.error).toBeFalsy();
+    expect(response.body.message).toMatch(`Activity with id: ${firstActivityId}`);
+    expect(response.body.error).toBeFalsy();
   });
   test('The database must return 404 if the id does not exist', async () => {
     const nonExistentId = '64677fdefc13ae39f1753b99';
     const response = await request(app).get(`/api/activities/${nonExistentId}`).send();
     expect(response.status).toBe(404);
     expect(response.body.message).toMatch(/There is no activity with id/);
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
   test('The database must return 400 if the id is wrong, and said Invalid activity id', async () => {
     const idNotValid = '12345';
     const response = await request(app).get(`/api/activities/${idNotValid}`).send();
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch(/Invalid activity id/);
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
   test('The status must be 404, if the url is wrong', async () => {
     const response = await request(app).get('/activities/:id').send();
@@ -101,41 +119,31 @@ describe('POST /api/activities', () => {
     expect(response.body.data).toHaveProperty('name');
     expect(response.body.data).toHaveProperty('description');
     expect(response.body.data).toHaveProperty('isActive');
-    expect(response.error).toBeFalsy();
+    expect(response.body.message).toMatch('New activity added correctly');
+    expect(response.body.error).toBeFalsy();
   });
   test('If name is already existing, status must be 409', async () => {
     const response = await request(app).post('/api/activities').send(mockActivityExistingName);
     expect(response.status).toBe(409);
     expect(response.body.message).toMatch('Activity with that name already exists');
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
   test('If name is not defined, status must be 400, name is required', async () => {
     const response = await request(app).post('/api/activities').send(mockLessName);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('There was an error: \"name\" is not allowed to be empty');
-    expect(response.error).toBeTruthy();
+    expect(response.body.message).toMatch('There was an error: "name" is not allowed to be empty');
+    expect(response.body.error).toBeTruthy();
   });
   test('If description is not defined, status must be 400, description is required', async () => {
     const response = await request(app).post('/api/activities').send(mockLessDescription);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('There was an error: \"description\" is not allowed to be empty');
-    expect(response.error).toBeTruthy();
+    expect(response.body.message).toMatch('There was an error: "description" is not allowed to be empty');
+    expect(response.body.error).toBeTruthy();
   });
   test('If isActive is not defined, status must be 400, isActive is required', async () => {
     const response = await request(app).post('/api/activities').send(mockLessIsActive);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('There was an error: \"isActive\" must be a boolean');
-    expect(response.error).toBeTruthy();
-  });
-});
-
-// It's after the others tests, because delete all data for correc test. It has to be the last.
-describe('GET /api/activities', () => {
-  test('The database must return 404 if it\'s empty of activities. An said There are no activities', async () => {
-    await activity.collection.deleteMany({});
-    const response = await request(app).get('/api/activities').send();
-    expect(response.body.data).toBe(undefined);
-    expect(response.status).toBe(404);
-    expect(response.body.message).toMatch(/There are no activities/);
+    expect(response.body.message).toMatch('There was an error: "isActive" must be a boolean');
+    expect(response.body.error).toBeTruthy();
   });
 });
