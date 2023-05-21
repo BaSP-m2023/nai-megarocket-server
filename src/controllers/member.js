@@ -145,7 +145,6 @@ const createMembers = (req, res) => {
     firstName, lastName, dni, phone, email, password, city, birthDay, postalCode, isActive,
     membership,
   } = req.body;
-
   Member.findOne({ email })
     .then((existingMember) => {
       if (existingMember) {
@@ -154,7 +153,6 @@ const createMembers = (req, res) => {
           error: 'Email already exists in the database, please check.',
         });
       }
-
       return Member.create({
         firstName,
         lastName,
@@ -167,13 +165,13 @@ const createMembers = (req, res) => {
         postalCode,
         isActive,
         membership,
-      });
+      })
+        .then((result) => res.status(201).json({
+          message: 'Member Created!',
+          data: result,
+          error: false,
+        }));
     })
-    .then((result) => res.status(201).json({
-      message: 'Member Created!',
-      data: result,
-      error: false,
-    }))
     .catch((error) => res.status(500).json({
       message: 'Error!',
       error,

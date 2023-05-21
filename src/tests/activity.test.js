@@ -62,14 +62,12 @@ describe('GET /api/activities', () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBeUndefined();
   });
-  describe('GET /api/activities', () => {
-    test('The database must return 404 if it\'s empty of activities. An said There are no activities', async () => {
-      await activity.collection.deleteMany({});
-      const response = await request(app).get('/api/activities').send();
-      expect(response.body.data).toBe(undefined);
-      expect(response.status).toBe(404);
-      expect(response.body.message).toMatch(/There are no activities/);
-    });
+  test('The database must return 404 if it\'s empty of activities. An said There are no activities', async () => {
+    await activity.collection.deleteMany({});
+    const response = await request(app).get('/api/activities').send();
+    expect(response.body.data).toBe(undefined);
+    expect(response.status).toBe(404);
+    expect(response.body.message).toMatch(/There are no activities/);
   });
 });
 
@@ -78,10 +76,7 @@ describe('GET BY ID /api/activities/:id', () => {
     const response = await request(app).get(`/api/activities/${firstActivityId}`).send();
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
-    expect(response.body.data).toHaveProperty('_id');
-    expect(response.body.data).toHaveProperty('name');
-    expect(response.body.data).toHaveProperty('description');
-    expect(response.body.data).toHaveProperty('isActive');
+    expect(response.body.data).toHaveProperty('_id', 'name', 'description', 'isActive');
     expect(response.body.message).toMatch(`Activity with id: ${firstActivityId}`);
     expect(response.body.error).toBeFalsy();
   });

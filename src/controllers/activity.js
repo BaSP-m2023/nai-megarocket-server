@@ -103,26 +103,25 @@ const updateActivities = (req, res) => {
 const deleteActivities = (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.status(400).json({
+    return res.status(400).json({
       message: 'Invalid id format',
       error: true,
     });
   }
-  Activity.findByIdAndDelete(id)
+  return Activity.findByIdAndDelete(id)
     .then((activity) => {
       if (!activity) {
-        res.status(404).json({
+        return res.status(404).json({
           message: `There is no activity with id:${id}`,
           data: undefined,
           error: true,
         });
-      } else {
-        res.status(200).json({
-          message: 'Activity deleted',
-          data: activity,
-          error: false,
-        });
       }
+      return res.status(200).json({
+        message: 'Activity deleted',
+        data: activity,
+        error: false,
+      });
     })
     .catch((error) => {
       res.status(500).json({
