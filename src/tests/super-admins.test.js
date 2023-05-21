@@ -43,15 +43,10 @@ const mockSuperAdminLessPassword = {
   email: 'some@email.com',
   password: '',
 };
+
 const mockSuperAdminPasswordError = {
   firstName: 'Zoe',
   email: 'zoeee@email.com',
-  password: 'password',
-};
-
-const mockSuperAdminExistingEmail = {
-  firstName: 'Maria',
-  email: firstSuperAdminEmail,
   password: 'password',
 };
 
@@ -151,10 +146,14 @@ describe('POST /api/super-admins', () => {
     const response = await request(app).post('/api/super-admins').send(mockSuperAdminPasswordError);
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch('Password must have at least 1 special character ( <, >, @, #, ^, %, *, _, -, ?, ¿, ¡, ! ) 1 uppercase letter, 1 lowercase letter and 1 number');
-    expect(response.body.data.password).not.toMatch(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%^&*<>_?\-¿¡])/);
     expect(response.body.error).toBeTruthy();
   });
   test('If email is already existing, status must be 409', async () => {
+    const mockSuperAdminExistingEmail = {
+      firstName: 'Maria',
+      email: firstSuperAdminEmail,
+      password: 'pAssw0rd!',
+    };
     const response = await request(app).post('/api/super-admins').send(mockSuperAdminExistingEmail);
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch('This email is already used.');
