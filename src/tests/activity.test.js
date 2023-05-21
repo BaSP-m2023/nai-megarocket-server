@@ -60,7 +60,7 @@ describe('GET /api/activities', () => {
   test('The status must be 404, if the url is wrong', async () => {
     const response = await request(app).get('/activities').send();
     expect(response.status).toBe(404);
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeUndefined();
   });
   describe('GET /api/activities', () => {
     test('The database must return 404 if it\'s empty of activities. An said There are no activities', async () => {
@@ -102,7 +102,7 @@ describe('GET BY ID /api/activities/:id', () => {
   test('The status must be 404, if the url is wrong', async () => {
     const response = await request(app).get('/activities/:id').send();
     expect(response.status).toBe(404);
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeUndefined();
   });
 });
 
@@ -110,7 +110,7 @@ describe('POST /api/activities', () => {
   test('The status must be 404, if the url is wrong', async () => {
     const response = await request(app).post('/activities').send();
     expect(response.status).toBe(404);
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeUndefined();
   });
   test('When create an activities status must be 201, and must have name, description and isActive defined', async () => {
     const response = await request(app).post('/api/activities').send(mockActivity);
