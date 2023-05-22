@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Member = require('../models/member');
 
 const updateMember = (req, res) => {
@@ -16,7 +17,15 @@ const updateMember = (req, res) => {
     membership,
   } = req.body;
 
-  Member.findOne({ dni })
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({
+      message: 'Invalid ID',
+      data: id,
+      error: true,
+    });
+  }
+
+  return Member.findOne({ dni })
     .then((repeatedDni) => {
       if (repeatedDni) {
         // eslint-disable-next-line

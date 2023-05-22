@@ -8,7 +8,7 @@ beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
   const mongoOptions = {
-    useNewUrlParse: true,
+    useNewUrlParser: true,
     useUnifiedTopology: true,
   };
   await mongoose.connect(uri, mongoOptions);

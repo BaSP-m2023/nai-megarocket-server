@@ -1,8 +1,8 @@
-// import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 export default [
   {
-    _id: '645ea2e59338b2a843989321',
+    _id: new mongoose.Types.ObjectId('645ea2e59338b2a123456789'),
     firstName: 'unc',
     lastName: 'Chat',
     dni: 39189584,
@@ -17,7 +17,7 @@ export default [
     __v: 0,
   },
   {
-    _id: '645ea2f49338b2a843989323',
+    _id: new mongoose.Types.ObjectId('645ea2f49338b2a843989323'),
     firstName: 'Ayn',
     lastName: 'Hallibone',
     dni: 21515905,
@@ -32,7 +32,7 @@ export default [
     __v: 0,
   },
   {
-    _id: '645ea30d9338b2a843989325',
+    _id: new mongoose.Types.ObjectId('645ea30d9338b2a843989325'),
     firstName: 'Ralf',
     lastName: 'Cavanagh',
     dni: 36175329,
