@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import request from 'supertest';
 import app from '../app';
 import superAdmins from '../models/super-admins';
@@ -13,7 +14,6 @@ beforeEach(async () => {
   await superAdmins.collection.insertMany(superAdminSeed);
   const foundFirstSuperAdmin = await superAdmins.findOne();
   if (foundFirstSuperAdmin) {
-    // eslint-disable-next-line no-underscore-dangle
     firstSuperAdminId = foundFirstSuperAdmin._id;
     firstSuperAdminName = foundFirstSuperAdmin.firstName;
     firstSuperAdminEmail = foundFirstSuperAdmin.email;
@@ -55,7 +55,7 @@ afterEach(async () => {
 });
 
 describe('GET /api/super-admins', () => {
-  test('If are super admins in data base status mjust be 200', async () => {
+  test('If are super admins in data base status must be 200', async () => {
     const response = await request(app).get('/api/super-admins').send();
     expect(response.body.data.length).toBeGreaterThan(0);
     expect(response.status).toBe(200);
@@ -69,7 +69,7 @@ describe('GET /api/super-admins', () => {
     expect(response.body.error).toBeUndefined();
   });
   describe('GET /api/super-admins', () => {
-    test('The database must return 404 if it\'s empty of super admins. An said Cannot find any Super Admin, please create one.', async () => {
+    test('Should return 404 if aren\'t super admins registered. And the message must be: Cannot find any Super Admin, please create one.', async () => {
       await superAdmins.collection.deleteMany({});
       const response = await request(app).get('/api/super-admins').send();
       expect(response.body.data).toBe(undefined);
@@ -80,7 +80,7 @@ describe('GET /api/super-admins', () => {
 });
 
 describe('GET BY ID /api/super-admins/:id', () => {
-  test('The database must return 200 if the id exist', async () => {
+  test('Should return 200 if the id exist', async () => {
     const response = await request(app).get(`/api/super-admins/${firstSuperAdminId}`).send();
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
@@ -93,14 +93,14 @@ describe('GET BY ID /api/super-admins/:id', () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBeUndefined();
   });
-  test('The database must return 400 if the id is not a mongoose id, and said The ID is not valid', async () => {
+  test('Should return status 400 if the id is not a mongoose id, and said The ID is not valid', async () => {
     const invalidId = '1';
     const response = await request(app).get(`/api/super-admins/${invalidId}`).send();
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch('The ID is not valid');
     expect(response.body.error).toBeTruthy();
   });
-  test('The database must return 404 if the id does not exist', async () => {
+  test('Should return status 404 if the id does not exist', async () => {
     const nonExistentId = '678a4ffafc13ae184b753af0';
     const response = await request(app).get(`/api/super-admins/${nonExistentId}`).send();
     expect(response.status).toBe(404);
@@ -124,7 +124,7 @@ describe('POST /api/super-admins', () => {
     expect(response.body.message).toMatch('Super Admin Created!');
     expect(response.body.error).toBeFalsy();
   });
-  test('When create an super admin status must be 400 if name is not defined', async () => {
+  test('When create a super admin status must be 400 if name is not defined', async () => {
     const response = await request(app).post('/api/super-admins').send(mockSuperAdminLessName);
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch('Name is required');
