@@ -77,6 +77,8 @@ const deleteClass = (req, res) => {
 };
 const getAllClasses = (req, res) => {
   Class.find()
+    .populate('trainer')
+    .populate('activity')
     .then((classes) => {
       if (classes.length > 0) {
         res.status(200).json({
@@ -100,6 +102,8 @@ const getAllClasses = (req, res) => {
 const getClassId = (req, res) => {
   const { id } = req.params;
   Class.findById(id)
+    .populate('trainer')
+    .populate('activity')
     .then((classes) => {
       if (classes) {
         res.status(200).json({
