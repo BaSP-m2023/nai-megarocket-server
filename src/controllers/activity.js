@@ -7,7 +7,7 @@ const getAllActivities = (req, res) => {
       if (activities.length === 0) {
         return res.status(404).json({
           message: 'There are no activities',
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
@@ -33,7 +33,7 @@ const getActivitiesById = (req, res) => {
         return res.status(404).json({
           message: `There is no activity with id: ${id}`,
           data: activity,
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
@@ -46,9 +46,9 @@ const getActivitiesById = (req, res) => {
 };
 
 const createActivities = async (req, res) => {
+  const { name, description, isActive } = req.body;
   const existingActivity = await Activity.findOne({ name: req.body.name });
   if (!existingActivity) {
-    const { name, description, isActive } = req.body;
     return Activity.create({
       name,
       description,
@@ -84,7 +84,8 @@ const updateActivities = (req, res) => {
         res.status(404).json({
           message: `There is no activity with id:${id}`,
           data: undefined,
-          error: false,
+          error: true,
+
         });
       } else {
         res.status(200).json({
@@ -113,7 +114,7 @@ const deleteActivities = (req, res) => {
         return res.status(404).json({
           message: `There is no activity with id:${id}`,
           data: undefined,
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
