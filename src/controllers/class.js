@@ -9,6 +9,17 @@ const updateClass = (req, res) => {
 
   return Class.findOne({ day, hour, trainer })
     .then((repeatClass) => {
+      if (repeatClass) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < repeatClass.day.length; i++) {
+          if (day.includes(repeatClass.day[i])) {
+            return res.status(400).json({
+              message: 'Trainer has another class scheduled.',
+              error: true,
+            });
+          }
+        }
+      }
       // eslint-disable-next-line
       if ((repeatClass && repeatClass._id.toString() !== id)) {
         return res.status(404).json({
@@ -136,13 +147,18 @@ const createClass = (req, res) => {
     });
   }
 
-  return Class.findOne({ day, hour, trainer })
+  return Class.findOne({ hour, trainer })
     .then((existingClass) => {
       if (existingClass) {
-        return res.status(400).json({
-          message: 'Trainer has another class scheduled at that time.',
-          error: true,
-        });
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < existingClass.day.length; i++) {
+          if (day.includes(existingClass.day[i])) {
+            return res.status(400).json({
+              message: 'Trainer has another class scheduled.',
+              error: true,
+            });
+          }
+        }
       }
       return Class.create({
         day,

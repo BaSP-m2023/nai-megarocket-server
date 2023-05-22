@@ -16,7 +16,18 @@ const validationUpdateClass = (req, res, next) => {
     trainer: Joi.string().custom(isObjectId).messages({
       invalid: 'The member id must be a valid ObjectId',
     }),
-    day: Joi.string(),
+    day: Joi.array()
+      .min(1)
+      .items(
+        Joi.string()
+          .valid('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+      )
+      .required()
+      .messages({
+        'array.min': 'Day must contain at least one element',
+        'array.items': 'Day must be an array of strings representing the days of the week',
+        'any.required': 'Day is required',
+      }),
     slots: Joi.number(),
     hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required(),
   });
@@ -29,10 +40,18 @@ const validationUpdateClass = (req, res, next) => {
 };
 const validateCreation = (req, res, next) => {
   const classValidation = Joi.object({
-    day: Joi.date().min('now').required().messages({
-      'date.min': 'Date cannot be in the past',
-      'any.required': 'Date is required',
-    }),
+    day: Joi.array()
+      .min(1)
+      .items(
+        Joi.string()
+          .valid('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+      )
+      .required()
+      .messages({
+        'array.min': 'Day must contain at least one element',
+        'array.items': 'Day must be an array of strings representing the days of the week',
+        'any.required': 'Day is required',
+      }),
     hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required().messages({
       'string.pattern.base': 'Hour format must be HH:MM',
       'any.required': 'Hour is required',
