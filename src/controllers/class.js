@@ -29,16 +29,17 @@ const updateClass = (req, res) => {
       )
         .then((result) => {
           if (!result) {
-            return res.status(200).json({
+            res.status(404).json({
+              message: `ID: ${id} not found`,
+              error: false,
+            });
+          } else {
+            res.status(200).json({
               message: 'Class updated correctly',
               error: false,
               data: result,
             });
           }
-          return res.status(404).json({
-            message: `ID: ${id} not found`,
-            error: false,
-          });
         })
         .catch((error) => res.status(400).json(error));
     });
@@ -47,22 +48,27 @@ const updateClass = (req, res) => {
 const deleteClass = (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({
+    res.status(400).json({
       message: 'The ID does not exist',
       data: id,
       error: true,
     });
   }
-  return Class.findByIdAndDelete(id)
+  Class.findByIdAndDelete(id)
     .then((result) => {
       if (!result) {
-        return res.status(404).json({
+        res.status(404).json({
           message: `Class with ID (${id}) was not found`,
           data: undefined,
-          error: true,
+          error: false,
+        });
+      } else {
+        res.status(200).json({
+          message: 'Class deleted',
+          data: result,
+          error: false,
         });
       }
-      return res.status(204).json({});
     })
     .catch((error) => res.status(500).json({
       message: error,
@@ -71,6 +77,8 @@ const deleteClass = (req, res) => {
 };
 const getAllClasses = (req, res) => {
   Class.find()
+    .populate('trainer')
+    .populate('activity')
     .then((classes) => {
       if (classes.length > 0) {
         res.status(200).json({
@@ -94,6 +102,8 @@ const getAllClasses = (req, res) => {
 const getClassId = (req, res) => {
   const { id } = req.params;
   Class.findById(id)
+    .populate('trainer')
+    .populate('activity')
     .then((classes) => {
       if (classes) {
         res.status(200).json({
