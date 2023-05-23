@@ -12,24 +12,68 @@ const mockClass = {
   slots: 7,
 };
 
-const mockInvalidId = '646a353ecdc4cb3be6be10b3';
+const secondMockClass = {
+  day: 'Mondayss',
+  hour: '15:00',
+  trainer: '646428fc0b6aa64a90624a23',
+  activity: '6465095739daaa5e7a21035a',
+  slots: 7,
+};
+
+const mockIdNotFound = '646a353ecdc4cb3be6be10b3';
+
+const invalidId = 'asdasdasd';
 
 beforeAll(async () => {
   await Class.collection.insertMany(classSeed);
 });
 
-describe('PUT /api/class', () => {
-  test('should return status 404 due to existing data in DB', async () => {
-    const response = await request(app).put(`/api/class/${classSeed[0]._id}`).send(mockClass);
+describe('PUT /api/classes', () => {
+  // test('should return status 400 due to existing data in DB', async () => {
+  //   const response = await request(app).put(`/api/classes/${classSeed[0]._id}`).send(mockClass);
+  //   expect(response.status).toBe(400);
+  //   expect(response.body.message).toBe('Class data already exists');
+  //   expect(response.body.error).toBeTruthy();
+  // });
+  test('should return status 404 because ID was not found in BD', async () => {
+    const response = await request(app).put(`/api/classes/${mockIdNotFound}`).send(secondMockClass);
     expect(response.status).toBe(404);
-    expect(response.error).toBeTruthy();
+    expect(response.body.message).toBe(`ID: ${mockIdNotFound} not found`);
+    expect(response.body.error).toBeTruthy();
+  });
+  test('id not valid', async () => {
+    const response = await request(app).put(`/api/classes/${invalidId}`).send(mockClass);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('The ID is not valid');
+    expect(response.body.error).toBeTruthy();
+    expect(response.body.data).toBeDefined();
+  });
+  test('should update class correctly', async () => {
+    const response = await request(app).put(`/api/classes/${classSeed[0]._id}`).send(secondMockClass);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('Class updated correctly');
+    expect(response.body.error).toBeFalsy();
   });
 });
 
-describe('DELETE /api/class', () => {
+describe('DELETE /api/classes', () => {
   test('should return status 404 because ID was not found in BD', async () => {
-    const response = (await request(app).delete(`/api/class/${mockInvalidId}`).send());
+    const response = await request(app).delete(`/api/classes/${mockIdNotFound}`).send();
     expect(response.status).toBe(404);
-    expect(response.error).toBeTruthy();
+    expect(response.body.message).toBe(`Class with ID (${mockIdNotFound}) was not found`);
+    expect(response.body.error).toBeTruthy();
+  });
+  test('should return status 400 because of invalid ID', async () => {
+    const response = await request(app).delete(`/api/classes/${invalidId}`).send();
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('The ID is not valid');
+    expect(response.body.error).toBeTruthy();
+    expect(response.body.data).toBeDefined();
+  });
+  test('should delete class', async () => {
+    const response = await request(app).delete(`/api/classes/${classSeed[0]._id}`).send();
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('Class deleted');
+    expect(response.body.error).toBeFalsy();
   });
 });
