@@ -80,9 +80,9 @@ const createSuperAdmins = async (req, res) => {
   }
 };
 
-const applyResponse = (res, status, msg, data, error) => {
+const applyResponse = (res, status, message, data, error) => {
   res.status(status).json({
-    msg,
+    message,
     data,
     error,
   });
