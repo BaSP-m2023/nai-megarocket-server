@@ -4,20 +4,8 @@ import app from '../app';
 import superAdmins from '../models/super-admins';
 import superAdminSeed from '../seeds/super-admins';
 
-let firstSuperAdminId;
-
-let firstSuperAdminName;
-
-let firstSuperAdminEmail;
-
 beforeEach(async () => {
   await superAdmins.collection.insertMany(superAdminSeed);
-  const foundFirstSuperAdmin = await superAdmins.findOne();
-  if (foundFirstSuperAdmin) {
-    firstSuperAdminId = foundFirstSuperAdmin._id;
-    firstSuperAdminName = foundFirstSuperAdmin.firstName;
-    firstSuperAdminEmail = foundFirstSuperAdmin.email;
-  }
 });
 
 const mockSuperAdmin = {
@@ -81,11 +69,11 @@ describe('GET /api/super-admins', () => {
 
 describe('GET BY ID /api/super-admins/:id', () => {
   test('Should return 200 if the id exist', async () => {
-    const response = await request(app).get(`/api/super-admins/${firstSuperAdminId}`).send();
+    const response = await request(app).get(`/api/super-admins/${superAdminSeed[0]._id}`).send();
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
     expect(response.body.data).toHaveProperty('_id', 'firstName', 'email', 'password');
-    expect(response.body.message).toMatch(`Super Admin Found! ${firstSuperAdminName}`);
+    expect(response.body.message).toMatch(`Super Admin Found! ${superAdminSeed[0].firstName}`);
     expect(response.body.error).toBeFalsy();
   });
   test('The status must be 404, if the url is wrong', async () => {
@@ -151,7 +139,7 @@ describe('POST /api/super-admins', () => {
   test('If email is already existing, status must be 409', async () => {
     const mockSuperAdminExistingEmail = {
       firstName: 'Maria',
-      email: firstSuperAdminEmail,
+      email: superAdminSeed[0].email,
       password: 'pAssw0rd!',
     };
     const response = await request(app).post('/api/super-admins').send(mockSuperAdminExistingEmail);
