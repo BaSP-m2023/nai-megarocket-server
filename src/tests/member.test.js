@@ -91,6 +91,7 @@ describe('GET BY ID /api/members/:id', () => {
     expect(response).toBeTruthy();
     expect(response.status).toBe(404);
     expect(response.body.message).toBe(`Member not found with id: ${incorrectId}`);
+    expect(response.body.error).toBeTruthy();
   });
   test('If wrong URL status 404', async () => {
     const response = await request(app).get('/api/member/:id').send();
@@ -102,21 +103,22 @@ describe('GET BY ID /api/members/:id', () => {
 describe('POST /api/members', () => {
   test('Post correctly when the right data is sent.', async () => {
     const response = await request(app).post('/api/members').send(mockMember);
+    const { _id, __v, ...res } = response.body.data;
     expect(response.status).toBe(201);
-    expect(response.body.data).toHaveProperty('_id', 'firstName', 'lastName', 'dni', 'phone', 'email', 'password', 'city', 'birthDay', 'postalCode', 'isActive', 'membership');
+    expect(res).toEqual(mockMember);
     expect(response.body.error).toBeFalsy();
   });
   test('Error 400 if repeated email', async () => {
     const response = await request(app).post('/api/members').send(mockRepeatedEmail);
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Email or Dni already exists');
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
   test('Error 400 if repeated Dni', async () => {
     const response = await request(app).post('/api/members').send(mockRepeatedDni);
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Email or Dni already exists');
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
   test('If wrong URL status 404', async () => {
     const response = await request(app).post('/api/member').send();
