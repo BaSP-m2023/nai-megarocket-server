@@ -31,7 +31,7 @@ const updateMember = (req, res) => {
         // eslint-disable-next-line
         if (repeatedDni.toObject()._id.toString() !== id){
           return res.status(400).json({
-            msg: `DNI: ${repeatedDni.toObject().dni} already exists.`,
+            message: `DNI: ${repeatedDni.toObject().dni} already exists.`,
             data: undefined,
             error: true,
           });
@@ -43,7 +43,7 @@ const updateMember = (req, res) => {
             // eslint-disable-next-line
           if (repeatedMail.toObject()._id.toString() !== id){
               return res.status(400).json({
-                msg: `Email: ${repeatedMail.toObject().email} already exists.`,
+                message: `Email: ${repeatedMail.toObject().email} already exists.`,
                 data: undefined,
                 error: true,
               });
@@ -69,13 +69,13 @@ const updateMember = (req, res) => {
             .then((result) => {
               if (!result) {
                 return res.status(404).json({
-                  msg: `The member with id: ${id} was not found`,
+                  message: `The member with id: ${id} was not found`,
                   data: undefined,
                   error: true,
                 });
               }
               return res.status(200).json({
-                msg: `The member with id: ${id} was successfully updated.`,
+                message: `The member with id: ${id} was successfully updated.`,
                 data: result,
                 error: false,
               });
@@ -87,17 +87,23 @@ const updateMember = (req, res) => {
 
 const deleteMember = (req, res) => {
   const { id } = req.params;
-  Member.findByIdAndDelete(id)
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({
+      message: 'A valid Id is required',
+      error: true,
+    });
+  }
+  return Member.findByIdAndDelete(id)
     .then((result) => {
       if (!result) {
         return res.status(404).json({
-          msg: `The member with id: ${id} was not found`,
+          message: `The member with id: ${id} was not found`,
           data: undefined,
           error: true,
         });
       }
       return res.status(200).json({
-        msg: `Member ${result.firstName} deleted`,
+        message: `Member ${result.firstName} deleted`,
         data: result,
         error: false,
       });

@@ -30,6 +30,13 @@ const validateMembersUpdate = (req, res, next) => {
     membership: Joi.string(),
   });
 
+  if (Object.entries(req.body).length === 0) {
+    return res.status(400).json({
+      message: 'The body cannot be empty',
+      error: true,
+    });
+  }
+
   const validateMember = membersUpdate.validate(req.body);
 
   if (!validateMember.error) return next();
