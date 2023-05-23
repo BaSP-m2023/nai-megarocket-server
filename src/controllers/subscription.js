@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Subscription = require('../models/subscription');
 
 const getAllSubscriptions = (req, res) => {
-  Subscription.find()
+  Subscription.find().populate('classes').populate('member')
     .then((subscription) => res.status(200).json({
       message: 'Complete subscription list.',
       data: subscription,
@@ -16,11 +16,12 @@ const getAllSubscriptions = (req, res) => {
 
 const getSubscriptionById = (req, res) => {
   const { id } = req.params;
-  Subscription.findById(id).then((subscription) => res.status(200).json({
-    message: `Subscription found: ${subscription.id}`,
-    data: subscription,
-    error: false,
-  }))
+  Subscription.findById(id).populate('classes').populate('member')
+    .then((subscription) => res.status(200).json({
+      message: `Subscription found: ${subscription.id}`,
+      data: subscription,
+      error: false,
+    }))
     .catch((error) => res.status(404).json({
       message: 'Subscription not found.',
       error,
