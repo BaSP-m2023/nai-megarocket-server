@@ -24,7 +24,7 @@ const updateClass = (req, res) => {
       if ((repeatClass && repeatClass._id.toString() !== id)) {
         return res.status(404).json({
           message: 'Class data already exists',
-          error: false,
+          error: true,
         });
       }
       return Class.findByIdAndUpdate(
@@ -42,7 +42,7 @@ const updateClass = (req, res) => {
           if (!result) {
             res.status(404).json({
               message: `ID: ${id} not found`,
-              error: false,
+              error: true,
             });
           } else {
             res.status(200).json({
@@ -71,7 +71,7 @@ const deleteClass = (req, res) => {
         res.status(404).json({
           message: `Class with ID (${id}) was not found`,
           data: undefined,
-          error: false,
+          error: true,
         });
       } else {
         res.status(200).json({
