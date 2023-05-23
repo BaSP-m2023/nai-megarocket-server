@@ -47,7 +47,7 @@ describe('PUT /api/super-admins', () => {
     expect(response.body.message).toBeDefined();
     expect(response.body.data).toBeUndefined();
   });
-  test('No Id is send on the request, should return a status 400 and a message', async () => {
+  test('No Id is send on the request, should return a status 404 and a message', async () => {
     const response = await request(app).put('/api/super-admins/').send(mockSuperAdminSameInfo);
     expect(response.status).toBe(404);
     expect(response.body.error).toBeTruthy();
