@@ -57,7 +57,7 @@ describe('GET /api/members', () => {
   test('If wrong URL status 404', async () => {
     const response = await request(app).get('/api/member').send();
     expect(response.status).toBe(404);
-    expect(response.body.error).toBeTruthy();
+    expect(response.error).toBeTruthy();
   });
 });
 
@@ -81,7 +81,7 @@ describe('GET BY ID /api/members/:id', () => {
   test('If wrong URL status 404', async () => {
     const response = await request(app).get('/api/member/:id').send();
     expect(response.status).toBe(404);
-    expect(response.body.error).toBeTruthy();
+    expect(response.error).toBeTruthy();
   });
 });
 
@@ -100,6 +100,6 @@ describe('POST /api/members', () => {
   test('If wrong URL status 404', async () => {
     const response = await request(app).post('/api/member').send();
     expect(response.status).toBe(404);
-    expect(response.body.error).toBeTruthy();
+    expect(response.error).toBeTruthy();
   });
 });
