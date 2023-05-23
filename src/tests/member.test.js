@@ -32,6 +32,20 @@ const mockRepeatedEmail = {
   membership: 'Black',
 };
 
+const mockRepeatedDni = {
+  firstName: 'asdslf',
+  lastName: 'Rodsfriguez',
+  dni: 39189584,
+  phone: 5373456337,
+  email: 'dcasattc@opera.com',
+  password: 's1Xas6cZ8',
+  city: 'siparay',
+  birthDay: '1978-06-12T03:00:00.000Z',
+  postalCode: 85049,
+  isActive: true,
+  membership: 'Black',
+};
+
 beforeEach(async () => {
   await Member.collection.insertMany(memberSeed);
 });
@@ -95,7 +109,14 @@ describe('POST /api/members', () => {
   test('Error 400 if repeated email', async () => {
     const response = await request(app).post('/api/members').send(mockRepeatedEmail);
     expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Email already exists in the database, please check.');
+    expect(response.body.message).toBe('Email or Dni already exists');
+    expect(response.error).toBeTruthy();
+  });
+  test('Error 400 if repeated Dni', async () => {
+    const response = await request(app).post('/api/members').send(mockRepeatedDni);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('Email or Dni already exists');
+    expect(response.error).toBeTruthy();
   });
   test('If wrong URL status 404', async () => {
     const response = await request(app).post('/api/member').send();
