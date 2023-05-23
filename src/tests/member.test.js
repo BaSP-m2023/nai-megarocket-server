@@ -5,21 +5,21 @@ import Member from '../models/member';
 import memberSeed from '../seeds/member';
 
 const mockMember = {
-  firstName: 'unc',
-  lastName: 'Chat',
-  dni: 27750137,
-  phone: 5634921235,
-  email: 'dchattc@operado4.com',
-  password: 'g5Fj4sT9',
-  city: 'Ołpiny',
-  birthDay: '1976-09-09T03:00:00.000Z',
-  postalCode: 27678,
-  isActive: false,
-  membership: 'Classic',
+  firstName: `${memberSeed[0].firstName}`,
+  lastName: `${memberSeed[0].lastName}`,
+  dni: `${memberSeed[0].dni}`,
+  phone: `${memberSeed[0].phone}`,
+  email: `${memberSeed[0].email}`,
+  password: `${memberSeed[0].password}`,
+  city: `${memberSeed[0].city}`,
+  birthDay: `${memberSeed[0].birthDay}`,
+  postalCode: `${memberSeed[0].postalCode}`,
+  isActive: `${memberSeed[0].isActive}`,
+  membership: `${memberSeed[0].membership}`,
 };
 
 const mockMemberName = {
-  firstName: 'holis',
+  firstName: 'Bumblebee',
 };
 
 const invalidId = '27750127M@M';
@@ -32,7 +32,7 @@ describe('PUT /api/members/id', () => {
   test(
     'it should return status 200 when updating an existing member with valid data',
     async () => {
-      const response = await request(app).put(`/api/members/${memberSeed[1]._id.toString()}`)
+      const response = await request(app).put(`/api/members/${memberSeed[0]._id.toString()}`)
         .send(mockMember);
       expect(response.status).toBe(200);
       expect(response.body.error).toBeFalsy();
@@ -71,7 +71,6 @@ describe('DELETE /api/members', () => {
       // eslint-disable-next-line no-underscore-dangle
       const response = await request(app).delete(`/api/members/${memberSeed[0]._id}`);
       expect(response.status).toBe(404);
-      // eslint-disable-next-line no-underscore-dangle
       expect(response.body.message).toBeDefined();
       expect(response.body.error).toBeTruthy();
       expect(response.body.data).toBeUndefined();
