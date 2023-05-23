@@ -61,6 +61,7 @@ describe('GET /api/trainers', () => {
     expect(response).toBeTruthy();
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('There is no trainers');
+    expect(response.body.error).toBeTruthy();
   });
   test('If wrong URL status 404', async () => {
     const response = await request(app).get('/api/trainer').send();
@@ -111,19 +112,9 @@ describe('GET BY ID /api/trainers/:id', () => {
 describe('POST /api/trainers', () => {
   test('Post correctly when the right data is sent', async () => {
     const response = await request(app).post('/api/trainers').send(mockTrainer);
+    const { _id, __v, ...res } = response.body.data;
     expect(response.status).toBe(201);
-    expect(response.body.data).toHaveProperty(
-      '_id',
-      'firstName',
-      'lastName',
-      'dni',
-      'phone',
-      'email',
-      'city',
-      'password',
-      'salary',
-      'isActive',
-    );
+    expect(res).toEqual(mockTrainer);
     expect(response.body.error).toBeFalsy();
   });
   test('Error 409 if repeated email', async () => {
@@ -134,7 +125,7 @@ describe('POST /api/trainers', () => {
     expect(response.body.message).toBe(
       'Trainer with that Email already exists',
     );
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
   test('Error 409 if repeated dni', async () => {
     const response = await request(app)
@@ -142,7 +133,7 @@ describe('POST /api/trainers', () => {
       .send(mockRepeatedDni);
     expect(response.status).toBe(409);
     expect(response.body.message).toBe('Trainer with that DNI already exists');
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
   test('If wrong URL, status 404', async () => {
     const response = await request(app).post('/api/trainer').send();
