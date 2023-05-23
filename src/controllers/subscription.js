@@ -65,7 +65,7 @@ const updateSubscription = (req, res) => {
   const { id } = req.params;
   const { classes, member, date } = req.body;
   if (!mongoose.isValidObjectId(id)) {
-    return applyResponse(res, 404, 'Id is invalid', undefined, true);
+    return applyResponse(res, 400, 'Id is invalid', id, true);
   }
   return Subscription.findById(id)
     .then((sub) => {
@@ -83,12 +83,12 @@ const updateSubscription = (req, res) => {
         return true;
       });
       if (areEquals) {
-        return applyResponse(res, 400, 'Data in request body and in db instance are identical', undefined, true);
+        return applyResponse(res, 400, 'Data in request body and in db instance are identical', sub, true);
       }
       return Subscription.findOne({ classes, member, date })
         .then((subRepeated) => {
           if (subRepeated) {
-            throw new Error('Subscription data already exists');
+            return applyResponse(res, 400, 'Subscription data already exists', subRepeated, true);
           }
           return Subscription.findByIdAndUpdate(
             id,
@@ -98,15 +98,15 @@ const updateSubscription = (req, res) => {
               date,
             },
             { new: true },
-          );
+          )
+            .then((result) => applyResponse(
+              res,
+              200,
+              `Subscription with id: ${id} was updated successfully`,
+              result,
+              false,
+            ));
         })
-        .then((result) => applyResponse(
-          res,
-          200,
-          `Subscription with id: ${id} was updated successfully`,
-          result,
-          false,
-        ))
         .catch((error) => applyResponse(res, 500, error.message, undefined, true));
     })
     .catch((error) => applyResponse(res, 500, error.message, undefined, true));
@@ -115,7 +115,7 @@ const updateSubscription = (req, res) => {
 const deleteSubscription = (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
-    return applyResponse(res, 404, 'Id is invalid', undefined, true);
+    return applyResponse(res, 400, 'Id is invalid', id, true);
   }
   return Subscription.findByIdAndDelete(id)
     .then((result) => {
