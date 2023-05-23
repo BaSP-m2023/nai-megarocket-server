@@ -6,6 +6,46 @@ import classSeed from '../seeds/class';
 // eslint-disable-next-line no-underscore-dangle
 const classId = classSeed[0]._id.toString();
 
+const mockClassA = {
+  day: ['Monday', 'Saturday'],
+  hour: '18:00',
+  trainer: '646428fc0b6aa64a90624c05',
+  activity: '646428fc0b6aa64a90624c05',
+  slots: 3,
+};
+
+const mockClassB = {
+  day: ['Monday', 'Saturday'],
+  hour: '19:00',
+  trainer: '646428fc0b6aa64a90624c05',
+  activity: '646428fc0b6aa64a90624c05',
+  slots: 3,
+};
+
+const mockClassC = {
+  day: ['Monday', 'Saturday'],
+  hour: '20:00',
+  trainer: '646428fc0b6aa64a90624c05',
+  activity: '646428fc0b6aa64a90624c05',
+  slots: 3,
+};
+
+const mockClassRepeat = {
+  day: ['Tuesday', 'Monday'],
+  hour: '23:07',
+  trainer: '646a3278743738c22171407b',
+  activity: '646428fc0b6aa64a90624c05',
+  slots: 3,
+};
+
+const mockClassInvalidId = {
+  day: ['Tuesday', 'Monday'],
+  hour: '16:07',
+  trainer: '646428fc0b6aa64a90624c0',
+  activity: '646428fc0b6aa64a90624c05',
+  slots: 3,
+};
+
 beforeAll(async () => {
   await Class.collection.insertMany(classSeed);
 });
@@ -97,5 +137,45 @@ describe('GETBYID /api/classes/:id', () => {
     expect(response.status).toBe(500);
     expect(response.body.message).toBe('Cannot get the class');
     expect(response.error).toBeTruthy();
+  });
+});
+
+describe('POST /api/classes', () => {
+  test('Should return status 201, and an object with data, message and error property.', async () => {
+    const response = await request(app).post('/api/classes').send(mockClassA);
+    expect(response.status).toBe(201);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('data');
+    expect(response.body).toHaveProperty('message');
+    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toBeFalsy();
+  });
+  test('Should return data as an object with at least one property and a creation message.', async () => {
+    const response = await request(app).post('/api/classes').send(mockClassB);
+    expect(typeof response.body.data).toBe('object');
+    expect(Object.keys(response.body.data).length).toBeGreaterThan(0);
+    expect(response.body.message).toBe('Class created.');
+    expect(response.body.error).toBeFalsy();
+  });
+  test('Should return a message indicating "Trainer has another class scheduled".', async () => {
+    const response = await request(app).post('/api/classes').send(mockClassRepeat);
+    expect(response.body.message).toBe('Trainer has another class scheduled.');
+    expect(response.body.error).toBeTruthy();
+  });
+  test('Should return all properties from the class.', async () => {
+    const response = await request(app).post('/api/classes').send(mockClassC);
+    const classItem = response.body.data;
+    expect(classItem).toHaveProperty('day');
+    expect(classItem).toHaveProperty('hour');
+    expect(classItem).toHaveProperty('trainer');
+    expect(classItem).toHaveProperty('activity');
+    expect(classItem).toHaveProperty('slots');
+    expect(response.body.error).toBeFalsy();
+  });
+  test('Should return error indicating "Member id must be a valid ObjectID".', async () => {
+    const response = await request(app).post('/api/classes').send(mockClassInvalidId);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('There was an error: The member id must be a valid ObjectId');
+    expect(response.body.error).toBeTruthy();
   });
 });
