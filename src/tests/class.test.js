@@ -86,7 +86,7 @@ describe('GET /api/classes', () => {
       expect(classItem).toHaveProperty('activity');
       expect(classItem).toHaveProperty('slots');
     });
-    expect(response.error).toBeFalsy();
+    expect(response.body.error).toBeFalsy();
   });
 });
 
@@ -136,7 +136,7 @@ describe('GETBYID /api/classes/:id', () => {
     const response = await request(app).get(`/api/classes/${invalidId}`).send();
     expect(response.status).toBe(500);
     expect(response.body.message).toBe('Cannot get the class');
-    expect(response.error).toBeTruthy();
+    expect(response.body.error).toBeTruthy();
   });
 });
 
