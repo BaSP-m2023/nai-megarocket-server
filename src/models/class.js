@@ -13,16 +13,14 @@ const classSchema = new Schema(
       require: true,
     },
     trainer: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Trainers',
       require: true,
-      minLength: 3,
-      maxLength: 20,
     },
     activity: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Activity',
       require: true,
-      minLength: 3,
-      maxLength: 20,
     },
     slots: {
       type: Number,

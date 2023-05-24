@@ -141,20 +141,19 @@ const getMembersById = (req, res) => {
 };
 
 const createMembers = (req, res) => {
-  const {
-    firstName, lastName, dni, phone, email, password, city, birthDay, postalCode, isActive,
-    membership,
-  } = req.body;
-
-  Member.findOne({ email })
-    .then((existingMember) => {
-      if (existingMember) {
+  const { id } = req.params;
+  Member.findOne({ $or: [{ dni: req.body.dni }, { email: req.body.email }] })
+    .then((repeated) => {
+      if (repeated && Object.values(repeated.toObject())[0].toString() !== id) {
         return res.status(400).json({
-          message: 'Error!',
-          error: 'Email already exists in the database, please check.',
+          message: 'Email or Dni already exists',
+          error: true,
         });
       }
-
+      const {
+        firstName, lastName, dni, phone, email, password, city, birthDay, postalCode, isActive,
+        membership,
+      } = req.body;
       return Member.create({
         firstName,
         lastName,
@@ -167,13 +166,13 @@ const createMembers = (req, res) => {
         postalCode,
         isActive,
         membership,
-      });
+      })
+        .then((result) => res.status(201).json({
+          message: 'Member Created!',
+          data: result,
+          error: false,
+        }));
     })
-    .then((result) => res.status(201).json({
-      message: 'Member Created!',
-      data: result,
-      error: false,
-    }))
     .catch((error) => res.status(500).json({
       message: 'Error!',
       error,
