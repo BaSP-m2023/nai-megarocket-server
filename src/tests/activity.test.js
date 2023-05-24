@@ -159,7 +159,6 @@ describe('PUT /api/activity', () => {
     expect(response.body.error).toBeTruthy();
   });
 });
-
 describe('DELETE /api/activity', () => {
   test('should return status 201 if activity was deleted', async () => {
     const response = await request(app).delete(`/api/activity/${activitySeed[1]._id.toString()}`);
