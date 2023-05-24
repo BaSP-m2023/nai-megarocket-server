@@ -142,3 +142,33 @@ describe('POST /api/activities', () => {
     expect(response.body.error).toBeTruthy();
   });
 });
+describe('PUT /api/activity', () => {
+  test('should return the 200 status if the activity was successfully updated', async () => {
+    const response = await request(app).put(`/api/activity${activitySeed[0]._id.toString()}`).send(mockActivity);
+    expect(response.status).toBe(200);
+    expect(response.body.error).toBeFalsy();
+  });
+  test('should return 400 status if there is another activity with the same content', async () => {
+    const response = await request(app).put('/api/activity').send(mockActivity);
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBeTruthy();
+  });
+  test('should return 400 status if activity not found', async () => {
+    const response = await request(app).put('/api/activity').send();
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBeTruthy();
+  });
+});
+
+describe('DELETE /api/activity', () => {
+  test('should return status 201 if activity was deleted', async () => {
+    const response = await request(app).delete(`/api/activity/${activitySeed[1]._id.toString()}`);
+    expect(response.status).toBe(201);
+    expect(response.body.error).toBeFalsy();
+  });
+  test('should return 400 status if activity not found', async () => {
+    const response = await request(app).delete('/api/activity').send();
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBeTruthy();
+  });
+});
