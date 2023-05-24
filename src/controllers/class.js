@@ -4,9 +4,13 @@ const Class = require('../models/class');
 const updateClass = async (req, res) => {
   const { id } = req.params;
   const {
-    day, hour, trainer, activity, slots,
+    day,
+    hour,
+    trainer,
+    activity,
+    slots,
   } = req.body;
-  const existingClass = await Class.findOne({ day, hour, trainer });
+
   if (!mongoose.isValidObjectId(id)) {
     return res.status(400).json({
       message: 'The ID is not valid',
@@ -14,34 +18,36 @@ const updateClass = async (req, res) => {
       error: true,
     });
   }
-  return Class.findByIdAndUpdate(
-    id,
-    {
-      day,
-      hour,
-      trainer,
-      activity,
-      slots,
-    },
-    { new: true },
-  )
-    .then((result) => {
-      if (!result) {
-        return res.status(404).json({
-          message: `ID: ${id} not found`,
-          error: true,
-        });
-      }
+  return Class.findOne({ hour, trainer })
+    .then((existingClass) => {
       if (existingClass) {
         return res.status(400).json({
           message: 'Class data already exists',
           error: true,
         });
       }
-      return res.status(200).json({
-        message: 'Class updated correctly',
-        error: false,
-        data: result,
+      return Class.findByIdAndUpdate(
+        id,
+        {
+          day,
+          hour,
+          trainer,
+          activity,
+          slots,
+        },
+        { new: true },
+      ).then((result) => {
+        if (!result) {
+          return res.status(404).json({
+            message: `ID: ${id} not found`,
+            error: true,
+          });
+        }
+        return res.status(200).json({
+          message: 'Class updated correctly',
+          error: false,
+          data: result,
+        });
       });
     })
     .catch((error) => res.status(400).json(error));
@@ -126,7 +132,11 @@ const getClassId = (req, res) => {
 
 const createClass = (req, res) => {
   const {
-    day, hour, trainer, activity, slots,
+    day,
+    hour,
+    trainer,
+    activity,
+    slots,
   } = req.body;
 
   if (!day || !hour || !trainer) {
