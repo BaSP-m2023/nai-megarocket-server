@@ -7,7 +7,7 @@ const getAllTrainers = (req, res) => {
       if (trainers.length === 0) {
         return res.status(404).json({
           message: 'There is no trainers',
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
@@ -123,7 +123,7 @@ const updateTrainers = (req, res) => {
             return res.status(404).json({
               message: `There is no trainer with id:${id}`,
               data: undefined,
-              error: false,
+              error: true,
             });
           }
           return res.status(200).json({
@@ -151,7 +151,7 @@ const deleteTrainers = (req, res) => {
       if (!trainer) {
         return res.status(404).json({
           message: `There is no trainer with id ${id}`,
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
