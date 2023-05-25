@@ -3,27 +3,52 @@ const Subscription = require('../models/subscription');
 
 const getAllSubscriptions = (req, res) => {
   Subscription.find().populate('classes').populate('member')
-    .then((subscription) => res.status(200).json({
-      message: 'Complete subscription list.',
-      data: subscription,
-      error: false,
-    }))
-    .catch((error) => res.status(404).json({
-      message: 'Subscription not found.',
+    .then((subscriptions) => {
+      if (subscriptions.length === 0) {
+        return res.status(404).json({
+          message: 'There are not subscriptions yet',
+          data: subscriptions,
+          error: true,
+        });
+      }
+      return res.status(200).json({
+        message: 'Subscriptions list.',
+        data: subscriptions,
+        error: false,
+      });
+    })
+    .catch((error) => res.status(500).json({
+      message: 'An error has ocurred',
       error,
     }));
 };
 
 const getSubscriptionById = (req, res) => {
   const { id } = req.params;
-  Subscription.findById(id).populate('classes').populate('member')
-    .then((subscription) => res.status(200).json({
-      message: `Subscription found: ${subscription.id}`,
-      data: subscription,
-      error: false,
-    }))
-    .catch((error) => res.status(404).json({
-      message: 'Subscription not found.',
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      message: 'The ID is invalid',
+      data: id,
+      error: true,
+    });
+  }
+  return Subscription.findById(id).populate('classes').populate('member')
+    .then((subscription) => {
+      if (!subscription) {
+        return res.status(404).json({
+          message: 'Subscription not found',
+          data: subscription,
+          error: true,
+        });
+      }
+      return res.status(200).json({
+        message: `Subscription found: ${subscription.id}`,
+        data: subscription,
+        error: false,
+      });
+    })
+    .catch((error) => res.status(500).json({
+      message: 'An error has ocurred',
       error,
     }));
 };

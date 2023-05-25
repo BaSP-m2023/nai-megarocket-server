@@ -56,8 +56,8 @@ const createSuperAdmins = async (req, res) => {
 
     if (existingSuperAdmin) {
       return res.status(400).json({
-        message: 'Error!',
-        error: 'This email is already used.',
+        message: 'This email is already used.',
+        error: true,
       });
     }
 
@@ -74,15 +74,15 @@ const createSuperAdmins = async (req, res) => {
     });
   } catch (error) {
     return res.status(400).json({
-      message: 'Error!',
-      error,
+      message: 'Super Admin couldn\'t be created',
+      error: true,
     });
   }
 };
 
-const applyResponse = (res, status, msg, data, error) => {
+const applyResponse = (res, status, message, data, error) => {
   res.status(status).json({
-    msg,
+    message,
     data,
     error,
   });
