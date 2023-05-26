@@ -7,7 +7,7 @@ const getAllTrainers = (req, res) => {
       if (trainers.length === 0) {
         return res.status(404).json({
           message: 'There is no trainers',
-          error: false,
+          error: true,
         });
       }
       return res.status(200).json({
@@ -120,13 +120,13 @@ const updateTrainers = (req, res) => {
       )
         .then((trainer) => {
           if (!trainer) {
-            res.status(404).json({
+            return res.status(404).json({
               message: `There is no trainer with id:${id}`,
               data: undefined,
-              error: false,
+              error: true,
             });
           }
-          res.status(200).json({
+          return res.status(200).json({
             message: 'Trainer updated correctly',
             data: trainer,
             error: false,
@@ -141,31 +141,28 @@ const updateTrainers = (req, res) => {
 const deleteTrainers = (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.status(400).json({
+    return res.status(400).json({
       message: 'Invalid id format',
       error: true,
     });
   }
-  Trainer.findByIdAndDelete(id)
+  return Trainer.findByIdAndDelete(id)
     .then((trainer) => {
       if (!trainer) {
-        res.status(404).json({
-          message: `There is no trainer with id:${id}`,
-          error: false,
-        });
-      } else {
-        res.status(200).json({
-          message: 'Trainer deleted',
-          data: trainer,
-          error: false,
+        return res.status(404).json({
+          message: `There is no trainer with id ${id}`,
+          error: true,
         });
       }
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message: 'An error occurred', error,
+      return res.status(200).json({
+        message: 'Trainer deleted',
+        data: trainer,
+        error: false,
       });
-    });
+    })
+    .catch((error) => res.status(500).json({
+      message: 'An error occurred', error,
+    }));
 };
 
 module.exports = {

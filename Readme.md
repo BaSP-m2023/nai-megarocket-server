@@ -1,6 +1,6 @@
 # BaSP 2023 - [MegaRocket - Backend]
 
-## Week-08
+## Week-08.
 ## Java Script.
 ## ES6, NPM and Express.js
 
@@ -66,7 +66,7 @@ To fix the lint issues:
 npm run lint:fix
 ```
 
-## Week-09
+## Week-09.
 ## Java Script.
 ## API Rest and MongoDB
 
@@ -99,6 +99,23 @@ Within the repository there must be a Postman collection to document all the end
 
 To conclude, a Smoke Test must be completed. It is based on reviewing all the functionalities carried out and doing a manual test and checking that everythings works correctly. In case something does not work, the error must be declared on it.
 
+<br>
+
+## Week-10.
+## Java Script.
+## Cloud Servers and Unit Tests
+For the realization of the Week-10 assignment, it focuses mainly on the implementation of Unit Tests on the API Rest server that have been developing in the previous week. Besides, there were added to Mongoose the Schema relations so the data that has a link is linked at a database structure level.
+The Cloud Service ***Vercel*** was configured to be able to host the server in the cloud and make it accessible from any device with an internet connection.
+
+First of all, it is necessary to configure the ***dotenv*** library to be able to handle environment variables and ckeck if it works correctly. After this implementation, the sensitive values or the ones that can change depending on the environment where it is deployed, such as, the connection string of the database or the port number where the server runs, must be moved.
+
+The current repositories were connected to the ***Vercel*** deployment service, which will automatically deploy to a web environment all the changes made in the Master branch and it will also generate a temporary deployment of what is deployed in each Pull Request. To access these deployments, it can be done from the same repository, where there will be a *Vercel* bot what will publish each new available URL.
+
+In this project was required to add two new folders inside of the "src" folder. The first one is called **"tests"** where a file was created for each entity, in each file the different Unit Tests must be created to test all possible cases of each entity and check that the results are as expected. In order to achieve that the tests are isolated and are not affected by effects not related to each endpoint logic itself, the database must be mocked so that the real one is not used, which needs an internet connection and consistent data.
+
+The second folder created into 'src' is called **"seeds"**, where a file was created for each entity, in which a seed was created respecting each Schema structure related to the respective entity. This seed will be used to complete the mocked database used in the Unit Test, and it will also be used in the future to complete the real one in case it needs to be restored.
+
+To conclude, the *index.js* file was separated into two. An **"app.js"** file was created at the same level as *index.js*, which contains all the database connection and the *Express* server configurations. The server created in **"app.js"** was imported to the *index.js* file, where the database connection must be made and after that, the server must be raised on the indicated port.
 
 <br>
 
@@ -112,10 +129,9 @@ To conclude, a Smoke Test must be completed. It is based on reviewing all the fu
 <img src="https://avatars.githubusercontent.com/u/127552931?v=4" height="50" width="50">| Martín Lupo | lupomartin2003@gmail.com | [@lupomartin](https://github.com/lupomartin)
 <img src="https://avatars.githubusercontent.com/u/87949682?v=4" height="50" width="50">| Franco Duarte | francoa.duarte2001@gmail.com | [@francoax](https://github.com/francoax)
 <img src="https://avatars.githubusercontent.com/u/49520632?v=4" height="50" width="50">| Iván Jukonis | jukoivan024@gmail.com | [@IvanJukonis](https://github.com/IvanJukonis)
-<img src="https://avatars.githubusercontent.com/u/127459363?v=4" height="50" width="50">| Eliezer Joel Alberto | eliezer.alberto95@gmail.com | [@Eliezer-Alberto](https://github.com/Eliezer-Alberto)
+<img src="https://avatars.githubusercontent.com/u/127459363?v=4" height="50" width="50">| Eliezer Alberto | eliezer.alberto95@gmail.com | [@Eliezer-Alberto](https://github.com/Eliezer-Alberto)
 <img src="https://avatars.githubusercontent.com/u/127452350?v=4" height="50" width="50">| Daniel Lezama | dlezama0796@gmail.com | [@Dannylez](https://github.com/Dannylez)
 <img src="https://avatars.githubusercontent.com/u/67287153?v=4" height="50" width="50">| Gianluca Agrano | gianlucka1@gmail.com | [@Gianluca27](https://github.com/Gianluca27)
-<img src="https://avatars.githubusercontent.com/u/70290650?v=4" height="50" width="50">| Juan Manuel Lantermo | juanmlantermo@gmail.com | [@juanlantermo](https://github.com/juanlantermo)
 
 
 <br>

@@ -48,38 +48,41 @@ const getSuperAdminsById = (req, res) => {
     .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
 };
 
-const createSuperAdmins = (req, res) => {
+const createSuperAdmins = async (req, res) => {
   const { firstName, email, password } = req.body;
 
-  SuperAdmin.findOne({ email })
-    .then((existingSuperAdmin) => {
-      if (existingSuperAdmin) {
-        return res.status(400).json({
-          message: 'Error!',
-          error: 'This email is used by another super admin.',
-        });
-      }
+  try {
+    const existingSuperAdmin = await SuperAdmin.findOne({ email });
 
-      return SuperAdmin.create({
-        firstName,
-        email,
-        password,
+    if (existingSuperAdmin) {
+      return res.status(400).json({
+        message: 'This email is already used.',
+        error: true,
       });
-    })
-    .then((result) => res.status(201).json({
+    }
+
+    const result = await SuperAdmin.create({
+      firstName,
+      email,
+      password,
+    });
+
+    return res.status(201).json({
       message: 'Super Admin Created!',
       data: result,
       error: false,
-    }))
-    .catch((error) => res.status(400).json({
-      message: 'Error!',
-      error,
-    }));
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: 'Super Admin couldn\'t be created',
+      error: true,
+    });
+  }
 };
 
-const applyResponse = (res, status, msg, data, error) => {
+const applyResponse = (res, status, message, data, error) => {
   res.status(status).json({
-    msg,
+    message,
     data,
     error,
   });
