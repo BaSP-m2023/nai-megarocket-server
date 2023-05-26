@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import request from 'supertest';
 import app from '../app';
 import activity from '../models/activity';
@@ -10,7 +11,7 @@ const mockActivity = {
 };
 
 const mockActivityExistingName = {
-  name: 'Chandal',
+  name: `${activitySeed[0].name}`,
   description: 'Any description',
   isActive: false,
 };
@@ -32,16 +33,14 @@ const mockLessIsActive = {
   description: 'some description',
   isActive: '',
 };
-
-let firstActivityId;
+const mockUpdate = {
+  name: 'Martin',
+  description: 'descriptionnn',
+  isActive: false,
+};
 
 beforeEach(async () => {
   await activity.collection.insertMany(activitySeed);
-  const foundFirstId = await activity.find();
-  if (foundFirstId.length > 0) {
-    // eslint-disable-next-line no-underscore-dangle
-    firstActivityId = foundFirstId[0]._id;
-  }
 });
 
 afterEach(async () => {
@@ -73,11 +72,11 @@ describe('GET /api/activities', () => {
 
 describe('GET BY ID /api/activities/:id', () => {
   test('The database must return 200 if the id exist', async () => {
-    const response = await request(app).get(`/api/activities/${firstActivityId}`).send();
+    const response = await request(app).get(`/api/activities/${activitySeed[0]._id}`).send();
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
     expect(response.body.data).toHaveProperty('_id', 'name', 'description', 'isActive');
-    expect(response.body.message).toMatch(`Activity with id: ${firstActivityId}`);
+    expect(response.body.message).toMatch(`Activity with id: ${activitySeed[0]._id}`);
     expect(response.body.error).toBeFalsy();
   });
   test('The database must return 404 if the id does not exist', async () => {
@@ -139,6 +138,33 @@ describe('POST /api/activities', () => {
     const response = await request(app).post('/api/activities').send(mockLessIsActive);
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch('There was an error: "isActive" must be a boolean');
+    expect(response.body.error).toBeTruthy();
+  });
+});
+describe('PUT /api/activities', () => {
+  test('should return the 201 status if the activity was successfully updated', async () => {
+    const response = await request(app).put(`/api/activities/${activitySeed[0]._id.toString()}`).send(mockUpdate);
+    expect(response.status).toBe(201);
+    expect(response.body.error).toBeFalsy();
+  });
+  test('should return 400 status if activity not found', async () => {
+    const nonExistentId = '64677fdefc13ae39f1753b99';
+    const response = await request(app).put(`/api/activities/${nonExistentId}`).send();
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBeTruthy();
+  });
+});
+describe('DELETE /api/activities', () => {
+  test('should return status 200 if activity was deleted', async () => {
+    const response = await request(app).delete(`/api/activities/${activitySeed[1]._id.toString()}`);
+    expect(response.status).toBe(200);
+    expect(response.body.error).toBeFalsy();
+  });
+  test('should return 400 status if activity not found', async () => {
+    const nonExistentId = '64677fdefc13ae39f1753b99';
+    const response = await request(app).del(`/api/activities/${nonExistentId}`).send();
+
+    expect(response.status).toBe(404);
     expect(response.body.error).toBeTruthy();
   });
 });
