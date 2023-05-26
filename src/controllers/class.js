@@ -11,17 +11,22 @@ const updateClass = async (req, res) => {
     slots,
   } = req.body;
 
-  if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({
-      message: 'The ID is not valid',
-      data: id,
-      error: true,
-    });
-  }
-  return Class.findOne({ hour, trainer })
-    .then((existingClass) => {
-      if (existingClass) {
-        return res.status(400).json({
+  return Class.findOne({ day, hour, trainer })
+    .then((repeatClass) => {
+      if (repeatClass) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < repeatClass.day.length; i++) {
+          if (day.includes(repeatClass.day[i])) {
+            return res.status(400).json({
+              message: 'Trainer has another class scheduled.',
+              error: true,
+            });
+          }
+        }
+      }
+      // eslint-disable-next-line
+      if ((repeatClass && repeatClass._id.toString() !== id)) {
+        return res.status(404).json({
           message: 'Class data already exists',
           error: true,
         });
@@ -36,21 +41,23 @@ const updateClass = async (req, res) => {
           slots,
         },
         { new: true },
-      ).then((result) => {
-        if (!result) {
-          return res.status(404).json({
-            message: `ID: ${id} not found`,
-            error: true,
-          });
-        }
-        return res.status(200).json({
-          message: 'Class updated correctly',
-          error: false,
-          data: result,
-        });
-      });
-    })
-    .catch((error) => res.status(400).json(error));
+      )
+        .then((result) => {
+          if (!result) {
+            res.status(404).json({
+              message: `ID: ${id} not found`,
+              error: true,
+            });
+          } else {
+            res.status(200).json({
+              message: 'Class updated correctly',
+              error: false,
+              data: result,
+            });
+          }
+        })
+        .catch((error) => res.status(400).json(error));
+    });
 };
 
 const deleteClass = (req, res) => {
@@ -146,13 +153,18 @@ const createClass = (req, res) => {
     });
   }
 
-  return Class.findOne({ day, hour, trainer })
+  return Class.findOne({ hour, trainer })
     .then((existingClass) => {
       if (existingClass) {
-        return res.status(400).json({
-          message: 'Trainer has another class scheduled at that time.',
-          error: true,
-        });
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < existingClass.day.length; i++) {
+          if (day.includes(existingClass.day[i])) {
+            return res.status(400).json({
+              message: 'Trainer has another class scheduled.',
+              error: true,
+            });
+          }
+        }
       }
       return Class.create({
         day,

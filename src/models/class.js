@@ -5,8 +5,11 @@ const { Schema } = mongoose;
 const classSchema = new Schema(
   {
     day: {
-      type: String,
-      require: true,
+      type: [{
+        type: String,
+        enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      }],
+      required: true,
     },
     hour: {
       type: String,

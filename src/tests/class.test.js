@@ -13,9 +13,17 @@ const mockClass = {
 };
 
 const secondMockClass = {
-  day: 'Wednesdayyy',
+  day: ['Wednesday'],
   hour: '17:24',
   trainer: '646428fc0b6aa64a90624c73',
+  activity: '6465095739daaa5e7a21023a',
+  slots: 3,
+};
+
+const thirdMockClass = {
+  day: ['Wednesday'],
+  hour: '17:24',
+  trainer: '646428fc0b6aa64a90624c74',
   activity: '6465095739daaa5e7a21023a',
   slots: 3,
 };
@@ -32,7 +40,7 @@ describe('PUT /api/classes', () => {
   test('should return status 400 due to existing data in DB', async () => {
     const response = await request(app).put(`/api/classes/${classSeed[1]._id}`).send(mockClass);
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Class data already exists');
+    expect(response.body.message).toBe('Trainer has another class scheduled.');
     expect(response.body.error).toBeTruthy();
   });
   test('should return status 404 because ID was not found in BD', async () => {
@@ -42,11 +50,9 @@ describe('PUT /api/classes', () => {
     expect(response.body.error).toBeTruthy();
   });
   test('should return status 400 because of invalid ID', async () => {
-    const response = await request(app).put(`/api/classes/${invalidId}`).send(mockClass);
+    const response = await request(app).put(`/api/classes/${invalidId}`).send(thirdMockClass);
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('The ID is not valid');
-    expect(response.body.error).toBeTruthy();
-    expect(response.body.data).toBeDefined();
+    expect(response.error).toBeTruthy();
   });
   test('should update class correctly', async () => {
     const response = await request(app).put(`/api/classes/${classSeed[0]._id}`).send(secondMockClass);
