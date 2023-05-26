@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const classSchema = new Schema(
   {
     day: {
-      type: Date,
+      type: String,
       require: true,
     },
     hour: {
