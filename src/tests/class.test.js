@@ -29,12 +29,12 @@ beforeAll(async () => {
 });
 
 describe('PUT /api/classes', () => {
-  // test('should return status 400 due to existing data in DB', async () => {
-  //   const response = await request(app).put(`/api/classes/${classSeed[1]._id}`).send(mockClass);
-  //   expect(response.status).toBe(400);
-  //   expect(response.body.message).toBe('Class data already exists');
-  //   expect(response.body.error).toBeTruthy();
-  // });
+  test('should return status 400 due to existing data in DB', async () => {
+    const response = await request(app).put(`/api/classes/${classSeed[1]._id}`).send(mockClass);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('Class data already exists');
+    expect(response.body.error).toBeTruthy();
+  });
   test('should return status 404 because ID was not found in BD', async () => {
     const response = await request(app).put(`/api/classes/${mockIdNotFound}`).send(secondMockClass);
     expect(response.status).toBe(404);
