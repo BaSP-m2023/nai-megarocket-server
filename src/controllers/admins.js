@@ -4,10 +4,10 @@ const Admin = require('../models/admins');
 const getAllAdmins = (req, res) => {
   Admin.find()
     .then((adminsList) => {
-      if (!adminsList) {
+      if (adminsList.length === 0) {
         return res.status(404).json({
           message: 'There are not admins yet',
-          data: undefined,
+          data: adminsList,
           error: true,
         });
       }

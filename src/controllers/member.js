@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Member = require('../models/member');
 
 const updateMember = (req, res) => {
@@ -16,13 +17,21 @@ const updateMember = (req, res) => {
     membership,
   } = req.body;
 
-  Member.findOne({ dni })
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({
+      message: 'Invalid ID',
+      data: id,
+      error: true,
+    });
+  }
+
+  return Member.findOne({ dni })
     .then((repeatedDni) => {
       if (repeatedDni) {
         // eslint-disable-next-line
         if (repeatedDni.toObject()._id.toString() !== id){
           return res.status(400).json({
-            msg: `DNI: ${repeatedDni.toObject().dni} already exists.`,
+            message: `DNI: ${repeatedDni.toObject().dni} already exists.`,
             data: undefined,
             error: true,
           });
@@ -34,7 +43,7 @@ const updateMember = (req, res) => {
             // eslint-disable-next-line
           if (repeatedMail.toObject()._id.toString() !== id){
               return res.status(400).json({
-                msg: `Email: ${repeatedMail.toObject().email} already exists.`,
+                message: `Email: ${repeatedMail.toObject().email} already exists.`,
                 data: undefined,
                 error: true,
               });
@@ -60,13 +69,13 @@ const updateMember = (req, res) => {
             .then((result) => {
               if (!result) {
                 return res.status(404).json({
-                  msg: `The member with id: ${id} was not found`,
+                  message: `The member with id: ${id} was not found`,
                   data: undefined,
                   error: true,
                 });
               }
               return res.status(200).json({
-                msg: `The member with id: ${id} was successfully updated.`,
+                message: `The member with id: ${id} was successfully updated.`,
                 data: result,
                 error: false,
               });
@@ -78,17 +87,23 @@ const updateMember = (req, res) => {
 
 const deleteMember = (req, res) => {
   const { id } = req.params;
-  Member.findByIdAndDelete(id)
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({
+      message: 'A valid Id is required',
+      error: true,
+    });
+  }
+  return Member.findByIdAndDelete(id)
     .then((result) => {
       if (!result) {
         return res.status(404).json({
-          msg: `The member with id: ${id} was not found`,
+          message: `The member with id: ${id} was not found`,
           data: undefined,
           error: true,
         });
       }
       return res.status(200).json({
-        msg: `Member ${result.firstName} deleted`,
+        message: `Member ${result.firstName} deleted`,
         data: result,
         error: false,
       });
@@ -141,18 +156,19 @@ const getMembersById = (req, res) => {
 };
 
 const createMembers = (req, res) => {
-  const {
-    firstName, lastName, dni, phone, email, password, city, birthDay, postalCode, isActive,
-    membership,
-  } = req.body;
-  Member.findOne({ email })
-    .then((existingMember) => {
-      if (existingMember) {
+  const { id } = req.params;
+  Member.findOne({ $or: [{ dni: req.body.dni }, { email: req.body.email }] })
+    .then((repeated) => {
+      if (repeated && Object.values(repeated.toObject())[0].toString() !== id) {
         return res.status(400).json({
-          message: 'Error!',
-          error: 'Email already exists in the database, please check.',
+          message: 'Email or Dni already exists',
+          error: true,
         });
       }
+      const {
+        firstName, lastName, dni, phone, email, password, city, birthDay, postalCode, isActive,
+        membership,
+      } = req.body;
       return Member.create({
         firstName,
         lastName,
