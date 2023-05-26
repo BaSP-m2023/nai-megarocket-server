@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 const Class = require('../models/class');
 
-const updateClass = (req, res) => {
+const updateClass = async (req, res) => {
   const { id } = req.params;
   const {
-    day, hour, trainer, activity, slots,
+    day,
+    hour,
+    trainer,
+    activity,
+    slots,
   } = req.body;
 
   return Class.findOne({ day, hour, trainer })
@@ -24,7 +28,7 @@ const updateClass = (req, res) => {
       if ((repeatClass && repeatClass._id.toString() !== id)) {
         return res.status(404).json({
           message: 'Class data already exists',
-          error: false,
+          error: true,
         });
       }
       return Class.findByIdAndUpdate(
@@ -42,7 +46,7 @@ const updateClass = (req, res) => {
           if (!result) {
             res.status(404).json({
               message: `ID: ${id} not found`,
-              error: false,
+              error: true,
             });
           } else {
             res.status(200).json({
@@ -59,19 +63,19 @@ const updateClass = (req, res) => {
 const deleteClass = (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
-    res.status(400).json({
-      message: 'The ID does not exist',
+    return res.status(400).json({
+      message: 'The ID is not valid',
       data: id,
       error: true,
     });
   }
-  Class.findByIdAndDelete(id)
+  return Class.findByIdAndDelete(id)
     .then((result) => {
       if (!result) {
         res.status(404).json({
           message: `Class with ID (${id}) was not found`,
           data: undefined,
-          error: false,
+          error: true,
         });
       } else {
         res.status(200).json({
@@ -81,11 +85,9 @@ const deleteClass = (req, res) => {
         });
       }
     })
-    .catch((error) => res.status(500).json({
-      message: error,
-      data: undefined,
-    }));
+    .catch((error) => res.status(500).json(error));
 };
+
 const getAllClasses = (req, res) => {
   Class.find()
     .populate('trainer')
@@ -137,7 +139,11 @@ const getClassId = (req, res) => {
 
 const createClass = (req, res) => {
   const {
-    day, hour, trainer, activity, slots,
+    day,
+    hour,
+    trainer,
+    activity,
+    slots,
   } = req.body;
 
   if (!day || !hour || !trainer) {
