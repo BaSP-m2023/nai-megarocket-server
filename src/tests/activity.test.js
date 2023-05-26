@@ -33,6 +33,11 @@ const mockLessIsActive = {
   description: 'some description',
   isActive: '',
 };
+const mockUpdate = {
+  name: 'Martin',
+  description: 'descriptionnn',
+  isActive: false,
+};
 
 beforeEach(async () => {
   await activity.collection.insertMany(activitySeed);
@@ -138,7 +143,7 @@ describe('POST /api/activities', () => {
 });
 describe('PUT /api/activities', () => {
   test('should return the 201 status if the activity was successfully updated', async () => {
-    const response = await request(app).put(`/api/activities/${activitySeed[0]._id.toString()}`).send(mockActivity);
+    const response = await request(app).put(`/api/activities/${activitySeed[0]._id.toString()}`).send(mockUpdate);
     expect(response.status).toBe(201);
     expect(response.body.error).toBeFalsy();
   });
