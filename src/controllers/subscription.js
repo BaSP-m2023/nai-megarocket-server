@@ -2,7 +2,15 @@ const mongoose = require('mongoose');
 const Subscription = require('../models/subscription');
 
 const getAllSubscriptions = (req, res) => {
-  Subscription.find().populate('classes').populate('member')
+  Subscription.find().populate({
+    path: 'classes',
+    select: 'activity',
+    populate: {
+      path: 'activity',
+      select: 'name',
+    },
+  })
+    .populate('member')
     .then((subscriptions) => {
       if (subscriptions.length === 0) {
         return res.status(404).json({
@@ -32,7 +40,15 @@ const getSubscriptionById = (req, res) => {
       error: true,
     });
   }
-  return Subscription.findById(id).populate('classes').populate('member')
+  return Subscription.findById(id).populate({
+    path: 'classes',
+    select: 'activity',
+    populate: {
+      path: 'activity',
+      select: 'name',
+    },
+  })
+    .populate('member')
     .then((subscription) => {
       if (!subscription) {
         return res.status(404).json({
