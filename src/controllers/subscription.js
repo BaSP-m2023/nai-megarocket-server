@@ -4,7 +4,7 @@ const Subscription = require('../models/subscription');
 const getAllSubscriptions = (req, res) => {
   Subscription.find().populate({
     path: 'classes',
-    select: 'activity',
+    select: 'activity day',
     populate: {
       path: 'activity',
       select: 'name',
@@ -42,7 +42,7 @@ const getSubscriptionById = (req, res) => {
   }
   return Subscription.findById(id).populate({
     path: 'classes',
-    select: 'activity',
+    select: 'activity day',
     populate: {
       path: 'activity',
       select: 'name',
