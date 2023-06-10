@@ -60,7 +60,7 @@ const updateMember = (req, res) => {
       });
       if (isEqual) {
         return res.status(404).json({
-          message: 'Update rejected. No changes in this Trainer',
+          message: 'There is nothing to change',
           data: undefined,
           error: true,
         });

@@ -108,7 +108,7 @@ const updateSuperAdmin = (req, res) => {
         return true;
       });
       if (isEqual) {
-        return applyResponse(res, 404, 'Update rejected. ReqBody is identical for that id instance', undefined, true);
+        return applyResponse(res, 404, 'There is nothing to change', undefined, true);
       }
       return SuperAdmin.findOne({ email })
         .then((repeatedMail) => {
