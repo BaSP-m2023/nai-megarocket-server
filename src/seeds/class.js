@@ -4,7 +4,7 @@ export default [
   {
     _id: new mongoose.Types.ObjectId('646a3278743738c22171407a'),
     day: ['Tuesday', 'Monday'],
-    hour: '23:07',
+    hour: '22:00',
     trainer: new mongoose.Types.ObjectId('646a3278743738c22171407b'),
     activity: new mongoose.Types.ObjectId('646a3278743738c22171407c'),
     slots: 20,

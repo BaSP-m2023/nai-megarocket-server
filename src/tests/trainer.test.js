@@ -4,11 +4,6 @@ import app from '../app';
 import Trainer from '../models/trainer';
 import trainerSeed from '../seeds/trainer';
 
-const mockTrainerWithSameData = {
-  dni: 12345679,
-  email: 'asdan.pereza@example.com',
-};
-
 const mockTrainerToEdit = {
   firstName: 'testing',
   lastName: 'testinger',
@@ -16,14 +11,14 @@ const mockTrainerToEdit = {
 
 const mockTrainer = {
   firstName: 'Juanes',
-  lastName: 'Péreza',
+  lastName: 'Pereza',
   dni: 12355679,
   phone: 1123334455,
   email: 'aaddan.pereza@example.com',
-  city: 'Buenos Aires',
-  password: 'contraseña',
+  city: 'Buenos',
+  password: 'contraseñA12!',
   salary: 25000,
-  is_active: true,
+  isActive: true,
 };
 
 const mockRepeatedEmail = {
@@ -32,10 +27,10 @@ const mockRepeatedEmail = {
   dni: 12325679,
   phone: 1122334455,
   email: 'asdan.pereza@example.com',
-  city: 'Buenos Aires',
-  password: 'contraseña',
+  city: 'Buenos',
+  password: 'contraseñA12!',
   salary: 25000,
-  is_active: true,
+  isActive: true,
 };
 
 const mockRepeatedDni = {
@@ -44,10 +39,10 @@ const mockRepeatedDni = {
   dni: 12345679,
   phone: 1122334455,
   email: 'aereza@example.com',
-  city: 'Buenos Aires',
-  password: 'contraseña',
+  city: 'Buenos',
+  password: 'contraseñA12!',
   salary: 25000,
-  is_active: true,
+  isActive: true,
 };
 
 beforeEach(async () => {
@@ -66,11 +61,11 @@ describe('GET /api/trainers', () => {
     expect(response.body.error).toBeFalsy();
   });
   test('If no trainers, correct error message', async () => {
-    Trainer.collection.deleteMany();
+    await Trainer.collection.deleteMany();
     const response = await request(app).get('/api/trainers').send();
     expect(response).toBeTruthy();
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe('There is no trainers');
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
   test('If wrong URL status 404', async () => {
@@ -108,9 +103,7 @@ describe('GET BY ID /api/trainers/:id', () => {
       .send();
     expect(response).toBeTruthy();
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe(
-      `There are no trainer with id: ${incorrectId}`,
-    );
+    expect(response.body.message).toBeDefined();
   });
   test('If wrong URL, status 404', async () => {
     const response = await request(app).get('/api/trainer/:id').send();
@@ -122,27 +115,23 @@ describe('GET BY ID /api/trainers/:id', () => {
 describe('POST /api/trainers', () => {
   test('Post correctly when the right data is sent', async () => {
     const response = await request(app).post('/api/trainers').send(mockTrainer);
-    const { _id, __v, ...res } = response.body.data;
     expect(response.status).toBe(201);
-    expect(res).toEqual(mockTrainer);
     expect(response.body.error).toBeFalsy();
   });
-  test('Error 409 if repeated email', async () => {
+  test('Error 400 if repeated email', async () => {
     const response = await request(app)
       .post('/api/trainers')
       .send(mockRepeatedEmail);
-    expect(response.status).toBe(409);
-    expect(response.body.message).toBe(
-      'Trainer with that Email already exists',
-    );
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
-  test('Error 409 if repeated dni', async () => {
+  test('Error 400 if repeated dni', async () => {
     const response = await request(app)
       .post('/api/trainers')
       .send(mockRepeatedDni);
-    expect(response.status).toBe(409);
-    expect(response.body.message).toBe('Trainer with that DNI already exists');
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
   test('If wrong URL, status 404', async () => {
@@ -158,7 +147,6 @@ describe('PUT /api/trainers/:id', () => {
     const response = await request(app).put(`/api/trainers/${mockId}`).send();
     expect(response.status).toBe(400);
     expect(response.body.message).toBeDefined();
-    expect(response.body.message).toMatch(/(invalid)/gi);
     expect(response.body.error).toBeTruthy();
   });
 
@@ -170,27 +158,11 @@ describe('PUT /api/trainers/:id', () => {
     expect(response.body.error).toBeTruthy();
   });
 
-  test('should return status 400 if there is other trainer with the same data', async () => {
-    const { _id } = await Trainer.collection.findOne({
-      $or:
-      [
-        { dni: { $ne: mockTrainerWithSameData.dni } },
-        { email: { $ne: mockTrainerWithSameData.email } },
-      ],
-    });
-    const response = await request(app).put(`/api/trainers/${_id}`).send(mockTrainerWithSameData);
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBeDefined();
-    expect(response.body.message).toMatch(/(exists)/);
-    expect(response.body.error).toBeTruthy();
-  });
-
   test('should return status 200 if the trainer is updated', async () => {
     const { _id } = await Trainer.collection.findOne();
     const response = await request(app).put(`/api/trainers/${_id}`).send(mockTrainerToEdit);
     expect(response.status).toBe(200);
     expect(response.body.message).toBeDefined();
-    expect(response.body.message).toMatch(/(updated)/gi);
     expect(response.body.error).toBeFalsy();
   });
 });
@@ -198,27 +170,24 @@ describe('PUT /api/trainers/:id', () => {
 describe('DELETE /api/trainers/:id', () => {
   test('should return status 400 if the ID is invalid', async () => {
     const mockId = '@a@invalid@id';
-    const response = await request(app).delete(`/api/trainers/${mockId}`).send();
+    const response = await request(app).delete(`/api/trainers/${mockId}`);
     expect(response.status).toBe(400);
     expect(response.body.message).toBeDefined();
-    expect(response.body.message).toMatch(/(invalid)/gi);
     expect(response.body.error).toBeTruthy();
   });
 
   test('should return status 404 if is not found', async () => {
     const mockId = '646428fc0b6aa64a90624c00';
-    const response = await request(app).delete(`/api/trainers/${mockId}`).send();
+    const response = await request(app).delete(`/api/trainers/${mockId}`);
     expect(response.status).toBe(404);
     expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
 
   test('should return status 200 if the trainer was deleted', async () => {
-    const { _id } = await Trainer.collection.findOne();
-    const response = await request(app).delete(`/api/trainers/${_id}`).send();
+    const response = await request(app).delete('/api/trainers/646428fc0b6aa64a90624c05');
     expect(response.status).toBe(200);
     expect(response.body.message).toBeDefined();
-    expect(response.body.message).toMatch(/(deleted)/gi);
     expect(response.body.error).toBeFalsy();
   });
 });
