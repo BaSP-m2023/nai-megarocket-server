@@ -6,12 +6,12 @@ const getAllActivities = (req, res) => {
     .then((activities) => {
       if (activities.length === 0) {
         return res.status(404).json({
-          message: 'There are no activities',
+          message: 'Activities not found',
           error: true,
         });
       }
       return res.status(200).json({
-        message: 'Complete activities list',
+        message: 'Activities list',
         data: activities,
         error: false,
       });
@@ -23,7 +23,7 @@ const getActivitiesById = (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({
-      message: `Invalid activity id: ${id}`,
+      message: 'This _id has invalid format',
       error: true,
     });
   }
@@ -31,13 +31,13 @@ const getActivitiesById = (req, res) => {
     .then((activity) => {
       if (activity == null) {
         return res.status(404).json({
-          message: `There is no activity with id: ${id}`,
+          message: `Activity not found with this _id: ${id}`,
           data: activity,
           error: true,
         });
       }
       return res.status(200).json({
-        message: `Activity with id: ${id}`,
+        message: `Activity found! ${activity.name}`,
         data: activity,
         error: false,
       });
@@ -61,42 +61,72 @@ const createActivities = async (req, res) => {
       }))
       .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
   }
-  return res.status(409).json({
+  return res.status(400).json({
     message: 'Activity with that name already exists',
     error: true,
   });
 };
 
-const updateActivities = (req, res) => {
+const updateActivities = async (req, res) => {
   const { id } = req.params;
   const { name, description, isActive } = req.body;
-  Activity.findByIdAndUpdate(
-    id,
-    {
-      name,
-      description,
-      isActive,
-    },
-    { new: true },
-  )
-    .then((activity) => {
-      if (!activity) {
+
+  try {
+    const existingActivity = await Activity.findOne({
+      $and: [
+        {
+          $or: [{ name: req.body.name }],
+        },
+      ],
+    });
+
+    const isBodyEqualToDatabase = existingActivity
+    && existingActivity.name === name
+    && existingActivity.description === description;
+
+    if (isBodyEqualToDatabase) {
+      return res.status(400).json({
+        message: 'There is nothing to change',
+        error: true,
+      });
+    }
+
+    if (!existingActivity) {
+      const updatedActivity = await Activity.findByIdAndUpdate(
+        id,
+        {
+          name,
+          description,
+          isActive,
+        },
+        { new: true },
+      );
+
+      if (!updatedActivity) {
         return res.status(404).json({
-          message: `There is no activity with id:${id}`,
+          message: `Activity with _id:${id} was not found`,
           data: undefined,
           error: true,
-
         });
       }
+
       return res.status(201).json({
         message: 'Activity updated correctly',
-        data: activity,
+        data: updatedActivity,
         error: false,
       });
-    })
-    .catch((error) => res.status(500).json({
-      message: 'An error occurred', error,
-    }));
+    }
+
+    return res.status(400).json({
+      message: 'Activity with that name already exists',
+      error: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'An error occurred',
+      error,
+    });
+  }
 };
 
 const deleteActivities = (req, res) => {
@@ -117,7 +147,7 @@ const deleteActivities = (req, res) => {
         });
       }
       return res.status(200).json({
-        message: 'Activity deleted',
+        message: `Activity ${activity.name} deleted`,
         data: activity,
         error: false,
       });

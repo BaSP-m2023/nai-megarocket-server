@@ -124,12 +124,12 @@ const updateSubscription = (req, res) => {
         return true;
       });
       if (areEquals) {
-        return applyResponse(res, 400, 'Data in request body and in db instance are identical', sub, true);
+        return applyResponse(res, 400, 'There is nothing to change', sub, true);
       }
       return Subscription.findOne({ classes, member, date })
         .then((subRepeated) => {
           if (subRepeated) {
-            return applyResponse(res, 400, 'Subscription data already exists', subRepeated, true);
+            return applyResponse(res, 400, `${member.firstName} ${member.lastName} is already subscribed to this class.`, subRepeated, true);
           }
           return Subscription.findByIdAndUpdate(
             id,
@@ -143,7 +143,7 @@ const updateSubscription = (req, res) => {
             .then((result) => applyResponse(
               res,
               200,
-              `Subscription with id: ${id} was updated successfully`,
+              `Subscription with _id: ${id} was updated successfully`,
               result,
               false,
             ));

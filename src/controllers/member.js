@@ -25,57 +25,72 @@ const updateMember = (req, res) => {
     });
   }
 
-  return Member.findOne({ dni })
-    .then((repeatedDni) => {
-      if (repeatedDni) {
-        // eslint-disable-next-line
-        if (repeatedDni.toObject()._id.toString() !== id){
-          return res.status(400).json({
-            message: `DNI: ${repeatedDni.toObject().dni} already exists.`,
-            data: undefined,
-            error: true,
-          });
-        }
+  return Member.findByIdAndUpdate(
+    id,
+    {
+      firstName,
+      lastName,
+      dni,
+      phone,
+      email,
+      password,
+      city,
+      birthDay,
+      postalCode,
+      isActive,
+      membership,
+    },
+    { new: true },
+  )
+    .then((result) => {
+      if (!result) {
+        return res.status(404).json({
+          message: `The member with _id: ${id} was not found`,
+          data: undefined,
+          error: true,
+        });
       }
-      return Member.findOne({ email })
-        .then((repeatedMail) => {
-          if (repeatedMail) {
+      const membersObj = result.toObject();
+      const bodyObj = req.body;
+      const isEqual = Object.entries(bodyObj).every(([key]) => {
+        if (key !== '_id' && key !== '__v') {
+          return (bodyObj[key] === membersObj[key]);
+        }
+        return true;
+      });
+      if (isEqual) {
+        return res.status(404).json({
+          message: 'Update rejected. No changes in this Trainer',
+          data: undefined,
+          error: true,
+        });
+      }
+      return Member.findOne({ dni })
+        .then((repeatedDni) => {
+          if (repeatedDni) {
             // eslint-disable-next-line
-          if (repeatedMail.toObject()._id.toString() !== id){
+                  if (repeatedDni.toObject()._id.toString() !== id){
               return res.status(400).json({
-                message: `Email: ${repeatedMail.toObject().email} already exists.`,
+                message: 'Member with this DNI is already register',
                 data: undefined,
                 error: true,
               });
             }
           }
-          return Member.findByIdAndUpdate(
-            id,
-            {
-              firstName,
-              lastName,
-              dni,
-              phone,
-              email,
-              password,
-              city,
-              birthDay,
-              postalCode,
-              isActive,
-              membership,
-            },
-            { new: true },
-          )
-            .then((result) => {
-              if (!result) {
-                return res.status(404).json({
-                  message: `The member with id: ${id} was not found`,
-                  data: undefined,
-                  error: true,
-                });
+          return Member.findOne({ email })
+            .then((repeatedMail) => {
+              if (repeatedMail) {
+                // eslint-disable-next-line
+                    if (repeatedMail.toObject()._id.toString() !== id){
+                  return res.status(400).json({
+                    message: 'Member with this Email is already register',
+                    data: undefined,
+                    error: true,
+                  });
+                }
               }
               return res.status(200).json({
-                message: `The member with id: ${id} was successfully updated.`,
+                message: `The member ${result.firstName} ${result.lastName} was successfully updated.`,
                 data: result,
                 error: false,
               });
@@ -89,7 +104,7 @@ const deleteMember = (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return res.status(400).json({
-      message: 'A valid Id is required',
+      message: 'This _id has invalid format',
       error: true,
     });
   }
@@ -97,13 +112,13 @@ const deleteMember = (req, res) => {
     .then((result) => {
       if (!result) {
         return res.status(404).json({
-          message: `The member with id: ${id} was not found`,
+          message: `The member with _id: ${id} was not found`,
           data: undefined,
           error: true,
         });
       }
       return res.status(200).json({
-        message: `Member ${result.firstName} deleted`,
+        message: `Member ${result.firstName} ${result.lastName} deleted`,
         data: result,
         error: false,
       });
@@ -120,7 +135,7 @@ const getAllMembers = (req, res) => {
     .then((members) => {
       if (members.length > 0) {
         res.status(200).json({
-          message: 'Members list: ',
+          message: 'Members list',
           data: members,
           error: false,
         });
@@ -141,7 +156,7 @@ const getMembersById = (req, res) => {
     .then((members) => {
       if (members !== null) {
         res.status(200).json({
-          message: `Member Found! ${members.firstName}`,
+          message: `Member Found! ${members.firstName} ${members.lastName}`,
           data: members,
           error: false,
         });
@@ -161,7 +176,7 @@ const createMembers = (req, res) => {
     .then((repeated) => {
       if (repeated && Object.values(repeated.toObject())[0].toString() !== id) {
         return res.status(400).json({
-          message: 'Email or Dni already exists',
+          message: 'This member is already register',
           error: true,
         });
       }

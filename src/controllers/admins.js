@@ -140,7 +140,16 @@ const updateAdmin = async (req, res) => {
     });
   }
 
-  const anAdminAlreadyHas = await Admin.findOne({ $or: [{ dni }, { email }] });
+  const anAdminAlreadyHas = await Admin.findOne({
+    $and: [
+      {
+        $or: [{ dni }, { email }],
+      },
+      {
+        _id: { $ne: id },
+      },
+    ],
+  });
 
   if (anAdminAlreadyHas) {
     return res.status(400).json({
@@ -194,7 +203,7 @@ const deleteAdmin = (req, res) => {
         });
       }
       return res.status(200).json({
-        message: 'Admin deleted',
+        message: `Admin ${adminDeleted.firstName} ${adminDeleted.lastName} is deleted`,
         data: adminDeleted,
         error: false,
       });

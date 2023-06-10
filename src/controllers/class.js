@@ -4,60 +4,61 @@ const Class = require('../models/class');
 const updateClass = async (req, res) => {
   const { id } = req.params;
   const {
-    day,
-    hour,
-    trainer,
-    activity,
-    slots,
+    day, hour, trainer, activity, slots,
   } = req.body;
 
-  return Class.findOne({ day, hour, trainer })
-    .then((repeatClass) => {
-      if (repeatClass) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < repeatClass.day.length; i++) {
-          if (day.includes(repeatClass.day[i])) {
-            return res.status(400).json({
-              message: 'Trainer has another class scheduled.',
-              error: true,
-            });
-          }
-        }
-      }
-      // eslint-disable-next-line
-      if ((repeatClass && repeatClass._id.toString() !== id)) {
+  let updatedClass;
+
+  Class.findByIdAndUpdate(
+    id,
+    {
+      day, hour, trainer, activity, slots,
+    },
+    { new: true },
+  )
+    .then((classObj) => {
+      updatedClass = classObj;
+
+      if (!classObj) {
         return res.status(404).json({
-          message: 'Class data already exists',
+          message: `ID: ${id} not found`,
           error: true,
         });
       }
-      return Class.findByIdAndUpdate(
-        id,
-        {
-          day,
-          hour,
-          trainer,
-          activity,
-          slots,
-        },
-        { new: true },
-      )
-        .then((result) => {
-          if (!result) {
-            res.status(404).json({
-              message: `ID: ${id} not found`,
-              error: true,
-            });
-          } else {
-            res.status(200).json({
-              message: 'Class updated correctly',
-              error: false,
-              data: result,
-            });
-          }
-        })
-        .catch((error) => res.status(400).json(error));
-    });
+
+      const bodyObj = req.body;
+      const isEqual = Object.entries(bodyObj).every(([key]) => {
+        if (key !== '_id' && key !== '__v') {
+          return bodyObj[key] === classObj[key];
+        }
+        return true;
+      });
+
+      if (isEqual) {
+        return res.status(404).json({
+          message: 'There is nothing to change',
+          data: undefined,
+          error: true,
+        });
+      }
+
+      return Class.findOne({ day, trainer, _id: { $ne: id } });
+    })
+    .then((repeatClass) => {
+      if (repeatClass) {
+        return res.status(400).json({
+          message: 'Trainer has another class scheduled.',
+          error: true,
+        });
+      }
+
+      return res.status(200).json({
+        message: 'Class updated correctly',
+        error: false,
+        data: updatedClass,
+      });
+    })
+    .catch((error) => res.status(400).json(error));
 };
 
 const deleteClass = (req, res) => {
@@ -79,7 +80,7 @@ const deleteClass = (req, res) => {
         });
       } else {
         res.status(200).json({
-          message: 'Class deleted',
+          message: `Class ${result.name} deleted`,
           data: result,
           error: false,
         });
