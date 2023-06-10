@@ -20,16 +20,23 @@ const validationUpdateClass = (req, res, next) => {
       .min(1)
       .items(
         Joi.string()
-          .valid('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+          .valid('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
       )
-      .required()
       .messages({
         'array.min': 'Day must contain at least one element',
         'array.items': 'Day must be an array of strings representing the days of the week',
         'any.required': 'Day is required',
       }),
-    slots: Joi.number(),
-    hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required(),
+    slots: Joi.number().integer().min(5).max(15)
+      .messages({
+        'number.min': 'Slots cannot be less than 5',
+        'number.max': 'Slots cannot be more than 15',
+        'any.required': 'Slots are required',
+      }),
+    hour: Joi.string().pattern(/^(?:0[8-9]|1[0-9]|2[0-2]):[0-5][0-9]$/).messages({
+      'string.pattern.base': 'Hour format must be HH:MM',
+      'any.required': 'Hour is required',
+    }),
   });
 
   const validationsClass = classUpdate.validate(req.body);
@@ -44,7 +51,7 @@ const validateCreation = (req, res, next) => {
       .min(1)
       .items(
         Joi.string()
-          .valid('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+          .valid('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
       )
       .required()
       .messages({
@@ -52,8 +59,8 @@ const validateCreation = (req, res, next) => {
         'array.items': 'Day must be an array of strings representing the days of the week',
         'any.required': 'Day is required',
       }),
-    hour: Joi.string().pattern(/^[0-9]{2}:[0-9]{2}$/).required().messages({
-      'string.pattern.base': 'Hour format must be HH:MM',
+    hour: Joi.string().pattern(/^(?:0[8-9]|1[0-9]|2[0-2]):[0-5][0-9]$/).required().messages({
+      'string.pattern.base': 'Gym is only open between 8:00 and 22:00',
       'any.required': 'Hour is required',
     }),
     activity: Joi.string().custom(isObjectId).messages({
@@ -62,10 +69,10 @@ const validateCreation = (req, res, next) => {
     trainer: Joi.string().custom(isObjectId).messages({
       invalid: 'The member id must be a valid ObjectId',
     }).required(),
-    slots: Joi.number().min(0).max(25).required()
+    slots: Joi.number().min(5).max(15).required()
       .messages({
-        'number.min': 'Slots cannot be negative',
-        'number.max': 'Slots cannot be more than 25',
+        'number.min': 'Slots cannot be less than 5',
+        'number.max': 'Slots cannot be more than 15',
         'any.required': 'Slots are required',
       }),
   });

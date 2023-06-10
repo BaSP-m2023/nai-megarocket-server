@@ -2,13 +2,16 @@ const Joi = require('joi');
 
 const validateSuperAdminsCreation = (req, res, next) => {
   const superAdminsValidation = Joi.object({
-    firstName: Joi.string().min(3).max(25).required()
+    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+      .max(25)
+      .required()
       .label('First Name')
       .messages({
+        'string.pattern.base': 'Name must have only letters',
         'any.required': 'Name is required',
         'string.empty': 'Name is required.',
       }),
-    email: Joi.string().min(8).max(25).regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/)
+    email: Joi.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/)
       .label('Email')
       .required()
       .messages({
@@ -36,10 +39,17 @@ const validateSuperAdminsCreation = (req, res, next) => {
   });
 };
 
-const validate = (req, res, next) => {
+const validateSuperAdminUpdate = (req, res, next) => {
   const superAdminsValidation = Joi.object({
-    firstName: Joi.string().min(3).max(25),
-    email: Joi.string().min(8).max(25).regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/)
+    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+      .max(25)
+      .required()
+      .messages({
+        'string.pattern.base': 'Name must have only letters',
+        'any.required': 'Name is required SOS UN BOLUDO',
+        'string.empty': 'Name is required SOS UN BOLUDO.',
+      }),
+    email: Joi.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/)
       .label('Email')
       .messages({
         'string.pattern.base': 'Invalid email address format, must finish in \'.com\'',
@@ -73,6 +83,6 @@ const validate = (req, res, next) => {
 };
 
 module.exports = {
-  validate,
+  validateSuperAdminUpdate,
   validateSuperAdminsCreation,
 };

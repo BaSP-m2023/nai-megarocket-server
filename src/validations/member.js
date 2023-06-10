@@ -1,38 +1,86 @@
 const Joi = require('joi');
 
-const isOnlyLetters = (value, helpers) => {
-  for (let i = 0; i < value.length; i += 1) {
-    const code = value.charCodeAt(i);
-    if (!(((code >= 65 && code <= 90)
-            || (code >= 97 && code <= 122)
-            || code === 32
-            || code === 164
-            || code === 165))
-    ) {
-      return helpers.error('error');
-    }
-  }
-  return value;
-};
-
 const validateMembersUpdate = (req, res, next) => {
   const membersUpdate = Joi.object({
-    firstName: Joi.string().min(3).max(25).custom(isOnlyLetters),
-    lastName: Joi.string().min(3).max(25).custom(isOnlyLetters),
-    dni: Joi.number().min(1000000).max(99999999),
-    phone: Joi.number(),
-    email: Joi.string().min(8).max(25).regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/),
-    password: Joi.string().min(8).max(20).regex(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])/),
-    city: Joi.string().min(4).max(25),
-    birthDay: Joi.date().max('now'),
-    postalCode: Joi.number().integer().min(1000).max(99999),
+    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+      .max(25)
+      .messages({
+        'string.pattern.base': 'Name must have only letters',
+        'any.required': 'Name is required',
+        'string.empty': 'Name is required.',
+      }),
+    lastName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+      .max(25)
+      .messages({
+        'string.pattern.base': 'Last name must have only letters',
+        'any.required': 'Last name is required',
+        'string.empty': 'Last name is required.',
+      }),
+    dni: Joi
+      .number()
+      .integer()
+      .greater(99999)
+      .less(1000000000)
+      .messages({
+        'number.base': 'the DNI must be a number',
+        'number.greater': 'DNI must have at least 7 numbers',
+        'number.less': 'DNI cannot have more than 9 numbers',
+      }),
+    phone: Joi
+      .number()
+      .integer()
+      .messages({
+        'number.base': 'Phone must be a number',
+        'number.min': 'Phone must have exact 10 numbers',
+      }),
+    email: Joi
+      .string()
+      .trim()
+      .regex(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/)
+      .messages({
+        'string.pattern.base': 'The email is invalid',
+      }),
+    password: Joi.string().min(8).max(16).regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%^&*<>_?\-¿¡])/)
+      .label('Password')
+      .messages({
+        'string.pattern.base': 'Password must have at least 1 special character ( <, >, @, #, ^, %, *, _, -, ?, ¿, ¡, ! ) 1 uppercase letter, 1 lowercase letter and 1 number',
+        'any.required': 'Password is required.',
+        'string.empty': 'Password is required.',
+      }),
+    city: Joi
+      .string()
+      .trim()
+      .regex(/^[A-Za-z]+\s?[A-Za-z]+$/)
+      .min(5)
+      .max(25)
+      .messages({
+        'string.min': 'City must have between 5 and 25 characters',
+        'string.max': 'City must have between 5 and 25 characters',
+      }),
+    birthDay: Joi.date().max(new Date(new Date()
+      .setFullYear(new Date().getFullYear() - 18)).toISOString())
+      .messages({
+        'date.max': 'You must have at least 18 years',
+        'any.required': 'Date cannot be empty',
+      }),
+    postalCode: Joi.number().integer().min(1000).max(99999)
+      .messages({
+        'number.max': 'Postal code cannot have more than 5 numbers',
+        'number.min': 'Postal code cannot have less than 4 numbers',
+        'any.required': 'Date cannot be empty',
+      }),
     isActive: Joi.boolean(),
-    membership: Joi.string(),
+    membership: Joi.string().valid('Black', 'Gold', 'Only Classes', 'Classic').messages({
+      'string.valid': 'Please enter a valid membership: Black, Gold, Only Classes Classic',
+      'number.min': 'Postal code cannot have less than 4 numbers',
+      'any.required': 'Date cannot be empty',
+    }),
   });
 
   if (Object.entries(req.body).length === 0) {
     return res.status(400).json({
       message: 'The body cannot be empty',
+      data: undefined,
       error: true,
     });
   }
@@ -47,33 +95,87 @@ const validateMembersUpdate = (req, res, next) => {
 
 const validateMembersCreation = (req, res, next) => {
   const membersValidation = Joi.object({
-    firstName: Joi.string().min(3).max(25).required()
-      .label('First Name'),
-    lastName: Joi.string().min(3).max(25).required()
-      .label('Last Name'),
-    dni: Joi.number().integer().min(1000000).max(99999999)
-      .label('D.N.I')
-      .required(),
-    phone: Joi.number().integer().label('Phone')
-      .required(),
-    email: Joi.string().min(8).max(25).regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/)
-      .label('Email')
-      .required(),
-    password: Joi.string().min(8).max(20).regex(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])/)
-      .label('Password')
+    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+      .max(25)
+      .messages({
+        'string.pattern.base': 'Name must have only letters',
+        'any.required': 'Name is required',
+        'string.empty': 'Name is required.',
+      }),
+    lastName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
+      .max(25)
+      .messages({
+        'string.pattern.base': 'Last name must have only letters',
+        'any.required': 'Last name is required',
+        'string.empty': 'Last name is required.',
+      }),
+    dni: Joi
+      .number()
+      .integer()
+      .greater(99999)
+      .less(1000000000)
       .required()
       .messages({
-        'string.pattern.base': 'Password must have at least 1 number, 1 uppercase letter, and 1 lowercase letter',
+        'number.base': 'the DNI must be a number',
+        'number.greater': 'DNI must have at least 7 numbers',
+        'number.less': 'DNI cannot have more than 9 numbers',
       }),
-    city: Joi.string().min(4).max(25).label('City')
-      .required(),
-    birthDay: Joi.date().iso().max(new Date().toISOString()).label('Birth Day')
-      .required(),
+    phone: Joi
+      .number()
+      .integer()
+      .required()
+      .messages({
+        'number.base': 'Phone must be a number',
+        'number.min': 'Phone must have exact 10 numbers',
+      }),
+    email: Joi
+      .string()
+      .trim()
+      .regex(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/)
+      .required()
+      .messages({
+        'string.pattern.base': 'The email is invalid',
+      }),
+    password: Joi.string().min(8).max(16).regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%^&*<>_?\-¿¡])/)
+      .required()
+      .messages({
+        'string.pattern.base': 'Password must have at least 1 special character ( <, >, @, #, ^, %, *, _, -, ?, ¿, ¡, ! ) 1 uppercase letter, 1 lowercase letter and 1 number',
+        'any.required': 'Password is required.',
+        'string.empty': 'Password is required.',
+      }),
+    city: Joi
+      .string()
+      .trim()
+      .regex(/^[A-Za-z]+\s?[A-Za-z]+$/)
+      .min(5)
+      .max(25)
+      .required()
+      .messages({
+        'string.min': 'City must have between 5 and 25 characters',
+        'string.max': 'City must have between 5 and 25 characters',
+      }),
+    birthDay: Joi.date().max(new Date(new Date()
+      .setFullYear(new Date().getFullYear() - 18)).toISOString())
+      .required()
+      .messages({
+        'date.max': 'You must have at least 18 years',
+        'any.required': 'Date cannot be empty',
+      }),
     postalCode: Joi.number().integer().min(1000).max(99999)
-      .label('Postal Code')
-      .required(),
-    isActive: Joi.boolean().label('Is active').required(),
-    membership: Joi.string().label('Membership').required(),
+      .required()
+      .messages({
+        'number.max': 'Postal code cannot have more than 5 numbers',
+        'number.min': 'Postal code cannot have less than 4 numbers',
+        'any.required': 'Date cannot be empty',
+      }),
+    isActive: Joi.boolean(),
+    membership: Joi.string().valid('Black', 'Gold', 'Only Classes', 'Classic')
+      .required()
+      .messages({
+        'string.valid': 'Please enter a valid membership: Black, Gold, Only Classes Classic',
+        'number.min': 'Postal code cannot have less than 4 numbers',
+        'any.required': 'Date cannot be empty',
+      }),
   });
 
   const validation = membersValidation.validate(req.body);
