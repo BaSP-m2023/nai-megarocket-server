@@ -29,19 +29,17 @@ const membersSchema = new Schema({
   },
   email: {
     type: String,
-    minLength: 8,
-    maxLength: 25,
     required: true,
   },
   password: {
     type: String,
     minLength: 8,
-    maxLength: 20,
+    maxLength: 16,
     required: true,
   },
   city: {
     type: String,
-    minLength: 4,
+    minLength: 5,
     maxLength: 25,
     required: true,
   },
@@ -57,12 +55,12 @@ const membersSchema = new Schema({
   },
   isActive: {
     type: Boolean,
-    required: true,
+    default: true,
   },
   membership: {
     type: String,
     required: true,
-    enum: ['Black', 'Classic', 'Only Classes'],
+    enum: ['Black', 'Classic', 'Gold', 'Only Classes'],
   },
 });
 

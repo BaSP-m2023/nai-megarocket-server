@@ -18,7 +18,7 @@ const trainersSchema = new Schema({
   dni: {
     type: Number,
     required: true,
-    minLength: 6,
+    minLength: 7,
     maxLength: 9,
     unique: true,
   },
@@ -51,7 +51,7 @@ const trainersSchema = new Schema({
     type: Number,
     required: true,
   },
-  is_active: {
+  isActive: {
     type: Boolean,
     default: true,
   },

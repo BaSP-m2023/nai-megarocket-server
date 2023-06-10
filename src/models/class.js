@@ -28,6 +28,8 @@ const classSchema = new Schema(
     slots: {
       type: Number,
       require: true,
+      min: 5,
+      max: 15,
     },
   },
   {
