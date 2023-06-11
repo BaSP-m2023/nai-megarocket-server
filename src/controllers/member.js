@@ -1,33 +1,10 @@
 const mongoose = require('mongoose');
 const Member = require('../models/member');
 
-const updateMember = (req, res) => {
-  const { id } = req.params;
-  const {
-    firstName,
-    lastName,
-    dni,
-    phone,
-    email,
-    password,
-    city,
-    birthDay,
-    postalCode,
-    isActive,
-    membership,
-  } = req.body;
-
-  if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({
-      message: 'Invalid ID',
-      data: id,
-      error: true,
-    });
-  }
-
-  return Member.findByIdAndUpdate(
-    id,
-    {
+const updateMember = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
       firstName,
       lastName,
       dni,
@@ -39,65 +16,70 @@ const updateMember = (req, res) => {
       postalCode,
       isActive,
       membership,
-    },
-    { new: true },
-  )
-    .then((result) => {
-      if (!result) {
-        return res.status(404).json({
-          message: `The member with _id: ${id} was not found`,
-          data: undefined,
-          error: true,
-        });
-      }
-      const membersObj = result.toObject();
-      const bodyObj = req.body;
-      const isEqual = Object.entries(bodyObj).every(([key]) => {
-        if (key !== '_id' && key !== '__v') {
-          return (bodyObj[key] === membersObj[key]);
-        }
-        return true;
+    } = req.body;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        message: 'Invalid ID',
+        data: id,
+        error: true,
       });
-      if (isEqual) {
-        return res.status(404).json({
-          message: 'There is nothing to change',
-          data: undefined,
-          error: true,
-        });
-      }
-      return Member.findOne({ dni })
-        .then((repeatedDni) => {
-          if (repeatedDni) {
-            // eslint-disable-next-line
-                  if (repeatedDni.toObject()._id.toString() !== id){
-              return res.status(400).json({
-                message: 'Member with this DNI is already register',
-                data: undefined,
-                error: true,
-              });
-            }
-          }
-          return Member.findOne({ email })
-            .then((repeatedMail) => {
-              if (repeatedMail) {
-                // eslint-disable-next-line
-                    if (repeatedMail.toObject()._id.toString() !== id){
-                  return res.status(400).json({
-                    message: 'Member with this Email is already register',
-                    data: undefined,
-                    error: true,
-                  });
-                }
-              }
-              return res.status(200).json({
-                message: `The member ${result.firstName} ${result.lastName} was successfully updated.`,
-                data: result,
-                error: false,
-              });
-            });
-        });
-    })
-    .catch((error) => res.status(500).json(error));
+    }
+
+    const result = await Member.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        dni,
+        phone,
+        email,
+        password,
+        city,
+        birthDay,
+        postalCode,
+        isActive,
+        membership,
+      },
+      { new: true },
+    );
+
+    if (!result) {
+      return res.status(404).json({
+        message: `The member with _id: ${id} was not found`,
+        data: undefined,
+        error: true,
+      });
+    }
+
+    const repeatedDni = await Member.findOne({ dni });
+    // eslint-disable-next-line no-underscore-dangle
+    if (repeatedDni && repeatedDni.toObject()._id.toString() !== id) {
+      return res.status(400).json({
+        message: 'Member with this DNI is already register',
+        data: undefined,
+        error: true,
+      });
+    }
+
+    const repeatedMail = await Member.findOne({ email });
+    // eslint-disable-next-line no-underscore-dangle
+    if (repeatedMail && repeatedMail.toObject()._id.toString() !== id) {
+      return res.status(400).json({
+        message: 'Member with this Email is already register',
+        data: undefined,
+        error: true,
+      });
+    }
+
+    return res.status(200).json({
+      message: `The member ${result.firstName} ${result.lastName} was successfully updated.`,
+      data: result,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 };
 
 const deleteMember = (req, res) => {
@@ -181,7 +163,16 @@ const createMembers = (req, res) => {
         });
       }
       const {
-        firstName, lastName, dni, phone, email, password, city, birthDay, postalCode, isActive,
+        firstName,
+        lastName,
+        dni,
+        phone,
+        email,
+        password,
+        city,
+        birthDay,
+        postalCode,
+        isActive,
         membership,
       } = req.body;
       return Member.create({
@@ -196,12 +187,11 @@ const createMembers = (req, res) => {
         postalCode,
         isActive,
         membership,
-      })
-        .then((result) => res.status(201).json({
-          message: 'Member Created!',
-          data: result,
-          error: false,
-        }));
+      }).then((result) => res.status(201).json({
+        message: 'Member Created!',
+        data: result,
+        error: false,
+      }));
     })
     .catch((error) => res.status(500).json({
       message: 'Error!',

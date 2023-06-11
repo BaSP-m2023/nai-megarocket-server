@@ -164,9 +164,9 @@ describe('POST /api/super-admins', () => {
 });
 
 describe('PUT /api/super-admins', () => {
-  test('Sending same data as in the DB, should return a status 404 and a message', async () => {
+  test('Sending same data as in the DB, should return a status 400 and a message', async () => {
     const response = await request(app).put(`/api/super-admins/${superAdminSeed[0]._id}`).send(mockSuperAdminSameInfo);
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(400);
     expect(response.body.error).toBeTruthy();
     expect(response.body.message).toBeDefined();
     expect(response.body.data).toBeUndefined();

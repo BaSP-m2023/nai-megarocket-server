@@ -13,21 +13,21 @@ const classSchema = new Schema(
     },
     hour: {
       type: String,
-      require: true,
+      required: true,
     },
     trainer: {
       type: Schema.Types.ObjectId,
-      ref: 'Trainers',
-      require: true,
+      ref: 'Trainer',
+      required: true,
     },
     activity: {
       type: Schema.Types.ObjectId,
       ref: 'Activity',
-      require: true,
+      required: true,
     },
     slots: {
       type: Number,
-      require: true,
+      required: true,
       min: 5,
       max: 15,
     },

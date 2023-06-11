@@ -6,7 +6,7 @@ const getAllTrainers = (req, res) => {
     .then((trainers) => {
       if (trainers.length === 0) {
         return res.status(404).json({
-          message: 'There is no trainers',
+          message: 'Trainers not found',
           error: true,
         });
       }
@@ -104,25 +104,21 @@ const updateTrainers = async (req, res) => {
 
     if (!trainerToUpdate) {
       return res.status(404).json({
-        message: 'Trainer not found.',
+        message: 'Trainer was not found.',
         data: undefined,
         error: true,
       });
     }
 
-    const trainerProps = Object.keys(trainerToUpdate.toObject()).slice(1, -3);
-    let changes = false;
-    trainerProps.forEach((prop) => {
-      if (req.body[prop] && req.body[prop] !== trainerToUpdate[prop]) {
-        changes = true;
-      }
+    const sameTrainer = await Trainer.findOne({
+      firstName, lastName, dni, phone, email, city, password, salary, isActive,
     });
 
-    if (!changes) {
+    if (sameTrainer) {
       return res.status(400).json({
         message: 'There is nothing to change',
-        data: trainerToUpdate,
-        error: false,
+        data: undefined,
+        error: true,
       });
     }
 
@@ -137,10 +133,10 @@ const updateTrainers = async (req, res) => {
       ],
     });
 
-    // eslint-disable-next-line no-underscore-dangle
     if (existingTrainer) {
       return res.status(400).json({
         message: 'This trainer already exists.',
+        data: undefined,
         success: false,
       });
     }
@@ -164,6 +160,7 @@ const updateTrainers = async (req, res) => {
     if (!updatedTrainer) {
       return res.status(404).json({
         message: `There is no trainer with id:${id}`,
+        data: undefined,
         success: false,
       });
     }

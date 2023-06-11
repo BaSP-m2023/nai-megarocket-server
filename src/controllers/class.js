@@ -2,66 +2,68 @@ const mongoose = require('mongoose');
 const Class = require('../models/class');
 
 const updateClass = async (req, res) => {
-  const { id } = req.params;
-  const {
-    day, hour, trainer, activity, slots,
-  } = req.body;
-
-  let updatedClass;
-
-  Class.findByIdAndUpdate(
-    id,
-    {
+  try {
+    const { id } = req.params;
+    const {
       day, hour, trainer, activity, slots,
-    },
-    { new: true },
-  )
-    .then((classObj) => {
-      updatedClass = classObj;
+    } = req.body;
 
-      if (!classObj) {
-        return res.status(404).json({
-          message: `ID: ${id} not found`,
-          error: true,
-        });
-      }
+    const classToUpdate = await Class.findById(id);
 
-      const bodyObj = req.body;
-      const isEqual = Object.entries(bodyObj).every(([key]) => {
-        if (key !== '_id' && key !== '__v') {
-          return bodyObj[key] === classObj[key];
-        }
-        return true;
+    if (!classToUpdate) {
+      return res.status(404).json({
+        message: 'Class not found.',
+        data: undefined,
+        error: true,
       });
+    }
 
-      if (isEqual) {
-        return res.status(404).json({
-          message: 'There is nothing to change',
-          data: undefined,
-          error: true,
-        });
-      }
+    const sameClass = await Class.findOne({
+      day, hour, trainer, activity, slots,
+    });
 
-      return Class.findOne({ day, trainer, _id: { $ne: id } });
-    })
-    .then((repeatClass) => {
-      if (repeatClass) {
-        return res.status(400).json({
-          message: 'Trainer has another class scheduled.',
-          error: true,
-        });
-      }
-
-      return res.status(200).json({
-        message: 'Class updated correctly',
-        error: false,
-        data: updatedClass,
+    if (sameClass) {
+      return res.status(400).json({
+        message: 'There is nothing to change',
+        data: undefined,
+        error: true,
       });
-    })
-    .catch((error) => res.status(400).json(error));
+    }
+
+    const repeatClass = await Class.findOne({
+      day, hour, trainer, _id: { $ne: id },
+    });
+
+    if (repeatClass) {
+      return res.status(400).json({
+        message: 'This trainer already has another class scheduled',
+        data: undefined,
+        error: true,
+      });
+    }
+
+    const updatedClass = await Class.findByIdAndUpdate(
+      id,
+      {
+        day, hour, trainer, activity, slots,
+      },
+      { new: true },
+    );
+
+    return res.status(200).json({
+      message: 'Class updated correctly',
+      error: false,
+      data: updatedClass,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'An error occurred',
+      error,
+    });
+  }
 };
 
-const deleteClass = (req, res) => {
+const deleteClass = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return res.status(400).json({
@@ -70,47 +72,50 @@ const deleteClass = (req, res) => {
       error: true,
     });
   }
-  return Class.findByIdAndDelete(id)
-    .then((result) => {
-      if (!result) {
-        res.status(404).json({
-          message: `Class with ID (${id}) was not found`,
-          data: undefined,
-          error: true,
-        });
-      } else {
-        res.status(200).json({
-          message: `Class ${result.name} deleted`,
-          data: result,
-          error: false,
-        });
-      }
-    })
-    .catch((error) => res.status(500).json(error));
+
+  try {
+    const result = await Class.findByIdAndDelete(id);
+    if (!result) {
+      return res.status(404).json({
+        message: `Class with ID (${id}) was not found`,
+        data: undefined,
+        error: true,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Class ${result.activity.name} deleted`,
+      data: result,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 };
 
-const getAllClasses = (req, res) => {
-  Class.find()
-    .populate('trainer')
-    .populate('activity')
-    .then((classes) => {
-      if (classes.length > 0) {
-        res.status(200).json({
-          message: 'Complete list of classes.',
-          data: classes,
-          error: false,
-        });
-      } else {
-        res.status(404).json({
-          message: 'List of classes empty.',
-          error: true,
-        });
-      }
-    })
-    .catch((error) => res.status(500).json({
+const getAllClasses = async (req, res) => {
+  try {
+    const classes = await Class.find().populate('trainer').populate('activity');
+    if (classes) {
+      res.status(200).json({
+        message: 'Complete list of classes.',
+        data: classes,
+        error: false,
+      });
+    } else {
+      res.status(404).json({
+        message: 'List of classes empty.',
+        data: undefined,
+        error: true,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
       message: 'Cannot get all classes, an error has occurred',
-      error,
-    }));
+      data: undefined,
+      error: true,
+    });
+  }
 };
 
 const getClassId = (req, res) => {

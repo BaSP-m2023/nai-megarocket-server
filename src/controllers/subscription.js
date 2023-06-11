@@ -2,14 +2,15 @@ const mongoose = require('mongoose');
 const Subscription = require('../models/subscription');
 
 const getAllSubscriptions = (req, res) => {
-  Subscription.find().populate({
-    path: 'classes',
-    select: 'activity day',
-    populate: {
-      path: 'activity',
-      select: 'name',
-    },
-  })
+  Subscription.find()
+    .populate({
+      path: 'classes',
+      select: 'activity day',
+      populate: {
+        path: 'activity',
+        select: 'name',
+      },
+    })
     .populate('member')
     .then((subscriptions) => {
       if (subscriptions.length === 0) {
@@ -40,14 +41,15 @@ const getSubscriptionById = (req, res) => {
       error: true,
     });
   }
-  return Subscription.findById(id).populate({
-    path: 'classes',
-    select: 'activity day',
-    populate: {
-      path: 'activity',
-      select: 'name',
-    },
-  })
+  return Subscription.findById(id)
+    .populate({
+      path: 'classes',
+      select: 'activity day',
+      populate: {
+        path: 'activity',
+        select: 'name',
+      },
+    })
     .populate('member')
     .then((subscription) => {
       if (!subscription) {
@@ -71,7 +73,11 @@ const getSubscriptionById = (req, res) => {
 
 const createSubscription = async (req, res) => {
   const { classes, member, date } = req.body;
-  const existingSubscription = await Subscription.findOne({ classes, member, date });
+  const existingSubscription = await Subscription.findOne({
+    classes,
+    member,
+    date,
+  });
   if (existingSubscription) {
     return res.status(400).json({
       message: 'Subscription already exists!',
@@ -94,9 +100,9 @@ const createSubscription = async (req, res) => {
     }));
 };
 
-const applyResponse = (res, status, msg, data, error) => {
+const applyResponse = (res, status, message, data, error) => {
   res.status(status).json({
-    msg,
+    message,
     data,
     error,
   });
@@ -111,15 +117,22 @@ const updateSubscription = (req, res) => {
   return Subscription.findById(id)
     .then((sub) => {
       if (!sub) {
-        return applyResponse(res, 404, `Subscription with id: ${id} not found`, undefined, true);
+        return applyResponse(
+          res,
+          404,
+          `Subscription with id: ${id} not found`,
+          undefined,
+          true,
+        );
       }
       const subObj = sub.toObject();
       const bodyObj = req.body;
       const areEquals = Object.entries(bodyObj).every(([key]) => {
         if (key !== 'date' && key !== '_id' && key !== '__v') {
-          return (bodyObj[key] === subObj[key].toString());
-        } if ((key === 'date' && key !== '_id' && key !== '__v')) {
-          return (bodyObj[key] === subObj[key].toISOString().substring(0, 10));
+          return bodyObj[key] === subObj[key].toString();
+        }
+        if (key === 'date' && key !== '_id' && key !== '__v') {
+          return bodyObj[key] === subObj[key].toISOString().substring(0, 10);
         }
         return true;
       });
@@ -129,7 +142,13 @@ const updateSubscription = (req, res) => {
       return Subscription.findOne({ classes, member, date })
         .then((subRepeated) => {
           if (subRepeated) {
-            return applyResponse(res, 400, `${member.firstName} ${member.lastName} is already subscribed to this class.`, subRepeated, true);
+            return applyResponse(
+              res,
+              400,
+              'This member is already subscribed to this class.',
+              subRepeated,
+              true,
+            );
           }
           return Subscription.findByIdAndUpdate(
             id,
@@ -139,14 +158,13 @@ const updateSubscription = (req, res) => {
               date,
             },
             { new: true },
-          )
-            .then((result) => applyResponse(
-              res,
-              200,
-              `Subscription with _id: ${id} was updated successfully`,
-              result,
-              false,
-            ));
+          ).then((result) => applyResponse(
+            res,
+            200,
+            `Subscription with _id: ${id} was updated successfully`,
+            result,
+            false,
+          ));
         })
         .catch((error) => applyResponse(res, 500, error.message, undefined, true));
     })
@@ -161,9 +179,21 @@ const deleteSubscription = (req, res) => {
   return Subscription.findByIdAndDelete(id)
     .then((result) => {
       if (!result) {
-        return applyResponse(res, 404, `Subscription with id: ${id} was not found`, undefined, true);
+        return applyResponse(
+          res,
+          404,
+          `Subscription with id: ${id} was not found`,
+          undefined,
+          true,
+        );
       }
-      return applyResponse(res, 200, `Subscription with id ${id} was deleted`, result, false);
+      return applyResponse(
+        res,
+        200,
+        `Subscription with id ${id} was deleted`,
+        result,
+        false,
+      );
     })
     .catch((error) => applyResponse(res, 500, error.message, undefined, true));
 };

@@ -64,14 +64,14 @@ describe('GET /api/subscriptions/:id', () => {
 describe('DELETE /api/subscriptions', () => {
   test('should return status 404 id not found', async () => {
     const response = await request(app).delete(`/api/subscriptions/${idValidNotFound}`).send();
-    expect(response.body.msg).toBeDefined();
+    expect(response.body.message).toBeDefined();
     expect(response.body.data).toBeUndefined();
     expect(response.status).toBe(404);
     expect(response.body.error).toBeTruthy();
   });
   test('should return status 400 id is not valid', async () => {
     const response = await request(app).delete(`/api/subscriptions/${idInvalid}`).send();
-    expect(response.body.msg).toBeDefined();
+    expect(response.body.message).toBeDefined();
     expect(response.body.data).toEqual(idInvalid);
     expect(response.status).toBe(400);
     expect(response.body.error).toBeTruthy();
@@ -82,7 +82,7 @@ describe('DELETE /api/subscriptions', () => {
     props.forEach((prop) => {
       expect(response.body.data).toHaveProperty(prop);
     });
-    expect(response.body.msg).toBeDefined();
+    expect(response.body.message).toBeDefined();
     expect(response.status).toBe(200);
     expect(response.body.error).toBeFalsy();
   });
@@ -156,7 +156,7 @@ describe('PUT /api/subscriptions', () => {
     const response = await request(app)
       .put(`/api/subscriptions/${subscriptionSeed[0]._id.toString()}`)
       .send(alreadyExists);
-    expect(response.body.msg).toBeDefined();
+    expect(response.body.message).toBeDefined();
     expect(response.status).toBe(400);
     expect(response.body.error).toBeTruthy();
   });
@@ -168,19 +168,19 @@ describe('PUT /api/subscriptions', () => {
     const response = await request(app)
       .put(`/api/subscriptions/${subscriptionSeed[3]._id.toString()}`)
       .send(identical);
-    expect(response.body.msg).toBeDefined();
+    expect(response.body.message).toBeDefined();
     expect(response.status).toBe(400);
     expect(response.body.error).toBeTruthy();
   });
   test('should return status 400 due to invalid id', async () => {
     const response = await request(app).put(`/api/subscriptions/${idInvalid}`).send(mockSubscription);
-    expect(response.body.msg).toBeDefined();
+    expect(response.body.message).toBeDefined();
     expect(response.status).toBe(400);
     expect(response.body.error).toBeTruthy();
   });
   test('should return status 404 subscription not found', async () => {
     const response = await request(app).put(`/api/subscriptions/${idValidNotFound}`).send(mockSubscription);
-    expect(response.body.msg).toBeDefined();
+    expect(response.body.message).toBeDefined();
     expect(response.body.data).toBeUndefined();
     expect(response.status).toBe(404);
     expect(response.body.error).toBeTruthy();
@@ -195,7 +195,7 @@ describe('PUT /api/subscriptions', () => {
   });
   test('should return status 200 subscription updated', async () => {
     const response = await request(app).put(`/api/subscriptions/${subscriptionSeed[0]._id.toString()}`).send(mockSubscription);
-    expect(response.body.msg)
+    expect(response.body.message)
       .toBeDefined();
     expect(response.status).toBe(200);
   });
