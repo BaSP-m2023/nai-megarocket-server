@@ -6,13 +6,13 @@ const getAllAdmins = (req, res) => {
     .then((adminsList) => {
       if (adminsList.length === 0) {
         return res.status(404).json({
-          message: 'There are not admins yet',
+          message: 'Admins was not found',
           data: adminsList,
           error: true,
         });
       }
       return res.status(200).json({
-        message: 'Admins list obtained',
+        message: 'Admins list',
         data: adminsList,
         error: false,
       });
@@ -37,7 +37,7 @@ const getAdminById = (req, res) => {
     .then((adminToSend) => {
       if (!adminToSend) {
         return res.status(404).json({
-          message: `Admin with id (${id}) was not found`,
+          message: 'Admin was not found',
           data: undefined,
           error: true,
         });
@@ -68,7 +68,7 @@ const createAdmin = async (req, res) => {
   const alreadyExists = await Admin.findOne({ $or: [{ dni }, { email }] });
   if (alreadyExists) {
     return res.status(400).json({
-      message: 'It already exists another admin with that Dni or Email',
+      message: 'This admin already exists',
       data: req.body,
       error: true,
     });
@@ -83,7 +83,7 @@ const createAdmin = async (req, res) => {
     password,
   })
     .then((adminCreated) => res.status(201).json({
-      message: 'Admin created',
+      message: 'Admin was succesfully created',
       data: adminCreated,
       error: false,
     }))
@@ -118,7 +118,7 @@ const updateAdmin = async (req, res) => {
 
   if (!adminToUpdate) {
     return res.status(404).json({
-      message: `Admin with the id (${id}) was not found.`,
+      message: 'Admin was not found',
       data: undefined,
       error: true,
     });
@@ -153,7 +153,7 @@ const updateAdmin = async (req, res) => {
 
   if (anAdminAlreadyHas) {
     return res.status(400).json({
-      message: 'There is another admin with that data.',
+      message: 'This admin already exists',
       data: req.body,
       error: true,
     });
@@ -173,7 +173,7 @@ const updateAdmin = async (req, res) => {
     { new: true },
   )
     .then((adminUpdated) => res.status(200).json({
-      message: 'Admin updated',
+      message: 'Admin was succesfully updated',
       data: adminUpdated,
       error: false,
     }))
@@ -197,13 +197,13 @@ const deleteAdmin = (req, res) => {
     .then((adminDeleted) => {
       if (!adminDeleted) {
         return res.status(404).json({
-          message: `Admin with ID (${id}) was not found`,
+          message: 'Admin was not found',
           data: undefined,
           error: true,
         });
       }
       return res.status(200).json({
-        message: `Admin ${adminDeleted.firstName} ${adminDeleted.lastName} is deleted`,
+        message: `Admin ${adminDeleted.firstName} ${adminDeleted.lastName} was succesfully deleted`,
         data: adminDeleted,
         error: false,
       });

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const validateCreation = (req, res, next) => {
   const trainerValidation = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .required()
       .messages({
@@ -62,7 +62,12 @@ const validateCreation = (req, res, next) => {
         'any.required': 'Password is required.',
         'string.empty': 'Password is required.',
       }),
-    salary: Joi.number().required(),
+    salary: Joi.number().min(10).max(100).required()
+      .messages({
+        'any.required': 'Salary is required.',
+        'number.min': 'Salary can not be less than 10',
+        'number.max': 'Salary can not be more than 100',
+      }),
     isActive: Joi.boolean(),
   });
 
@@ -70,7 +75,7 @@ const validateCreation = (req, res, next) => {
 
   if (!validation.error) return next();
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });
@@ -78,14 +83,14 @@ const validateCreation = (req, res, next) => {
 
 const validateUpdate = (req, res, next) => {
   const trainerValidation = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .messages({
         'string.pattern.base': 'Name must have only letters',
         'any.required': 'Name is required',
         'string.empty': 'Name is required.',
       }),
-    lastName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    lastName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .messages({
         'string.pattern.base': 'Last name must have only letters',
@@ -133,7 +138,11 @@ const validateUpdate = (req, res, next) => {
         'any.required': 'Password is required.',
         'string.empty': 'Password is required.',
       }),
-    salary: Joi.number(),
+    salary: Joi.number().min(10).max(100).messages({
+      'any.required': 'Salary is required.',
+      'number.min': 'Salary can not be less than 10',
+      'number.max': 'Salary can not be more than 100',
+    }),
     isActive: Joi.boolean(),
   });
 
@@ -148,7 +157,7 @@ const validateUpdate = (req, res, next) => {
   }
   if (validation.error) {
     return res.status(400).json({
-      message: `There was an error: ${validation.error}`,
+      message: `${validation.error}`,
       data: undefined,
       error: true,
     });

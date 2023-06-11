@@ -23,7 +23,7 @@ const getActivitiesById = (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({
-      message: 'This _id has invalid format',
+      message: 'This id has invalid format',
       error: true,
     });
   }
@@ -31,7 +31,7 @@ const getActivitiesById = (req, res) => {
     .then((activity) => {
       if (activity == null) {
         return res.status(404).json({
-          message: `Activity not found with this _id: ${id}`,
+          message: 'Activity was not found',
           data: activity,
           error: true,
         });
@@ -55,14 +55,14 @@ const createActivities = async (req, res) => {
       isActive,
     })
       .then((result) => res.status(201).json({
-        message: 'New activity added correctly',
+        message: 'Activity was succesfully created',
         data: result,
         error: false,
       }))
       .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
   }
   return res.status(400).json({
-    message: 'Activity with that name already exists',
+    message: 'This activity already exists',
     error: true,
   });
 };
@@ -104,21 +104,21 @@ const updateActivities = async (req, res) => {
 
       if (!updatedActivity) {
         return res.status(404).json({
-          message: `Activity with _id:${id} was not found`,
+          message: 'Activity was not found',
           data: undefined,
           error: true,
         });
       }
 
       return res.status(201).json({
-        message: 'Activity updated correctly',
+        message: 'Activity was succesfully updated',
         data: updatedActivity,
         error: false,
       });
     }
 
     return res.status(400).json({
-      message: 'Activity with that name already exists',
+      message: 'This activity already exists',
       error: true,
     });
   } catch (error) {
@@ -141,13 +141,13 @@ const deleteActivities = (req, res) => {
     .then((activity) => {
       if (!activity) {
         return res.status(404).json({
-          message: `There is no activity with id:${id}`,
+          message: 'Activity was not found',
           data: undefined,
           error: true,
         });
       }
       return res.status(200).json({
-        message: `Activity ${activity.name} deleted`,
+        message: `Activity ${activity.name} was succesfully deleted`,
         data: activity,
         error: false,
       });

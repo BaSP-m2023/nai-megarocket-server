@@ -10,6 +10,12 @@ const mockSubscription = {
   date: new Date(2014, 5, 14),
 };
 
+const identical = {
+  classes: subscriptionSeed[3].classes.toString(),
+  member: subscriptionSeed[3].member.toString(),
+  date: subscriptionSeed[3].date,
+};
+
 const idInvalid = '6465113fb6';
 const idValidNotFound = '6465100fb6b5507c22ad8dcd';
 const props = ['classes', 'member', 'date'];
@@ -161,10 +167,6 @@ describe('PUT /api/subscriptions', () => {
     expect(response.body.error).toBeTruthy();
   });
   test('should return status 400 if body request is identical to db data', async () => {
-    const identical = {
-      classes: subscriptionSeed[3].classes.toString(),
-      member: subscriptionSeed[3].member.toString(),
-    };
     const response = await request(app)
       .put(`/api/subscriptions/${subscriptionSeed[3]._id.toString()}`)
       .send(identical);

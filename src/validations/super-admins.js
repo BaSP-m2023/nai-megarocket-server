@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const validateSuperAdminsCreation = (req, res, next) => {
   const superAdminsValidation = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .required()
       .label('First Name')
@@ -33,7 +33,7 @@ const validateSuperAdminsCreation = (req, res, next) => {
 
   if (!validation.error) return next();
   return res.status(400).json({
-    message: `Error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });
@@ -41,7 +41,7 @@ const validateSuperAdminsCreation = (req, res, next) => {
 
 const validateSuperAdminUpdate = (req, res, next) => {
   const superAdminsValidation = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .required()
       .messages({
@@ -78,7 +78,7 @@ const validateSuperAdminUpdate = (req, res, next) => {
     return next();
   }
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
   });
 };
 

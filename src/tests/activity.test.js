@@ -88,7 +88,7 @@ describe('GET BY ID /api/activities/:id', () => {
     const idNotValid = '12345';
     const response = await request(app).get(`/api/activities/${idNotValid}`).send();
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('This _id has invalid format');
+    expect(response.body.message).toMatch('This id has invalid format');
     expect(response.body.error).toBeTruthy();
   });
   test('The status must be 404, if the url is wrong', async () => {
@@ -117,7 +117,7 @@ describe('POST /api/activities', () => {
   test('If name is already existing, status must be 409', async () => {
     const response = await request(app).post('/api/activities').send(mockActivityExistingName);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('Activity with that name already exists');
+    expect(response.body.message).toMatch('This activity already exists');
     expect(response.body.error).toBeTruthy();
   });
   test('If name is not defined, status must be 400, name is required', async () => {

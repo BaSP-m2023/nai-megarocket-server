@@ -26,6 +26,28 @@ const updateMember = async (req, res) => {
       });
     }
 
+    const sameMember = await Member.findOne({
+      firstName,
+      lastName,
+      dni,
+      phone,
+      email,
+      password,
+      city,
+      birthDay,
+      postalCode,
+      isActive,
+      membership,
+    });
+
+    if (sameMember) {
+      return res.status(400).json({
+        message: 'There is nothing to change',
+        data: undefined,
+        error: true,
+      });
+    }
+
     const result = await Member.findByIdAndUpdate(
       id,
       {
@@ -46,7 +68,7 @@ const updateMember = async (req, res) => {
 
     if (!result) {
       return res.status(404).json({
-        message: `The member with _id: ${id} was not found`,
+        message: 'The member was not found',
         data: undefined,
         error: true,
       });
@@ -86,7 +108,7 @@ const deleteMember = (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return res.status(400).json({
-      message: 'This _id has invalid format',
+      message: 'This id has invalid format',
       error: true,
     });
   }
@@ -94,13 +116,13 @@ const deleteMember = (req, res) => {
     .then((result) => {
       if (!result) {
         return res.status(404).json({
-          message: `The member with _id: ${id} was not found`,
+          message: 'The member was not found',
           data: undefined,
           error: true,
         });
       }
       return res.status(200).json({
-        message: `Member ${result.firstName} ${result.lastName} deleted`,
+        message: `Member ${result.firstName} ${result.lastName} was succesfully deleted`,
         data: result,
         error: false,
       });
@@ -123,7 +145,7 @@ const getAllMembers = (req, res) => {
         });
       } else {
         res.status(404).json({
-          message: 'No Members on the list, please create one.',
+          message: 'Members not found',
           error: true,
         });
       }
@@ -144,7 +166,7 @@ const getMembersById = (req, res) => {
         });
       } else {
         res.status(404).json({
-          message: `Member not found with id: ${id}`,
+          message: 'Member was not found',
           error: true,
         });
       }
@@ -188,7 +210,7 @@ const createMembers = (req, res) => {
         isActive,
         membership,
       }).then((result) => res.status(201).json({
-        message: 'Member Created!',
+        message: 'Member was succesfully created',
         data: result,
         error: false,
       }));

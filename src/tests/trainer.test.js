@@ -17,7 +17,7 @@ const mockTrainer = {
   email: 'aaddan.pereza@example.com',
   city: 'Buenos',
   password: 'contraseñA12!',
-  salary: 25000,
+  salary: 100,
   isActive: true,
 };
 
@@ -29,7 +29,7 @@ const mockRepeatedEmail = {
   email: 'asdan.pereza@example.com',
   city: 'Buenos',
   password: 'contraseñA12!',
-  salary: 25000,
+  salary: 100,
   isActive: true,
 };
 
@@ -41,7 +41,7 @@ const mockRepeatedDni = {
   email: 'aereza@example.com',
   city: 'Buenos',
   password: 'contraseñA12!',
-  salary: 25000,
+  salary: 100,
   isActive: true,
 };
 

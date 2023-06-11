@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const validateUpdate = (req, res, next) => {
   const adminValidation = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .messages({
         'string.pattern.base': 'Name must have only letters',
@@ -43,7 +43,7 @@ const validateUpdate = (req, res, next) => {
     city: Joi
       .string()
       .trim()
-      .alphanum()
+      .regex(/^[A-Za-z]+\s?[A-Za-z]+$/)
       .min(5)
       .max(25)
       .messages({
@@ -62,7 +62,7 @@ const validateUpdate = (req, res, next) => {
 
   if (!validation.error) return next();
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });
@@ -70,7 +70,7 @@ const validateUpdate = (req, res, next) => {
 
 const validateCreate = (req, res, next) => {
   const adminValidation = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .required()
       .messages({
@@ -78,7 +78,7 @@ const validateCreate = (req, res, next) => {
         'any.required': 'Name is required',
         'string.empty': 'Name is required.',
       }),
-    lastName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    lastName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .required()
       .messages({
@@ -118,7 +118,7 @@ const validateCreate = (req, res, next) => {
     city: Joi
       .string()
       .trim()
-      .alphanum()
+      .regex(/^[A-Za-z]+\s?[A-Za-z]+$/)
       .min(5)
       .max(25)
       .required()
@@ -139,7 +139,7 @@ const validateCreate = (req, res, next) => {
 
   if (!validation.error) return next();
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });

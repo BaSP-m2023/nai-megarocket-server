@@ -168,7 +168,7 @@ describe('GET BY ID /api/members/:id', () => {
     const response = await request(app).get(`/api/members/${incorrectId}`).send();
     expect(response).toBeTruthy();
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe(`Member not found with id: ${incorrectId}`);
+    expect(response.body.message).toBe('Member was not found');
     expect(response.body.error).toBeTruthy();
   });
   test('If wrong URL status 404', async () => {

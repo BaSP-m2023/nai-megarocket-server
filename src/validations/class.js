@@ -34,7 +34,7 @@ const validationUpdateClass = (req, res, next) => {
         'any.required': 'Slots are required',
       }),
     hour: Joi.string().pattern(/^(?:0[8-9]|1[0-9]|2[0-2]):[0-5][0-9]$/).messages({
-      'string.pattern.base': 'Hour format must be HH:MM',
+      'string.pattern.base': 'Gym is only open between 8:00 and 22:00',
       'any.required': 'Hour is required',
     }),
   });
@@ -42,7 +42,7 @@ const validationUpdateClass = (req, res, next) => {
   const validationsClass = classUpdate.validate(req.body);
   if (!validationsClass.error) return next();
   return res.status(400).json({
-    message: `There was an error: ${validationsClass.error.details[0].message}`,
+    message: `${validationsClass.error.details[0].message}`,
   });
 };
 const validateCreation = (req, res, next) => {
@@ -84,7 +84,7 @@ const validateCreation = (req, res, next) => {
   }
 
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });

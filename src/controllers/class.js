@@ -12,7 +12,7 @@ const updateClass = async (req, res) => {
 
     if (!classToUpdate) {
       return res.status(404).json({
-        message: 'Class not found.',
+        message: 'Class was not found.',
         data: undefined,
         error: true,
       });
@@ -31,15 +31,19 @@ const updateClass = async (req, res) => {
     }
 
     const repeatClass = await Class.findOne({
-      day, hour, trainer, _id: { $ne: id },
+      hour, trainer, _id: { $ne: id },
     });
 
     if (repeatClass) {
-      return res.status(400).json({
-        message: 'This trainer already has another class scheduled',
-        data: undefined,
-        error: true,
-      });
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < repeatClass.day.length; i++) {
+        if (day.includes(repeatClass.day[i])) {
+          return res.status(400).json({
+            message: 'Trainer has another class scheduled.',
+            error: true,
+          });
+        }
+      }
     }
 
     const updatedClass = await Class.findByIdAndUpdate(
@@ -51,7 +55,7 @@ const updateClass = async (req, res) => {
     );
 
     return res.status(200).json({
-      message: 'Class updated correctly',
+      message: 'Class was succesfully updated',
       error: false,
       data: updatedClass,
     });
@@ -77,14 +81,14 @@ const deleteClass = async (req, res) => {
     const result = await Class.findByIdAndDelete(id);
     if (!result) {
       return res.status(404).json({
-        message: `Class with ID (${id}) was not found`,
+        message: 'Class was not found',
         data: undefined,
         error: true,
       });
     }
 
     return res.status(200).json({
-      message: `Class ${result.activity.name} deleted`,
+      message: 'Class wass succesfully deleted',
       data: result,
       error: false,
     });
@@ -98,13 +102,13 @@ const getAllClasses = async (req, res) => {
     const classes = await Class.find().populate('trainer').populate('activity');
     if (classes) {
       res.status(200).json({
-        message: 'Complete list of classes.',
+        message: 'Classes list',
         data: classes,
         error: false,
       });
     } else {
       res.status(404).json({
-        message: 'List of classes empty.',
+        message: 'There are no classes',
         data: undefined,
         error: true,
       });
@@ -126,13 +130,13 @@ const getClassId = (req, res) => {
     .then((classes) => {
       if (classes) {
         res.status(200).json({
-          message: `Class ${classes.id} obtained.`,
+          message: 'Class obtained.',
           data: classes,
           error: false,
         });
       } else {
         res.status(404).json({
-          message: 'Class not found.',
+          message: 'Class was not found',
           error: true,
         });
       }
@@ -180,7 +184,7 @@ const createClass = (req, res) => {
         slots,
       })
         .then((createdClass) => res.status(201).json({
-          message: 'Class created.',
+          message: 'Class was succesfully created.',
           data: createdClass,
           error: false,
         }))

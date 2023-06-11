@@ -76,11 +76,10 @@ const createSubscription = async (req, res) => {
   const existingSubscription = await Subscription.findOne({
     classes,
     member,
-    date,
   });
   if (existingSubscription) {
     return res.status(400).json({
-      message: 'Subscription already exists!',
+      message: 'Subscription already exists',
       error: true,
     });
   }
@@ -90,7 +89,7 @@ const createSubscription = async (req, res) => {
     date,
   })
     .then((result) => res.status(201).json({
-      message: 'Subscription created succesfully',
+      message: 'Subscription succesfully created',
       data: result,
       error: false,
     }))
@@ -120,24 +119,10 @@ const updateSubscription = (req, res) => {
         return applyResponse(
           res,
           404,
-          `Subscription with id: ${id} not found`,
+          'Subscription was not found',
           undefined,
           true,
         );
-      }
-      const subObj = sub.toObject();
-      const bodyObj = req.body;
-      const areEquals = Object.entries(bodyObj).every(([key]) => {
-        if (key !== 'date' && key !== '_id' && key !== '__v') {
-          return bodyObj[key] === subObj[key].toString();
-        }
-        if (key === 'date' && key !== '_id' && key !== '__v') {
-          return bodyObj[key] === subObj[key].toISOString().substring(0, 10);
-        }
-        return true;
-      });
-      if (areEquals) {
-        return applyResponse(res, 400, 'There is nothing to change', sub, true);
       }
       return Subscription.findOne({ classes, member, date })
         .then((subRepeated) => {
@@ -145,7 +130,7 @@ const updateSubscription = (req, res) => {
             return applyResponse(
               res,
               400,
-              'This member is already subscribed to this class.',
+              'This member is already subscribed to this class',
               subRepeated,
               true,
             );
@@ -161,7 +146,7 @@ const updateSubscription = (req, res) => {
           ).then((result) => applyResponse(
             res,
             200,
-            `Subscription with _id: ${id} was updated successfully`,
+            'Subscription was successfully updated',
             result,
             false,
           ));
@@ -174,7 +159,7 @@ const updateSubscription = (req, res) => {
 const deleteSubscription = (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
-    return applyResponse(res, 400, 'Id is invalid', id, true);
+    return applyResponse(res, 400, 'Subscription was not found', id, true);
   }
   return Subscription.findByIdAndDelete(id)
     .then((result) => {
@@ -182,7 +167,7 @@ const deleteSubscription = (req, res) => {
         return applyResponse(
           res,
           404,
-          `Subscription with id: ${id} was not found`,
+          'Subscription was not found',
           undefined,
           true,
         );
@@ -190,7 +175,7 @@ const deleteSubscription = (req, res) => {
       return applyResponse(
         res,
         200,
-        `Subscription with id ${id} was deleted`,
+        'Subscription was succesfully deleted',
         result,
         false,
       );

@@ -49,6 +49,8 @@ const trainersSchema = new Schema({
   },
   salary: {
     type: Number,
+    min: 10,
+    max: 100,
     required: true,
   },
   isActive: {

@@ -31,7 +31,7 @@ const getTrainerById = (req, res) => {
     .then((trainer) => {
       if (trainer == null) {
         return res.status(404).json({
-          message: `There are no trainer with id: ${id}`,
+          message: 'Trainer was not found',
           data: trainer,
           error: false,
         });
@@ -78,7 +78,7 @@ const createTrainer = async (req, res) => {
     isActive,
   })
     .then((result) => res.status(201).json({
-      message: 'New trainer added correctly',
+      message: 'Trainer was succesfully created',
       data: result,
       error: false,
     }))
@@ -100,18 +100,35 @@ const updateTrainers = async (req, res) => {
       isActive,
     } = req.body;
 
-    const trainerToUpdate = await Trainer.findById(id);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: 'Invalid id format',
+        error: true,
+      });
+    }
 
-    if (!trainerToUpdate) {
+    const findTrainer = await Trainer.findById(id);
+
+    if (!findTrainer) {
       return res.status(404).json({
-        message: 'Trainer was not found.',
+        message: 'Trainer was not found',
         data: undefined,
         error: true,
       });
     }
 
     const sameTrainer = await Trainer.findOne({
-      firstName, lastName, dni, phone, email, city, password, salary, isActive,
+      $and: [
+        { firstName: { $eq: firstName } },
+        { lastName: { $eq: lastName } },
+        { dni: { $eq: dni } },
+        { phone: { $eq: phone } },
+        { email: { $eq: email } },
+        { city: { $eq: city } },
+        { password: { $eq: password } },
+        { salary: { $eq: salary } },
+        { isActive: { $eq: isActive } },
+      ],
     });
 
     if (sameTrainer) {
@@ -137,7 +154,7 @@ const updateTrainers = async (req, res) => {
       return res.status(400).json({
         message: 'This trainer already exists.',
         data: undefined,
-        success: false,
+        error: true,
       });
     }
 

@@ -6,7 +6,7 @@ const getAllSuperAdmins = (req, res) => {
     .then((superAdmins) => {
       if (superAdmins.length > 0) {
         res.status(200).json({
-          message: 'Super Admins list: ',
+          message: 'Super Admins list',
           data: superAdmins,
           error: false,
         });
@@ -40,7 +40,7 @@ const getSuperAdminsById = (req, res) => {
         });
       } else {
         res.status(404).json({
-          message: `Super Admin not found with this id: ${id}`,
+          message: 'Super Admin was not found',
           error: true,
         });
       }
@@ -68,7 +68,7 @@ const createSuperAdmins = async (req, res) => {
     });
 
     return res.status(201).json({
-      message: 'Super Admin Created!',
+      message: 'Super Admin was succesfully created',
       data: result,
       error: false,
     });
@@ -97,7 +97,7 @@ const updateSuperAdmin = (req, res) => {
   return SuperAdmin.findById(id)
     .then((superA) => {
       if (!superA) {
-        return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
+        return applyResponse(res, 404, 'Super Admin was not found', undefined, true);
       }
       const superAObj = superA.toObject();
       const bodyObj = req.body;
@@ -114,7 +114,7 @@ const updateSuperAdmin = (req, res) => {
         .then((repeatedMail) => {
           if ((repeatedMail)
           && (Object.values(repeatedMail.toObject())[0].toString() !== id)) {
-            return applyResponse(res, 404, 'Email already exists', undefined, true);
+            return applyResponse(res, 404, 'This Super Admin already exists', undefined, true);
           }
           return SuperAdmin.findByIdAndUpdate(
             id,
@@ -128,7 +128,7 @@ const updateSuperAdmin = (req, res) => {
             .then((result) => applyResponse(
               res,
               200,
-              `Super Admin ${result.firstName} was updated successfully`,
+              `Super Admin ${result.firstName} was successfully updated`,
               result,
               false,
             ));
@@ -145,9 +145,9 @@ const deleteSuperAdmin = (req, res) => {
   return SuperAdmin.findByIdAndDelete(id)
     .then((result) => {
       if (!result) {
-        return applyResponse(res, 404, `Super Admin with id: ${id} was not found`, undefined, true);
+        return applyResponse(res, 404, 'Super Admin was not found', undefined, true);
       }
-      return applyResponse(res, 200, `Super Admin ${result.firstName} was deleted`, result, false);
+      return applyResponse(res, 200, `Super Admin ${result.firstName} was succesfully deleted`, result, false);
     })
     .catch((error) => applyResponse(res, 500, error.message, undefined, true));
 };

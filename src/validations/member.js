@@ -2,14 +2,14 @@ const Joi = require('joi');
 
 const validateMembersUpdate = (req, res, next) => {
   const membersUpdate = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .messages({
         'string.pattern.base': 'Name must have only letters',
         'any.required': 'Name is required',
         'string.empty': 'Name is required.',
       }),
-    lastName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    lastName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .messages({
         'string.pattern.base': 'Last name must have only letters',
@@ -58,7 +58,7 @@ const validateMembersUpdate = (req, res, next) => {
         'string.max': 'City must have between 5 and 25 characters',
       }),
     birthDay: Joi.date().max(new Date(new Date()
-      .setFullYear(new Date().getFullYear() - 18)).toISOString())
+      .setFullYear(new Date().getFullYear() - 16)).toISOString())
       .messages({
         'date.max': 'You must have at least 18 years',
         'any.required': 'Date cannot be empty',
@@ -89,13 +89,13 @@ const validateMembersUpdate = (req, res, next) => {
 
   if (!validateMember.error) return next();
   return res.status(400).json({
-    message: `Error: ${validateMember.error.details[0].message}`,
+    message: `${validateMember.error.details[0].message}`,
   });
 };
 
 const validateMembersCreation = (req, res, next) => {
   const membersValidation = Joi.object({
-    firstName: Joi.string().regex(/^[a-zA-Z]+$/).trim().min(3)
+    firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
       .messages({
         'string.pattern.base': 'Name must have only letters',
@@ -155,7 +155,7 @@ const validateMembersCreation = (req, res, next) => {
         'string.max': 'City must have between 5 and 25 characters',
       }),
     birthDay: Joi.date().max(new Date(new Date()
-      .setFullYear(new Date().getFullYear() - 18)).toISOString())
+      .setFullYear(new Date().getFullYear() - 16)).toISOString())
       .required()
       .messages({
         'date.max': 'You must have at least 18 years',
@@ -182,7 +182,7 @@ const validateMembersCreation = (req, res, next) => {
 
   if (!validation.error) return next();
   return res.status(400).json({
-    message: `Error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });
