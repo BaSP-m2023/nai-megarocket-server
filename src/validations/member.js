@@ -70,8 +70,8 @@ const validateMembersUpdate = (req, res, next) => {
         'any.required': 'Date cannot be empty',
       }),
     isActive: Joi.boolean(),
-    membership: Joi.string().valid('Black', 'Gold', 'Only Classes', 'Classic').messages({
-      'string.valid': 'Please enter a valid membership: Black, Gold, Only Classes Classic',
+    membership: Joi.string().valid('Black', 'Gold', 'Only Classes', 'Classic', 'Silver').messages({
+      'string.valid': 'Please enter a valid membership: Black, Gold, Only Classes Classic, Silver',
       'number.min': 'Postal code cannot have less than 4 numbers',
       'any.required': 'Date cannot be empty',
     }),
@@ -169,10 +169,10 @@ const validateMembersCreation = (req, res, next) => {
         'any.required': 'Date cannot be empty',
       }),
     isActive: Joi.boolean(),
-    membership: Joi.string().valid('Black', 'Gold', 'Only Classes', 'Classic')
+    membership: Joi.string().valid('Black', 'Gold', 'Only Classes', 'Classic', 'Silver')
       .required()
       .messages({
-        'string.valid': 'Please enter a valid membership: Black, Gold, Only Classes Classic',
+        'string.valid': 'Please enter a valid membership: Black, Gold, Only Classes Classic, Silver',
         'number.min': 'Postal code cannot have less than 4 numbers',
         'any.required': 'Date cannot be empty',
       }),

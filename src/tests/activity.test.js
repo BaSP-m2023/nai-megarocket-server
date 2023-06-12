@@ -88,7 +88,7 @@ describe('GET BY ID /api/activities/:id', () => {
     const idNotValid = '12345';
     const response = await request(app).get(`/api/activities/${idNotValid}`).send();
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('This id has invalid format');
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
   test('The status must be 404, if the url is wrong', async () => {

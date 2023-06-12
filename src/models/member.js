@@ -60,7 +60,7 @@ const membersSchema = new Schema({
   membership: {
     type: String,
     required: true,
-    enum: ['Black', 'Classic', 'Gold', 'Only Classes'],
+    enum: ['Black', 'Classic', 'Gold', 'Only Classes', 'Silver'],
   },
 });
 

@@ -1,30 +1,31 @@
 const { default: mongoose } = require('mongoose');
 const Admin = require('../models/admins');
 
-const getAllAdmins = (req, res) => {
-  Admin.find()
-    .then((adminsList) => {
-      if (adminsList.length === 0) {
-        return res.status(404).json({
-          message: 'Admins was not found',
-          data: adminsList,
-          error: true,
-        });
-      }
-      return res.status(200).json({
-        message: 'Admins list',
-        data: adminsList,
-        error: false,
+const getAllAdmins = async (req, res) => {
+  try {
+    const admins = await Admin.find();
+    if (admins.length === 0) {
+      return res.status(404).json({
+        message: 'Admins not found',
+        data: undefined,
+        error: true,
       });
-    })
-    .catch((err) => res.status(500).json({
-      message: 'An error has ocurred',
-      err,
-      error: true,
-    }));
+    }
+    return res.status(200).json({
+      message: 'Admins list',
+      data: admins,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'An error has occurred',
+      data: undefined,
+      error,
+    });
+  }
 };
 
-const getAdminById = (req, res) => {
+const getAdminById = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return res.status(400).json({
@@ -33,26 +34,27 @@ const getAdminById = (req, res) => {
       error: true,
     });
   }
-  return Admin.findById(id)
-    .then((adminToSend) => {
-      if (!adminToSend) {
-        return res.status(404).json({
-          message: 'Admin was not found',
-          data: undefined,
-          error: true,
-        });
-      }
-      return res.status(200).json({
-        message: 'Admin found',
-        data: adminToSend,
-        error: false,
+  try {
+    const foundAdmin = await Admin.findById(id);
+    if (!foundAdmin) {
+      return res.status(404).json({
+        message: 'Admin not found',
+        data: undefined,
+        error: true,
       });
-    })
-    .catch((err) => res.status(500).json({
-      message: 'An error has ocurred',
-      err,
-      error: true,
-    }));
+    }
+    return res.status(200).json({
+      message: 'Admin found',
+      data: foundAdmin,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'An error has occurred',
+      data: undefined,
+      error,
+    });
+  }
 };
 
 const createAdmin = async (req, res) => {
@@ -65,103 +67,19 @@ const createAdmin = async (req, res) => {
     city,
     password,
   } = req.body;
-  const alreadyExists = await Admin.findOne({ $or: [{ dni }, { email }] });
-  if (alreadyExists) {
-    return res.status(400).json({
-      message: 'This admin already exists',
-      data: req.body,
-      error: true,
-    });
-  }
-  return Admin.create({
-    firstName,
-    lastName,
-    dni,
-    phone,
-    email,
-    city,
-    password,
-  })
-    .then((adminCreated) => res.status(201).json({
-      message: 'Admin was succesfully created',
-      data: adminCreated,
-      error: false,
-    }))
-    .catch((err) => res.status(500).json({
-      message: 'An error has ocurred',
-      err,
-      error: true,
-    }));
-};
 
-const updateAdmin = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({
-      message: 'The ID is not valid',
-      data: id,
-      error: true,
-    });
-  }
+  try {
+    const alreadyExists = await Admin.findOne({ $or: [{ dni }, { email }] });
 
-  const {
-    firstName,
-    lastName,
-    dni,
-    phone,
-    email,
-    city,
-    password,
-  } = req.body;
-
-  const adminToUpdate = await Admin.findById(id);
-
-  if (!adminToUpdate) {
-    return res.status(404).json({
-      message: 'Admin was not found',
-      data: undefined,
-      error: true,
-    });
-  }
-
-  const adminProps = Object.keys(adminToUpdate.toObject()).slice(1, -3);
-  let changes = false;
-  adminProps.forEach((prop) => {
-    if (req.body[prop] && req.body[prop] !== adminToUpdate[prop]) {
-      changes = true;
+    if (alreadyExists) {
+      return res.status(400).json({
+        message: 'This admin already exists',
+        data: undefined,
+        error: true,
+      });
     }
-  });
 
-  if (!changes) {
-    return res.status(400).json({
-      message: 'There is nothing to change',
-      data: adminToUpdate,
-      error: false,
-    });
-  }
-
-  const anAdminAlreadyHas = await Admin.findOne({
-    $and: [
-      {
-        $or: [{ dni }, { email }],
-      },
-      {
-        _id: { $ne: id },
-      },
-    ],
-  });
-
-  if (anAdminAlreadyHas) {
-    return res.status(400).json({
-      message: 'This admin already exists',
-      data: req.body,
-      error: true,
-    });
-  }
-
-  return Admin.findByIdAndUpdate(
-    id,
-    {
+    const adminCreated = await Admin.create({
       firstName,
       lastName,
       dni,
@@ -169,50 +87,146 @@ const updateAdmin = async (req, res) => {
       email,
       city,
       password,
-    },
-    { new: true },
-  )
-    .then((adminUpdated) => res.status(200).json({
-      message: 'Admin was succesfully updated',
-      data: adminUpdated,
-      error: false,
-    }))
-    .catch((error) => res.status(500).json({
-      message: 'There was an error',
-      data: undefined,
-      error,
-    }));
-};
+    });
 
-const deleteAdmin = (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({
-      message: 'The ID is not valid',
-      data: id,
+    return res.status(201).json({
+      message: 'Admin was successfully created',
+      data: adminCreated,
+      error: false,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'An error has occurred',
+      err,
       error: true,
     });
   }
-  return Admin.findByIdAndDelete(id)
-    .then((adminDeleted) => {
-      if (!adminDeleted) {
-        return res.status(404).json({
-          message: 'Admin was not found',
-          data: undefined,
-          error: true,
-        });
-      }
-      return res.status(200).json({
-        message: `Admin ${adminDeleted.firstName} ${adminDeleted.lastName} was succesfully deleted`,
-        data: adminDeleted,
+};
+
+const updateAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        message: 'The ID is not valid',
+        data: id,
+        error: true,
+      });
+    }
+
+    const {
+      firstName,
+      lastName,
+      dni,
+      phone,
+      email,
+      city,
+      password,
+    } = req.body;
+
+    const adminToUpdate = await Admin.findById(id);
+
+    if (!adminToUpdate) {
+      return res.status(404).json({
+        message: 'Admin was not found',
+        data: undefined,
+        error: true,
+      });
+    }
+
+    const sameAdmin = await Admin.findOne({
+      firstName, lastName, dni, phone, email, city, password,
+    });
+
+    if (sameAdmin) {
+      return res.status(400).json({
+        message: 'There is nothing to change',
+        data: undefined,
         error: false,
       });
-    })
-    .catch((error) => res.status(500).json({
-      message: 'An error has ocurred',
+    }
+
+    const anAdminAlreadyHas = await Admin.findOne({
+      $and: [
+        {
+          $or: [{ dni }, { email }],
+        },
+        {
+          _id: { $ne: id },
+        },
+      ],
+    });
+
+    if (anAdminAlreadyHas) {
+      return res.status(400).json({
+        message: 'This admin already exists',
+        data: undefined,
+        error: true,
+      });
+    }
+
+    const adminUpdated = await Admin.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        dni,
+        phone,
+        email,
+        city,
+        password,
+      },
+      { new: true },
+    );
+
+    return res.status(200).json({
+      message: 'Admin was successfully updated',
+      data: adminUpdated,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'There was an error',
       data: undefined,
       error,
-    }));
+    });
+  }
+};
+
+const deleteAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: 'Invalid id format',
+        error: true,
+      });
+    }
+
+    const adminDeleted = await Admin.findByIdAndDelete(id);
+
+    if (!adminDeleted) {
+      return res.status(404).json({
+        message: 'Admin was not found',
+        data: undefined,
+        error: true,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Admin ${adminDeleted.firstName} ${adminDeleted.lastName} was successfully deleted`,
+      data: adminDeleted,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'An error has occurred',
+      data: undefined,
+      error,
+    });
+  }
 };
 
 module.exports = {

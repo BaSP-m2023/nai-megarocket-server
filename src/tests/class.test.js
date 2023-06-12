@@ -123,7 +123,7 @@ describe('GETBYID /api/classes/:id', () => {
   // eslint-disable-next-line quotes
   test(`Should return a message indicating "Class ${classId} obtained".`, async () => {
     const response = await request(app).get(`/api/classes/${classId}`).send();
-    expect(response.body.message).toBe('Class obtained.');
+    expect(response.body.message).toBe('Class was found');
     expect(response.body.error).toBeFalsy();
   });
   test('Should return all properties from the class.', async () => {
@@ -165,7 +165,7 @@ describe('POST /api/classes', () => {
     const response = await request(app).post('/api/classes').send(mockClassB);
     expect(typeof response.body.data).toBe('object');
     expect(Object.keys(response.body.data).length).toBeGreaterThan(0);
-    expect(response.body.message).toBe('Class was succesfully created.');
+    expect(response.body.message).toBe('Class was successfully created.');
     expect(response.body.error).toBeFalsy();
   });
   test('Should return a message indicating "Trainer has another class scheduled".', async () => {

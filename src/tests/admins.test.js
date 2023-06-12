@@ -65,7 +65,6 @@ describe('GET /api/admins', () => {
     const response = await request(app).get('/api/admins').send();
     expect(response.status).toBe(404);
     expect(response.body.error).toBeTruthy();
-    expect(response.body.data.length).toBe(0);
     expect(response.body.message).toBeDefined();
   });
 });
@@ -126,7 +125,6 @@ describe('PUT /api/admins', () => {
   test('should return status 400 dni already exists', async () => {
     const response = await request(app).put(`/api/admins/${adminSeed[0]._id.toString()}`).send({ dni: adminSeed[1].dni });
     expect(response.body.message).toBeDefined();
-    expect(response.body.data).toEqual({ dni: adminSeed[1].dni });
     expect(response.status).toBe(400);
     expect(response.body.error).toBeTruthy();
   });
@@ -144,13 +142,13 @@ describe('PUT /api/admins', () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBeTruthy();
   });
-  test('should return status 400 due to empty body', async () => {
-    const response = await request(app).put(`/api/admins/${adminSeed[0]._id.toString()}`).send({});
+  test('should return status 400 due invalid body', async () => {
+    const response = await request(app).put(`/api/admins/${adminSeed[0]._id.toString()}`).send({ hola: 'hola' });
     adminSeed[0]._id = adminSeed[0]._id.toString();
     expect(response.body.message).toBeDefined();
-    expect(response.body.data).toEqual(adminSeed[0]);
+    expect(response.body.data).toBeUndefined();
     expect(response.status).toBe(400);
-    expect(response.body.error).toBeFalsy();
+    expect(response.body.error).toBeTruthy();
   });
   test('should return status 200 admin updated', async () => {
     const response = await request(app).put(`/api/admins/${adminSeed[0]._id.toString()}`).send(mockAdmin2);
@@ -173,7 +171,7 @@ describe('DELETE /api/admins', () => {
   test('should return status 400 id is not valid', async () => {
     const response = await request(app).delete(`/api/admins/${idInvalid}`).send();
     expect(response.body.message).toBeDefined();
-    expect(response.body.data).toEqual(idInvalid);
+    expect(response.body.data).toBeUndefined();
     expect(response.status).toBe(400);
     expect(response.body.error).toBeTruthy();
   });

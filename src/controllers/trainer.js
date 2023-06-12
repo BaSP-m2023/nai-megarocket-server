@@ -1,88 +1,94 @@
 const mongoose = require('mongoose');
 const Trainer = require('../models/trainer');
 
-const getAllTrainers = (req, res) => {
-  Trainer.find()
-    .then((trainers) => {
-      if (trainers.length === 0) {
-        return res.status(404).json({
-          message: 'Trainers not found',
-          error: true,
-        });
-      }
-      return res.status(200).json({
-        message: 'Trainers list',
-        data: trainers,
-        error: false,
+const getAllTrainers = async (req, res) => {
+  try {
+    const trainers = await Trainer.find();
+    if (trainers.length === 0) {
+      return res.status(404).json({
+        message: 'Trainers not found',
+        data: undefined,
+        error: true,
       });
-    })
-    .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
+    }
+    return res.status(200).json({
+      message: 'Trainers list',
+      data: trainers,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred', error });
+  }
 };
 
-const getTrainerById = (req, res) => {
+const getTrainerById = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({
-      message: `Invalid trainer id: ${id}`,
+      message: 'Invalid format id',
       error: true,
     });
   }
-  return Trainer.findById(id)
-    .then((trainer) => {
-      if (trainer == null) {
-        return res.status(404).json({
-          message: 'Trainer was not found',
-          data: trainer,
-          error: false,
-        });
-      }
-      return res.status(200).json({
-        message: `Trainer with id: ${id}`,
-        data: trainer,
+  try {
+    const trainer = await Trainer.findById(id);
+    if (!trainer) {
+      return res.status(404).json({
+        message: 'Trainer was not found',
+        data: undefined,
         error: false,
       });
-    })
-    .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
+    }
+    return res.status(200).json({
+      message: `Trainer with id: ${id}`,
+      data: trainer,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred', error });
+  }
 };
 
 const createTrainer = async (req, res) => {
-  const existingTrainerDni = await Trainer.findOne({ dni: req.body.dni });
-  const existingTrainerEmail = await Trainer.findOne({ email: req.body.email });
-  if (existingTrainerDni || existingTrainerEmail) {
-    return res.status(400).json({
-      message: 'This trainer already exists.',
-      data: undefined,
-      error: true,
+  try {
+    const existingTrainerDni = await Trainer.findOne({ dni: req.body.dni });
+    const existingTrainerEmail = await Trainer.findOne({ email: req.body.email });
+    if (existingTrainerDni || existingTrainerEmail) {
+      return res.status(400).json({
+        message: 'This trainer already exists.',
+        data: undefined,
+        error: true,
+      });
+    }
+    const {
+      firstName,
+      lastName,
+      dni,
+      phone,
+      email,
+      city,
+      password,
+      salary,
+      isActive,
+    } = req.body;
+    const addTrainer = await Trainer.create({
+      firstName,
+      lastName,
+      dni,
+      phone,
+      email,
+      city,
+      password,
+      salary,
+      isActive,
     });
-  }
-  const {
-    firstName,
-    lastName,
-    dni,
-    phone,
-    email,
-    city,
-    password,
-    salary,
-    isActive,
-  } = req.body;
-  return Trainer.create({
-    firstName,
-    lastName,
-    dni,
-    phone,
-    email,
-    city,
-    password,
-    salary,
-    isActive,
-  })
-    .then((result) => res.status(201).json({
-      message: 'Trainer was succesfully created',
-      data: result,
+    return res.status(201).json({
+      message: 'Trainer was successfully created',
+      data: addTrainer,
       error: false,
-    }))
-    .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred', data: undefined, error });
+  }
 };
 
 const updateTrainers = async (req, res) => {
@@ -178,14 +184,14 @@ const updateTrainers = async (req, res) => {
       return res.status(404).json({
         message: `There is no trainer with id:${id}`,
         data: undefined,
-        success: false,
+        error: true,
       });
     }
 
     return res.status(200).json({
       message: 'Trainer updated correctly',
-      success: true,
       data: updatedTrainer,
+      error: false,
     });
   } catch (error) {
     return res.status(500).json({
@@ -195,7 +201,7 @@ const updateTrainers = async (req, res) => {
   }
 };
 
-const deleteTrainers = (req, res) => {
+const deleteTrainers = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({
@@ -203,24 +209,25 @@ const deleteTrainers = (req, res) => {
       error: true,
     });
   }
-  return Trainer.findByIdAndDelete(id)
-    .then((trainer) => {
-      if (!trainer) {
-        return res.status(404).json({
-          message: `There is no trainer with id ${id}`,
-          error: true,
-        });
-      }
-      return res.status(200).json({
-        message: 'Trainer deleted',
-        error: false,
-        data: trainer,
+  try {
+    const deleteTrainer = await Trainer.findByIdAndDelete(id);
+    if (!deleteTrainer) {
+      return res.status(404).json({
+        message: `There is no trainer with id ${id}`,
+        error: true,
       });
-    })
-    .catch((error) => res.status(500).json({
+    }
+    return res.status(200).json({
+      message: 'Trainer deleted',
+      error: false,
+      data: deleteTrainer,
+    });
+  } catch (error) {
+    return res.status(500).json({
       message: 'An error occurred',
       error,
-    }));
+    });
+  }
 };
 
 module.exports = {

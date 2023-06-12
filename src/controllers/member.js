@@ -1,6 +1,113 @@
 const mongoose = require('mongoose');
 const Member = require('../models/member');
 
+const getAllMembers = async (req, res) => {
+  try {
+    const members = await Member.find();
+
+    if (members.length > 0) {
+      return res.status(200).json({
+        message: 'Members list',
+        data: members,
+        error: false,
+      });
+    }
+    return res.status(404).json({
+      message: 'Members not found',
+      error: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'An error occurred',
+      error: error.message,
+    });
+  }
+};
+
+const getMembersById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const member = await Member.findById(id);
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        message: 'Invalid ID',
+        data: id,
+        error: true,
+      });
+    }
+
+    if (member) {
+      return res.status(200).json({
+        message: `Member Found! ${member.firstName} ${member.lastName}`,
+        data: member,
+        error: false,
+      });
+    }
+    return res.status(404).json({
+      message: 'Member was not found',
+      error: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'An error occurred',
+      error: error.message,
+    });
+  }
+};
+
+const createMembers = async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      dni,
+      phone,
+      email,
+      password,
+      city,
+      birthDay,
+      postalCode,
+      isActive,
+      membership,
+    } = req.body;
+
+    const existingMember = await Member.findOne({ $or: [{ dni }, { email }] });
+
+    if (existingMember) {
+      return res.status(400).json({
+        message: 'This member is already registered',
+        error: true,
+      });
+    }
+
+    const createMember = await Member.create({
+      firstName,
+      lastName,
+      dni,
+      phone,
+      email,
+      password,
+      city,
+      birthDay,
+      postalCode,
+      isActive,
+      membership,
+    });
+
+    return res.status(201).json({
+      message: 'Member was successfully created',
+      data: createMember,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Error!',
+      error,
+    });
+  }
+};
+
 const updateMember = async (req, res) => {
   try {
     const { id } = req.params;
@@ -48,7 +155,7 @@ const updateMember = async (req, res) => {
       });
     }
 
-    const result = await Member.findByIdAndUpdate(
+    const memberToUpdate = await Member.findByIdAndUpdate(
       id,
       {
         firstName,
@@ -66,7 +173,7 @@ const updateMember = async (req, res) => {
       { new: true },
     );
 
-    if (!result) {
+    if (!memberToUpdate) {
       return res.status(404).json({
         message: 'The member was not found',
         data: undefined,
@@ -74,29 +181,28 @@ const updateMember = async (req, res) => {
       });
     }
 
-    const repeatedDni = await Member.findOne({ dni });
-    // eslint-disable-next-line no-underscore-dangle
-    if (repeatedDni && repeatedDni.toObject()._id.toString() !== id) {
-      return res.status(400).json({
-        message: 'Member with this DNI is already register',
-        data: undefined,
-        error: true,
-      });
-    }
+    const existingMember = await Member.findOne({
+      $and: [
+        {
+          $or: [{ dni }, { email }],
+        },
+        {
+          _id: { $ne: id },
+        },
+      ],
+    });
 
-    const repeatedMail = await Member.findOne({ email });
-    // eslint-disable-next-line no-underscore-dangle
-    if (repeatedMail && repeatedMail.toObject()._id.toString() !== id) {
+    if (existingMember) {
       return res.status(400).json({
-        message: 'Member with this Email is already register',
-        data: undefined,
+        message: 'This member already exists.',
+        data: existingMember,
         error: true,
       });
     }
 
     return res.status(200).json({
-      message: `The member ${result.firstName} ${result.lastName} was successfully updated.`,
-      data: result,
+      message: `The member ${memberToUpdate.firstName} ${memberToUpdate.lastName} was successfully updated.`,
+      data: memberToUpdate,
       error: false,
     });
   } catch (error) {
@@ -104,121 +210,38 @@ const updateMember = async (req, res) => {
   }
 };
 
-const deleteMember = (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({
-      message: 'This id has invalid format',
+const deleteMember = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        message: 'This id has an invalid format',
+        error: true,
+      });
+    }
+
+    const memberToDelete = await Member.findByIdAndDelete(id);
+
+    if (!memberToDelete) {
+      return res.status(404).json({
+        message: 'The member was not found',
+        data: undefined,
+        error: true,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Member ${memberToDelete.firstName} ${memberToDelete.lastName} was successfully deleted`,
+      data: memberToDelete,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      data: undefined,
       error: true,
     });
   }
-  return Member.findByIdAndDelete(id)
-    .then((result) => {
-      if (!result) {
-        return res.status(404).json({
-          message: 'The member was not found',
-          data: undefined,
-          error: true,
-        });
-      }
-      return res.status(200).json({
-        message: `Member ${result.firstName} ${result.lastName} was succesfully deleted`,
-        data: result,
-        error: false,
-      });
-    })
-    .catch((error) => res.status(500).json({
-      message: error,
-      data: undefined,
-      error: true,
-    }));
-};
-
-const getAllMembers = (req, res) => {
-  Member.find()
-    .then((members) => {
-      if (members.length > 0) {
-        res.status(200).json({
-          message: 'Members list',
-          data: members,
-          error: false,
-        });
-      } else {
-        res.status(404).json({
-          message: 'Members not found',
-          error: true,
-        });
-      }
-    })
-    .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
-};
-
-const getMembersById = (req, res) => {
-  const { id } = req.params;
-
-  Member.findById(id)
-    .then((members) => {
-      if (members !== null) {
-        res.status(200).json({
-          message: `Member Found! ${members.firstName} ${members.lastName}`,
-          data: members,
-          error: false,
-        });
-      } else {
-        res.status(404).json({
-          message: 'Member was not found',
-          error: true,
-        });
-      }
-    })
-    .catch((error) => res.status(500).json({ message: 'An error ocurred', error }));
-};
-
-const createMembers = (req, res) => {
-  const { id } = req.params;
-  Member.findOne({ $or: [{ dni: req.body.dni }, { email: req.body.email }] })
-    .then((repeated) => {
-      if (repeated && Object.values(repeated.toObject())[0].toString() !== id) {
-        return res.status(400).json({
-          message: 'This member is already register',
-          error: true,
-        });
-      }
-      const {
-        firstName,
-        lastName,
-        dni,
-        phone,
-        email,
-        password,
-        city,
-        birthDay,
-        postalCode,
-        isActive,
-        membership,
-      } = req.body;
-      return Member.create({
-        firstName,
-        lastName,
-        dni,
-        phone,
-        email,
-        password,
-        city,
-        birthDay,
-        postalCode,
-        isActive,
-        membership,
-      }).then((result) => res.status(201).json({
-        message: 'Member was succesfully created',
-        data: result,
-        error: false,
-      }));
-    })
-    .catch((error) => res.status(500).json({
-      message: 'Error!',
-      error,
-    }));
 };
 
 module.exports = {
