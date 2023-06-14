@@ -164,7 +164,7 @@ const updateTrainers = async (req, res) => {
       });
     }
 
-    const updatedTrainer = await Trainer.findByIdAndUpdate(
+    const trainerToUpdate = await Trainer.findByIdAndUpdate(
       id,
       {
         firstName,
@@ -180,7 +180,7 @@ const updateTrainers = async (req, res) => {
       { new: true },
     );
 
-    if (!updatedTrainer) {
+    if (!trainerToUpdate) {
       return res.status(404).json({
         message: `There is no trainer with id:${id}`,
         data: undefined,
@@ -190,7 +190,7 @@ const updateTrainers = async (req, res) => {
 
     return res.status(200).json({
       message: 'Trainer updated correctly',
-      data: updatedTrainer,
+      data: trainerToUpdate,
       error: false,
     });
   } catch (error) {
@@ -210,8 +210,8 @@ const deleteTrainers = async (req, res) => {
     });
   }
   try {
-    const deleteTrainer = await Trainer.findByIdAndDelete(id);
-    if (!deleteTrainer) {
+    const trainerToDelete = await Trainer.findByIdAndDelete(id);
+    if (!trainerToDelete) {
       return res.status(404).json({
         message: `There is no trainer with id ${id}`,
         error: true,
@@ -220,7 +220,7 @@ const deleteTrainers = async (req, res) => {
     return res.status(200).json({
       message: 'Trainer deleted',
       error: false,
-      data: deleteTrainer,
+      data: trainerToDelete,
     });
   } catch (error) {
     return res.status(500).json({

@@ -131,19 +131,20 @@ const updateSuperAdmin = async (req, res) => {
   }
 };
 
-const deleteSuperAdmin = (req, res) => {
+const deleteSuperAdmin = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return applyResponse(res, 404, 'Id is invalid', undefined, true);
   }
-  return SuperAdmin.findByIdAndDelete(id)
-    .then((result) => {
-      if (!result) {
-        return applyResponse(res, 404, 'Super Admin was not found', undefined, true);
-      }
-      return applyResponse(res, 200, `Super Admin ${result.firstName} was succesfully deleted`, result, false);
-    })
-    .catch((error) => applyResponse(res, 500, error.message, undefined, true));
+  try {
+    const result = await SuperAdmin.findByIdAndDelete(id);
+    if (!result) {
+      return applyResponse(res, 404, 'Super Admin was not found', undefined, true);
+    }
+    return applyResponse(res, 200, `Super Admin ${result.firstName} was successfully deleted`, result, false);
+  } catch (error) {
+    return applyResponse(res, 500, error.message, undefined, true);
+  }
 };
 
 module.exports = {
