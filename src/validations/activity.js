@@ -3,8 +3,19 @@ const mongoose = require('mongoose');
 
 const validateCreation = (req, res, next) => {
   const activityValidation = Joi.object({
-    name: Joi.string().min(3).max(20).required(),
-    description: Joi.string().min(5).max(250).required(),
+    name: Joi.string().trim().min(3).max(20)
+      .required()
+      .messages({
+        'any.required': 'Name is required',
+        'string.empty': 'Name is required.',
+      }),
+    description: Joi.string().trim().min(5).max(250)
+      .required()
+      .messages({
+        'any.required': 'Description is required.',
+        'string.empty': 'Description is required.',
+        'string.min': 'Description must have at least 5 characters.',
+      }),
     isActive: Joi.boolean(),
   });
 
@@ -12,7 +23,7 @@ const validateCreation = (req, res, next) => {
 
   if (!validation.error) return next();
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });
@@ -20,8 +31,17 @@ const validateCreation = (req, res, next) => {
 
 const validateUpdate = (req, res, next) => {
   const activityValidation = Joi.object({
-    name: Joi.string().min(3).max(20),
-    description: Joi.string().min(5).max(50),
+    name: Joi.string().trim().min(3).max(20)
+      .messages({
+        'any.required': 'Name is required',
+        'string.empty': 'Name is required.',
+      }),
+    description: Joi.string().trim().min(5).max(250)
+      .messages({
+        'any.required': 'Description is required',
+        'string.empty': 'Description is required.',
+        'string.min': 'Description must have at least 5 characters',
+      }),
     isActive: Joi.boolean(),
   });
 
@@ -36,7 +56,7 @@ const validateUpdate = (req, res, next) => {
   }
   if (validation.error) {
     return res.status(400).json({
-      message: `There was an error: ${validation.error}`,
+      message: `${validation.error.details[0].message}`,
       data: undefined,
       error: true,
     });

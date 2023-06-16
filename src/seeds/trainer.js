@@ -11,7 +11,7 @@ export default [
     city: 'Buenos Aires',
     password: 'contraseña',
     salary: 25000,
-    is_active: true,
+    isActive: true,
     __v: 0,
   },
   {
@@ -24,7 +24,7 @@ export default [
     city: 'Buenos Aires',
     password: 'contraseña',
     salary: 25000,
-    is_active: true,
+    isActive: true,
     __v: 0,
   },
   {
@@ -37,7 +37,7 @@ export default [
     city: 'Buenos Aires',
     password: 'contraseña',
     salary: 25000,
-    is_active: true,
+    isActive: true,
     __v: 0,
   },
   {
@@ -50,7 +50,7 @@ export default [
     city: 'Buenos Aires',
     password: 'contraseña',
     salary: 25000,
-    is_active: true,
+    isActive: true,
     __v: 0,
   },
 ];

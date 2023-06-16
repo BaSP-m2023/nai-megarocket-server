@@ -18,7 +18,7 @@ const trainersSchema = new Schema({
   dni: {
     type: Number,
     required: true,
-    minLength: 6,
+    minLength: 7,
     maxLength: 9,
     unique: true,
   },
@@ -49,12 +49,14 @@ const trainersSchema = new Schema({
   },
   salary: {
     type: Number,
+    min: 10,
+    max: 100,
     required: true,
   },
-  is_active: {
+  isActive: {
     type: Boolean,
     default: true,
   },
 });
 
-module.exports = mongoose.model('Trainers', trainersSchema);
+module.exports = mongoose.model('Trainer', trainersSchema);

@@ -23,7 +23,7 @@ const validateCreation = (req, res, next) => {
   if (Object.entries(req.body).length === 0) {
     validation.error = true;
     return res.status(400).json({
-      message: 'The request body cannot be empty',
+      message: 'The fields cannot be empty',
       data: undefined,
       error: true,
     });
@@ -62,7 +62,7 @@ const validateUpdate = (req, res, next) => {
     return next();
   }
   return res.status(400).json({
-    message: `There was an error: ${validation.error.details[0].message}`,
+    message: `${validation.error.details[0].message}`,
     data: undefined,
     error: true,
   });

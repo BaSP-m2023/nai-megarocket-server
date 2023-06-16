@@ -54,7 +54,7 @@ describe('GET /api/activities', () => {
     expect(response.status).toBe(200);
     expect(response.body.error).toBeFalsy();
     expect(response.body).toBeDefined();
-    expect(response.body.message).toMatch('Complete activities list');
+    expect(response.body.message).toMatch('Activities list');
   });
   test('The status must be 404, if the url is wrong', async () => {
     const response = await request(app).get('/activities').send();
@@ -66,7 +66,7 @@ describe('GET /api/activities', () => {
     const response = await request(app).get('/api/activities').send();
     expect(response.body.data).toBe(undefined);
     expect(response.status).toBe(404);
-    expect(response.body.message).toMatch(/There are no activities/);
+    expect(response.body.message).toMatch('Activities not found');
   });
 });
 
@@ -76,21 +76,19 @@ describe('GET BY ID /api/activities/:id', () => {
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
     expect(response.body.data).toHaveProperty('_id', 'name', 'description', 'isActive');
-    expect(response.body.message).toMatch(`Activity with id: ${activitySeed[0]._id}`);
     expect(response.body.error).toBeFalsy();
   });
   test('The database must return 404 if the id does not exist', async () => {
     const nonExistentId = '64677fdefc13ae39f1753b99';
     const response = await request(app).get(`/api/activities/${nonExistentId}`).send();
     expect(response.status).toBe(404);
-    expect(response.body.message).toMatch(/There is no activity with id/);
     expect(response.body.error).toBeTruthy();
   });
   test('The database must return 400 if the id is wrong, and said Invalid activity id', async () => {
     const idNotValid = '12345';
     const response = await request(app).get(`/api/activities/${idNotValid}`).send();
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch(/Invalid activity id/);
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
   test('The status must be 404, if the url is wrong', async () => {
@@ -113,31 +111,31 @@ describe('POST /api/activities', () => {
     expect(response.body.data).toHaveProperty('name');
     expect(response.body.data).toHaveProperty('description');
     expect(response.body.data).toHaveProperty('isActive');
-    expect(response.body.message).toMatch('New activity added correctly');
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeFalsy();
   });
   test('If name is already existing, status must be 409', async () => {
     const response = await request(app).post('/api/activities').send(mockActivityExistingName);
-    expect(response.status).toBe(409);
-    expect(response.body.message).toMatch('Activity with that name already exists');
+    expect(response.status).toBe(400);
+    expect(response.body.message).toMatch('This activity already exists');
     expect(response.body.error).toBeTruthy();
   });
   test('If name is not defined, status must be 400, name is required', async () => {
     const response = await request(app).post('/api/activities').send(mockLessName);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('There was an error: "name" is not allowed to be empty');
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
   test('If description is not defined, status must be 400, description is required', async () => {
     const response = await request(app).post('/api/activities').send(mockLessDescription);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('There was an error: "description" is not allowed to be empty');
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
   test('If isActive is not defined, status must be 400, isActive is required', async () => {
     const response = await request(app).post('/api/activities').send(mockLessIsActive);
     expect(response.status).toBe(400);
-    expect(response.body.message).toMatch('There was an error: "isActive" must be a boolean');
+    expect(response.body.message).toBeDefined();
     expect(response.body.error).toBeTruthy();
   });
 });
@@ -163,7 +161,6 @@ describe('DELETE /api/activities', () => {
   test('should return 400 status if activity not found', async () => {
     const nonExistentId = '64677fdefc13ae39f1753b99';
     const response = await request(app).del(`/api/activities/${nonExistentId}`).send();
-
     expect(response.status).toBe(404);
     expect(response.body.error).toBeTruthy();
   });

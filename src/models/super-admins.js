@@ -11,8 +11,6 @@ const superAdminsSchema = new Schema({
   },
   email: {
     type: String,
-    minLength: 8,
-    maxLength: 25,
     required: true,
   },
   password: {
