@@ -73,7 +73,7 @@ const validateCreation = (req, res, next) => {
       .messages({
         'number.min': 'Slots cannot be less than 5',
         'number.max': 'Slots cannot be more than 15',
-        'any.required': 'Slots are required',
+        'number.required': 'Slots are required',
       }),
   });
 
