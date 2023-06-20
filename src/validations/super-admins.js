@@ -46,8 +46,8 @@ const validateSuperAdminUpdate = (req, res, next) => {
       .required()
       .messages({
         'string.pattern.base': 'Name must have only letters',
-        'any.required': 'Name is required SOS UN BOLUDO',
-        'string.empty': 'Name is required SOS UN BOLUDO.',
+        'any.required': 'Name is required.',
+        'string.empty': 'Name is required.',
       }),
     email: Joi.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/)
       .label('Email')

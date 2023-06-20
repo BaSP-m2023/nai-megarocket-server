@@ -104,7 +104,7 @@ const updateActivities = async (req, res) => {
   const { name, description, isActive } = req.body;
 
   try {
-    const existingActivity = await Activity.findOne({ name, description });
+    const existingActivity = await Activity.findOne({ name, description, isActive });
 
     if (existingActivity) {
       return res.status(400).json({
