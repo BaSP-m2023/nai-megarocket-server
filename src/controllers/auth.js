@@ -1,0 +1,27 @@
+import SuperAdmins from '../models/super-admins';
+
+const getAuth = async (req, res) => {
+  try {
+    const superAdmin = await SuperAdmins.findOne({ firebaseUid: req.headers.firebaseUid });
+    if (superAdmin) {
+      return res.status(201).json({
+        message: 'Super Admin found',
+        data: superAdmin,
+        error: false,
+      });
+    }
+    return res.status(404).json({
+      message: 'User not found',
+      data: undefined,
+      error: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.toString(),
+      data: undefined,
+      error: true,
+    });
+  }
+};
+
+export default { getAuth };
