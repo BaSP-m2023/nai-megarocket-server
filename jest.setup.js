@@ -4,8 +4,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 const mongoServer = new MongoMemoryServer();
 let mongo;
 
-jest.setTimeout(30000);
-
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
