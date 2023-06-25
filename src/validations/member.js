@@ -100,6 +100,7 @@ const validateMembersCreation = (req, res, next) => {
   const membersValidation = Joi.object({
     firstName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
+      .required()
       .messages({
         'string.pattern.base': 'Name must have only letters',
         'any.required': 'Name is required',
@@ -107,6 +108,7 @@ const validateMembersCreation = (req, res, next) => {
       }),
     lastName: Joi.string().regex(/^[A-Za-z]+\s?[A-Za-z]+$/).trim().min(3)
       .max(25)
+      .required()
       .messages({
         'string.pattern.base': 'Last name must have only letters',
         'any.required': 'Last name is required',
@@ -176,7 +178,6 @@ const validateMembersCreation = (req, res, next) => {
       }),
     isActive: Joi.boolean(),
     membership: Joi.string().valid('Black', 'Gold', 'Only Classes', 'Classic', 'Silver')
-      .required()
       .messages({
         'string.valid': 'Please enter a valid membership: Black, Gold, Silver',
         'any.required': 'Membership cannot be empty',

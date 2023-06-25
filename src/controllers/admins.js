@@ -1,4 +1,5 @@
 const { default: mongoose } = require('mongoose');
+const firebaseApp = require('../helper/firebase/index').default;
 const Admin = require('../models/admins');
 
 const getAllAdmins = async (req, res) => {
@@ -67,6 +68,7 @@ const createAdmin = async (req, res) => {
     city,
     password,
   } = req.body;
+  let firebaseUid;
 
   try {
     const alreadyExists = await Admin.findOne({ $or: [{ dni }, { email }] });
@@ -79,14 +81,23 @@ const createAdmin = async (req, res) => {
       });
     }
 
+    const newFirebaseUser = await firebaseApp.auth().createUser({
+      email,
+      password,
+    });
+
+    firebaseUid = newFirebaseUser.uid;
+
+    await firebaseApp.auth().setCustomUserClaims(newFirebaseUser.uid, { role: 'ADMIN' });
+
     const adminCreated = await Admin.create({
+      firebaseUid,
       firstName,
       lastName,
       dni,
       phone,
       email,
       city,
-      password,
     });
 
     return res.status(201).json({
@@ -96,7 +107,7 @@ const createAdmin = async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({
-      message: 'An error has occurred',
+      message: err.toString(),
       err,
       error: true,
     });
@@ -120,9 +131,9 @@ const updateAdmin = async (req, res) => {
       lastName,
       dni,
       phone,
+      password,
       email,
       city,
-      password,
     } = req.body;
 
     const adminToUpdate = await Admin.findById(id);
@@ -136,7 +147,7 @@ const updateAdmin = async (req, res) => {
     }
 
     const sameAdmin = await Admin.findOne({
-      firstName, lastName, dni, phone, email, city, password,
+      firstName, lastName, dni, phone, email, city,
     });
 
     if (sameAdmin) {
@@ -166,6 +177,11 @@ const updateAdmin = async (req, res) => {
       });
     }
 
+    await firebaseApp.auth().updateUser(adminToUpdate.firebaseUid, {
+      password,
+      email,
+    });
+
     const adminUpdated = await Admin.findByIdAndUpdate(
       id,
       {
@@ -175,7 +191,6 @@ const updateAdmin = async (req, res) => {
         phone,
         email,
         city,
-        password,
       },
       { new: true },
     );
@@ -187,7 +202,7 @@ const updateAdmin = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'There was an error',
+      message: error.toString(),
       data: undefined,
       error,
     });
@@ -205,8 +220,8 @@ const deleteAdmin = async (req, res) => {
       });
     }
 
-    const adminDeleted = await Admin.findByIdAndDelete(id);
-
+    const adminToDelete = await Admin.findById(id);
+    const adminDeleted = await Admin.deleteOne(adminToDelete);
     if (!adminDeleted) {
       return res.status(404).json({
         message: 'Admin was not found',
@@ -215,14 +230,16 @@ const deleteAdmin = async (req, res) => {
       });
     }
 
+    await firebaseApp.auth().deleteUser(adminToDelete.firebaseUid);
+
     return res.status(200).json({
-      message: `Admin ${adminDeleted.firstName} ${adminDeleted.lastName} was successfully deleted`,
-      data: adminDeleted,
+      message: `Admin ${adminToDelete.firstName} ${adminToDelete.lastName} was successfully deleted`,
+      data: adminToDelete,
       error: false,
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'An error has occurred',
+      message: error.toString(),
       data: undefined,
       error,
     });

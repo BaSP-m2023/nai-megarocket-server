@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const firebaseApp = require('../helper/firebase/index').default;
 const Trainer = require('../models/trainer');
 
 const getAllTrainers = async (req, res) => {
@@ -49,9 +50,22 @@ const getTrainerById = async (req, res) => {
 };
 
 const createTrainer = async (req, res) => {
+  const {
+    firstName,
+    lastName,
+    dni,
+    phone,
+    email,
+    city,
+    password,
+    salary,
+    isActive,
+  } = req.body;
+  let firebaseUid;
+
   try {
-    const existingTrainerDni = await Trainer.findOne({ dni: req.body.dni });
-    const existingTrainerEmail = await Trainer.findOne({ email: req.body.email });
+    const existingTrainerDni = await Trainer.findOne({ dni });
+    const existingTrainerEmail = await Trainer.findOne({ email });
     if (existingTrainerDni || existingTrainerEmail) {
       return res.status(400).json({
         message: 'This trainer already exists.',
@@ -59,25 +73,23 @@ const createTrainer = async (req, res) => {
         error: true,
       });
     }
-    const {
-      firstName,
-      lastName,
-      dni,
-      phone,
+
+    const newFirebaseUser = await firebaseApp.auth().createUser({
       email,
-      city,
       password,
-      salary,
-      isActive,
-    } = req.body;
+    });
+
+    firebaseUid = newFirebaseUser.uid;
+
+    await firebaseApp.auth().setCustomUserClaims(newFirebaseUser.uid, { role: 'TRAINER' });
     const addTrainer = await Trainer.create({
+      firebaseUid,
       firstName,
       lastName,
       dni,
       phone,
       email,
       city,
-      password,
       salary,
       isActive,
     });
@@ -100,8 +112,8 @@ const updateTrainers = async (req, res) => {
       dni,
       phone,
       email,
-      city,
       password,
+      city,
       salary,
       isActive,
     } = req.body;
@@ -131,7 +143,6 @@ const updateTrainers = async (req, res) => {
         { phone: { $eq: phone } },
         { email: { $eq: email } },
         { city: { $eq: city } },
-        { password: { $eq: password } },
         { salary: { $eq: salary } },
         { isActive: { $eq: isActive } },
       ],
@@ -164,23 +175,34 @@ const updateTrainers = async (req, res) => {
       });
     }
 
-    const trainerToUpdate = await Trainer.findByIdAndUpdate(
+    const trainerToUpdate = await Trainer.findById(id);
+
+    await firebaseApp.auth().updateUser(trainerToUpdate.firebaseUid, {
+      password,
+      email,
+    });
+
+    const user = await firebaseApp.auth().getUser(trainerToUpdate.firebaseUid);
+
+    console.log(user);
+
+    const trainerUpdated = await Trainer.findByIdAndUpdate(
       id,
       {
         firstName,
         lastName,
         dni,
         phone,
+        password,
         email,
         city,
-        password,
         salary,
         isActive,
       },
       { new: true },
     );
 
-    if (!trainerToUpdate) {
+    if (!trainerUpdated) {
       return res.status(404).json({
         message: `There is no trainer with id:${id}`,
         data: undefined,
@@ -190,12 +212,12 @@ const updateTrainers = async (req, res) => {
 
     return res.status(200).json({
       message: 'Trainer updated correctly',
-      data: trainerToUpdate,
+      data: trainerUpdated,
       error: false,
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'An error occurred',
+      message: error.toString(),
       error,
     });
   }
@@ -210,21 +232,25 @@ const deleteTrainers = async (req, res) => {
     });
   }
   try {
-    const trainerToDelete = await Trainer.findByIdAndDelete(id);
+    const trainerToDelete = await Trainer.findById(id);
     if (!trainerToDelete) {
       return res.status(404).json({
         message: `There is no trainer with id ${id}`,
+        data: undefined,
         error: true,
       });
     }
+    await Trainer.deleteOne(trainerToDelete);
+    await firebaseApp.auth().deleteUser(trainerToDelete.firebaseUid);
     return res.status(200).json({
       message: 'Trainer deleted',
-      error: false,
       data: trainerToDelete,
+      error: false,
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'An error occurred',
+      message: error.toString(),
+      data: undefined,
       error,
     });
   }

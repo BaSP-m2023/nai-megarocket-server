@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const firebaseApp = require('../helper/firebase/index').default;
 const SuperAdmin = require('../models/super-admins');
 
 const getAllSuperAdmins = async (req, res) => {
@@ -53,6 +54,7 @@ const getSuperAdminsById = async (req, res) => {
 
 const createSuperAdmins = async (req, res) => {
   const { firstName, email, password } = req.body;
+  let firebaseUid;
 
   try {
     const existingSuperAdmin = await SuperAdmin.findOne({ email });
@@ -64,10 +66,19 @@ const createSuperAdmins = async (req, res) => {
       });
     }
 
-    const result = await SuperAdmin.create({
-      firstName,
+    const newFirebaseUser = await firebaseApp.auth().createUser({
       email,
       password,
+    });
+
+    firebaseUid = newFirebaseUser.uid;
+
+    await firebaseApp.auth().setCustomUserClaims(firebaseUid, { role: 'SUPER_ADMIN' });
+
+    const result = await SuperAdmin.create({
+      firebaseUid,
+      firstName,
+      email,
     });
 
     return res.status(201).json({
@@ -77,7 +88,7 @@ const createSuperAdmins = async (req, res) => {
     });
   } catch (error) {
     return res.status(400).json({
-      message: 'Super Admin couldn\'t be created',
+      message: error.toString(),
       error: true,
     });
   }
@@ -98,7 +109,7 @@ const updateSuperAdmin = async (req, res) => {
     return applyResponse(res, 404, 'Id is invalid', undefined, true);
   }
   try {
-    const noChanges = await SuperAdmin.findOne({ firstName, email, password });
+    const noChanges = await SuperAdmin.findOne({ firstName, email });
 
     if (noChanges) {
       return applyResponse(res, 400, 'There is nothing to change', undefined, true);
@@ -108,6 +119,14 @@ const updateSuperAdmin = async (req, res) => {
     if (repeatedMail && Object.values(repeatedMail.toObject())[0].toString() !== id) {
       return applyResponse(res, 404, 'This Super Admin already exists', undefined, true);
     }
+
+    const superAdminToUpdate = await SuperAdmin.findById(id);
+
+    await firebaseApp.auth().updateUser(superAdminToUpdate.firebaseUid, {
+      password,
+      email,
+    });
+
     const result = await SuperAdmin.findByIdAndUpdate(
       id,
       {
@@ -137,11 +156,19 @@ const deleteSuperAdmin = async (req, res) => {
     return applyResponse(res, 404, 'Id is invalid', undefined, true);
   }
   try {
-    const result = await SuperAdmin.findByIdAndDelete(id);
-    if (!result) {
+    const superAdmin = await SuperAdmin.findById(id);
+    if (!superAdmin) {
       return applyResponse(res, 404, 'Super Admin was not found', undefined, true);
     }
-    return applyResponse(res, 200, `Super Admin ${result.firstName} was successfully deleted`, result, false);
+    await firebaseApp.auth().deleteUser(superAdmin.firebaseUid);
+    await SuperAdmin.deleteOne(superAdmin);
+    return applyResponse(
+      res,
+      200,
+      `Super Admin ${superAdmin.firstName} was successfully deleted`,
+      superAdmin,
+      false,
+    );
   } catch (error) {
     return applyResponse(res, 500, error.message, undefined, true);
   }

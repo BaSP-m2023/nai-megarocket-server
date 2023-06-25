@@ -4,6 +4,10 @@ const { Schema } = mongoose;
 
 const adminSchema = new Schema(
   {
+    firebaseUid: {
+      type: String,
+      required: true,
+    },
     firstName: {
       type: String,
       minLength: 3,
@@ -38,12 +42,6 @@ const adminSchema = new Schema(
       type: String,
       minLength: 5,
       maxLength: 25,
-      required: true,
-    },
-    password: {
-      type: String,
-      minLength: 8,
-      maxLength: 20,
       required: true,
     },
   },
