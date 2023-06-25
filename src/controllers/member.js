@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const firebaseApp = require('../helper/firebase/index').default;
 const Member = require('../models/member');
 
 const getAllMembers = async (req, res) => {
@@ -57,21 +58,21 @@ const getMembersById = async (req, res) => {
 };
 
 const createMembers = async (req, res) => {
+  const {
+    firstName,
+    lastName,
+    dni,
+    phone,
+    email,
+    password,
+    city,
+    birthDay,
+    postalCode,
+    isActive,
+    membership,
+  } = req.body;
+  let firebaseUid;
   try {
-    const {
-      firstName,
-      lastName,
-      dni,
-      phone,
-      email,
-      password,
-      city,
-      birthDay,
-      postalCode,
-      isActive,
-      membership,
-    } = req.body;
-
     const existingMember = await Member.findOne({ $or: [{ dni }, { email }] });
 
     if (existingMember) {
@@ -80,14 +81,22 @@ const createMembers = async (req, res) => {
         error: true,
       });
     }
+    const newFirebaseUser = await firebaseApp.auth().createUser({
+      email,
+      password,
+    });
+
+    firebaseUid = newFirebaseUser.uid;
+
+    await firebaseApp.auth().setCustomUserClaims(newFirebaseUser.uid, { role: 'MEMBER' });
 
     const createMember = await Member.create({
+      firebaseUid,
       firstName,
       lastName,
       dni,
       phone,
       email,
-      password,
       city,
       birthDay,
       postalCode,
@@ -117,7 +126,6 @@ const updateMember = async (req, res) => {
       dni,
       phone,
       email,
-      password,
       city,
       birthDay,
       postalCode,
@@ -139,7 +147,6 @@ const updateMember = async (req, res) => {
       dni,
       phone,
       email,
-      password,
       city,
       birthDay,
       postalCode,
@@ -163,7 +170,6 @@ const updateMember = async (req, res) => {
         dni,
         phone,
         email,
-        password,
         city,
         birthDay,
         postalCode,
@@ -220,9 +226,12 @@ const deleteMember = async (req, res) => {
       });
     }
 
-    const memberToDelete = await Member.findByIdAndDelete(id);
+    const memberToDelete = await Member.findById(id);
 
-    if (!memberToDelete) {
+    await firebaseApp.auth().deleteUser(memberToDelete.firebaseUid);
+    const memberDeleted = await Member.deleteOne(memberToDelete);
+
+    if (!memberDeleted) {
       return res.status(404).json({
         message: 'The member was not found',
         data: undefined,

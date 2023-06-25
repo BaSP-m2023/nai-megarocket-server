@@ -63,21 +63,19 @@ const createClass = async (req, res) => {
       slots,
     } = req.body;
 
-    const sameClass = await Class.findOne({
-      day, hour, trainer, activity, slots,
-    });
+    const sameHourClass = await Class.findOne({ hour });
 
-    if (sameClass) {
+    if (sameHourClass && sameHourClass.day.some((sameDay) => day.includes(sameDay))) {
       return res.status(400).json({
-        message: 'There is nothing to change',
+        message: `There is already a class in this day at ${sameHourClass.hour}.`,
         data: undefined,
         error: true,
       });
     }
 
-    const sameHourClass = await Class.findOne({ hour, trainer });
+    const sameTrainerClass = await Class.findOne({ hour, trainer });
 
-    if (sameHourClass?.day.some((sameDay) => day.includes(sameDay))) {
+    if (sameTrainerClass?.day.some((sameDay) => day.includes(sameDay))) {
       return res.status(400).json({
         message: 'Trainer has another class scheduled.',
         data: undefined,
@@ -136,10 +134,22 @@ const updateClass = async (req, res) => {
     }
 
     const sameHourClass = await Class.findOne({
+      hour, _id: { $ne: id },
+    });
+
+    if (sameHourClass && sameHourClass.day.some((sameDay) => day.includes(sameDay))) {
+      return res.status(400).json({
+        message: `There is already a class in this day at ${sameHourClass.hour}.`,
+        data: undefined,
+        error: true,
+      });
+    }
+
+    const sameTrainerClass = await Class.findOne({
       hour, trainer, _id: { $ne: id },
     });
 
-    if (sameHourClass?.day.some((sameDay) => day.includes(sameDay))) {
+    if (sameTrainerClass?.day.some((sameDay) => day.includes(sameDay))) {
       return res.status(400).json({
         message: 'Trainer has another class scheduled.',
         data: undefined,

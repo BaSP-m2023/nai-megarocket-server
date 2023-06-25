@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const membersSchema = new Schema({
+  firebaseUid: {
+    type: String,
+    required: true,
+  },
   firstName: {
     type: String,
     minLength: 3,
@@ -29,12 +33,6 @@ const membersSchema = new Schema({
   },
   email: {
     type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    minLength: 8,
-    maxLength: 16,
     required: true,
   },
   city: {
