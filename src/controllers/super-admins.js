@@ -73,7 +73,7 @@ const createSuperAdmins = async (req, res) => {
 
     firebaseUid = newFirebaseUser.uid;
 
-    await firebaseApp.auth().setCustomUserClaims(newFirebaseUser.uid, { role: 'SUPER_ADMIN' });
+    await firebaseApp.auth().setCustomUserClaims(firebaseUid, { role: 'SUPER_ADMIN' });
 
     const result = await SuperAdmin.create({
       firebaseUid,
@@ -104,7 +104,7 @@ const applyResponse = (res, status, message, data, error) => {
 
 const updateSuperAdmin = async (req, res) => {
   const { id } = req.params;
-  const { firstName, email } = req.body;
+  const { firstName, email, password } = req.body;
   if (!mongoose.isValidObjectId(id)) {
     return applyResponse(res, 404, 'Id is invalid', undefined, true);
   }
@@ -120,11 +120,19 @@ const updateSuperAdmin = async (req, res) => {
       return applyResponse(res, 404, 'This Super Admin already exists', undefined, true);
     }
 
+    const superAdminToUpdate = await SuperAdmin.findById(id);
+
+    await firebaseApp.auth().updateUser(superAdminToUpdate.firebaseUid, {
+      password,
+      email,
+    });
+
     const result = await SuperAdmin.findByIdAndUpdate(
       id,
       {
         firstName,
         email,
+        password,
       },
       { new: true },
     );

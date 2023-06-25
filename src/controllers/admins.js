@@ -131,6 +131,7 @@ const updateAdmin = async (req, res) => {
       lastName,
       dni,
       phone,
+      password,
       email,
       city,
     } = req.body;
@@ -176,6 +177,11 @@ const updateAdmin = async (req, res) => {
       });
     }
 
+    await firebaseApp.auth().updateUser(adminToUpdate.firebaseUid, {
+      password,
+      email,
+    });
+
     const adminUpdated = await Admin.findByIdAndUpdate(
       id,
       {
@@ -196,7 +202,7 @@ const updateAdmin = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'There was an error',
+      message: error.toString(),
       data: undefined,
       error,
     });

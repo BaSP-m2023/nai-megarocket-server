@@ -112,6 +112,7 @@ const updateTrainers = async (req, res) => {
       dni,
       phone,
       email,
+      password,
       city,
       salary,
       isActive,
@@ -174,13 +175,25 @@ const updateTrainers = async (req, res) => {
       });
     }
 
-    const trainerToUpdate = await Trainer.findByIdAndUpdate(
+    const trainerToUpdate = await Trainer.findById(id);
+
+    await firebaseApp.auth().updateUser(trainerToUpdate.firebaseUid, {
+      password,
+      email,
+    });
+
+    const user = await firebaseApp.auth().getUser(trainerToUpdate.firebaseUid);
+
+    console.log(user);
+
+    const trainerUpdated = await Trainer.findByIdAndUpdate(
       id,
       {
         firstName,
         lastName,
         dni,
         phone,
+        password,
         email,
         city,
         salary,
@@ -189,7 +202,7 @@ const updateTrainers = async (req, res) => {
       { new: true },
     );
 
-    if (!trainerToUpdate) {
+    if (!trainerUpdated) {
       return res.status(404).json({
         message: `There is no trainer with id:${id}`,
         data: undefined,
@@ -199,12 +212,12 @@ const updateTrainers = async (req, res) => {
 
     return res.status(200).json({
       message: 'Trainer updated correctly',
-      data: trainerToUpdate,
+      data: trainerUpdated,
       error: false,
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'An error occurred',
+      message: error.toString(),
       error,
     });
   }

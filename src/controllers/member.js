@@ -127,6 +127,7 @@ const updateMember = async (req, res) => {
       phone,
       email,
       city,
+      password,
       birthDay,
       postalCode,
       isActive,
@@ -162,7 +163,14 @@ const updateMember = async (req, res) => {
       });
     }
 
-    const memberToUpdate = await Member.findByIdAndUpdate(
+    const memberToUpdate = await Member.findById(id);
+
+    await firebaseApp.auth().updateUser(memberToUpdate.firebaseUid, {
+      password,
+      email,
+    });
+
+    const memberUpdated = await Member.findByIdAndUpdate(
       id,
       {
         firstName,
@@ -179,7 +187,7 @@ const updateMember = async (req, res) => {
       { new: true },
     );
 
-    if (!memberToUpdate) {
+    if (!memberUpdated) {
       return res.status(404).json({
         message: 'The member was not found',
         data: undefined,
@@ -207,8 +215,8 @@ const updateMember = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: `The member ${memberToUpdate.firstName} ${memberToUpdate.lastName} was successfully updated.`,
-      data: memberToUpdate,
+      message: `The member ${memberUpdated.firstName} ${memberUpdated.lastName} was successfully updated.`,
+      data: memberUpdated,
       error: false,
     });
   } catch (error) {
