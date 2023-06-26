@@ -132,7 +132,6 @@ const updateSuperAdmin = async (req, res) => {
       {
         firstName,
         email,
-        password,
       },
       { new: true },
     );

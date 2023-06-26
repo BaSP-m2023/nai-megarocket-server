@@ -182,10 +182,6 @@ const updateTrainers = async (req, res) => {
       email,
     });
 
-    const user = await firebaseApp.auth().getUser(trainerToUpdate.firebaseUid);
-
-    console.log(user);
-
     const trainerUpdated = await Trainer.findByIdAndUpdate(
       id,
       {
@@ -193,7 +189,6 @@ const updateTrainers = async (req, res) => {
         lastName,
         dni,
         phone,
-        password,
         email,
         city,
         salary,
