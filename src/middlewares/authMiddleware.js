@@ -1,26 +1,28 @@
 import firebaseApp from '../helper/firebase';
 
-const verifyToken = async (req, res, next) => {
-  const { token } = req.headers;
-  if (!token) {
-    return res.status(400).json({
-      message: 'Provide a Token',
-      data: undefined,
-      error: true,
-    });
-  }
+const authMiddleware = (accessRoles) => async (req, res, next) => {
   try {
+    const { token } = req.headers;
+    if (!token || typeof token !== 'string') {
+      throw new Error('Token is required');
+    }
     const response = await firebaseApp.auth().verifyIdToken(token);
 
-    req.headers.firebaseUid = response.user_id;
+    const firebaseUser = await firebaseApp.auth().getUser(response.uid);
+
+    const role = firebaseUser.customClaims?.role;
+
+    if (!role) {
+      throw new Error('No credentials found');
+    }
+    if (!(accessRoles.includes(role))) {
+      throw new Error('Credentials not authorized to access this information');
+    }
+    req.firebaseUid = response.uid;
     return next();
   } catch (error) {
-    return res.status(401).json({
-      message: error.toString(),
-      data: undefined,
-      error: true,
-    });
+    throw new Error(error.message);
   }
 };
 
-export default { verifyToken };
+export default authMiddleware;

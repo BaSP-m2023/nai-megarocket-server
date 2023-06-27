@@ -1,16 +1,15 @@
 const express = require('express');
 const activitiesController = require('../controllers/activity');
 const validations = require('../validations/activity');
-const adminTrainerMemberMiddleware = require('../middlewares/adminTrainerMemberMiddleware').default;
-const adminMiddleware = require('../middlewares/adminMiddleware').default;
+const authMiddleware = require('../middlewares/authMiddleware').default;
 
 const router = express.Router();
 
 router
-  .get('/', adminTrainerMemberMiddleware.verifyAdminTrainerMember, activitiesController.getAllActivities)
-  .get('/:id', adminTrainerMemberMiddleware.verifyAdminTrainerMember, activitiesController.getActivitiesById)
-  .post('/', adminMiddleware.verifyAdmin, validations.validateCreation, activitiesController.createActivities)
-  .put('/:id', adminMiddleware.verifyAdmin, validations.validateUpdate, activitiesController.updateActivities)
-  .delete('/:id', adminMiddleware.verifyAdmin, activitiesController.deleteActivities);
+  .get('/', authMiddleware(['ADMIN', 'TRAINER', 'MEMBER']), activitiesController.getAllActivities)
+  .get('/:id', authMiddleware(['ADMIN', 'TRAINER', 'MEMBER']), activitiesController.getActivitiesById)
+  .post('/', authMiddleware(['ADMIN']), activitiesController.createActivities)
+  .put('/:id', authMiddleware(['ADMIN']), validations.validateUpdate, activitiesController.updateActivities)
+  .delete('/:id', authMiddleware(['ADMIN']), activitiesController.deleteActivities);
 
 module.exports = router;

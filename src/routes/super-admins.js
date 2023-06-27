@@ -1,15 +1,15 @@
 const express = require('express');
 const superAdminsController = require('../controllers/super-admins');
 const superAdminsValidation = require('../validations/super-admins');
-const superAdminMiddleware = require('../middlewares/superAdminMiddleware').default;
+const authMiddleware = require('../middlewares/authMiddleware').default;
 
 const router = express.Router();
 
 router
-  .get('/', superAdminMiddleware.verifySuperAdmin, superAdminsController.getAllSuperAdmins)
-  .get('/:id', superAdminMiddleware.verifySuperAdmin, superAdminsController.getSuperAdminsById)
-  .post('/', superAdminMiddleware.verifySuperAdmin, superAdminsValidation.validateSuperAdminsCreation, superAdminsController.createSuperAdmins)
-  .put('/:id?', superAdminMiddleware.verifySuperAdmin, superAdminsValidation.validateSuperAdminUpdate, superAdminsController.updateSuperAdmin)
-  .delete('/:id?', superAdminMiddleware.verifySuperAdmin, superAdminsController.deleteSuperAdmin);
+  .get('/', authMiddleware(['SUPER_ADMIN']), superAdminsController.getAllSuperAdmins)
+  .get('/:id', authMiddleware(['SUPER_ADMIN']), superAdminsController.getSuperAdminsById)
+  .post('/', authMiddleware(['SUPER_ADMIN']), superAdminsValidation.validateSuperAdminsCreation, superAdminsController.createSuperAdmins)
+  .put('/:id?', authMiddleware(['SUPER_ADMIN']), superAdminsValidation.validateSuperAdminUpdate, superAdminsController.updateSuperAdmin)
+  .delete('/:id?', authMiddleware(['SUPER_ADMIN']), superAdminsController.deleteSuperAdmin);
 
 module.exports = router;

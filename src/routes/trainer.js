@@ -1,16 +1,15 @@
 const express = require('express');
 const trainersController = require('../controllers/trainer');
 const validations = require('../validations/trainer');
-const adminTrainerMiddleware = require('../middlewares/adminTrainerMiddleware').default;
-const adminMiddleware = require('../middlewares/adminMiddleware').default;
+const authMiddleware = require('../middlewares/authMiddleware').default;
 
 const router = express.Router();
 
 router
-  .get('/', adminMiddleware.verifyAdmin, trainersController.getAllTrainers)
-  .get('/:id', adminTrainerMiddleware.verifyAdminTrainer, trainersController.getTrainerById)
-  .post('/', adminMiddleware.verifyAdmin, validations.validateCreation, trainersController.createTrainer)
-  .put('/:id', adminTrainerMiddleware.verifyAdminTrainer, validations.validateUpdate, trainersController.updateTrainers)
-  .delete('/:id', adminMiddleware.verifyAdmin, trainersController.deleteTrainers);
+  .get('/', authMiddleware(['ADMIN']), trainersController.getAllTrainers)
+  .get('/:id', authMiddleware(['ADMIN', 'TRAINER']), trainersController.getTrainerById)
+  .post('/', authMiddleware(['ADMIN']), validations.validateCreation, trainersController.createTrainer)
+  .put('/:id', authMiddleware(['ADMIN', 'TRAINER']), validations.validateUpdate, trainersController.updateTrainers)
+  .delete('/:id', authMiddleware(['ADMIN']), trainersController.deleteTrainers);
 
 module.exports = router;
