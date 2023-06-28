@@ -7,6 +7,5 @@ const router = express.Router();
 
 router
   .get('/login', authMiddleware(['SUPER_ADMIN', 'ADMIN', 'TRAINER', 'MEMBER']), authControllers.getAuth)
-  .post('/register', authMiddleware(['MEMBER']), memberController.createMembers);
-// .post('/logout', getAuth);
+  .post('/register', memberController.createMembers);
 module.exports = router;
