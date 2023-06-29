@@ -1,15 +1,15 @@
 const express = require('express');
 const adminsController = require('../controllers/admins');
 const validations = require('../validations/admins');
-const superAdminMiddleware = require('../middlewares/superAdminMiddleware').default;
+const authMiddleware = require('../middlewares/authMiddleware').default;
 
 const router = express.Router();
 
 router
-  .get('/', superAdminMiddleware.verifySuperAdmin, adminsController.getAllAdmins)
-  .get('/:id', superAdminMiddleware.verifySuperAdmin, adminsController.getAdminById)
-  .post('/', superAdminMiddleware.verifySuperAdmin, validations.validateCreate, adminsController.createAdmin)
-  .put('/:id', superAdminMiddleware.verifySuperAdmin, validations.validateUpdate, adminsController.updateAdmin)
-  .delete('/:id', superAdminMiddleware.verifySuperAdmin, adminsController.deleteAdmin);
+  .get('/', authMiddleware(['SUPER_ADMIN', 'ADMIN']), adminsController.getAllAdmins)
+  .get('/:id', authMiddleware(['SUPER_ADMIN', 'ADMIN']), adminsController.getAdminById)
+  .post('/', authMiddleware(['SUPER_ADMIN']), validations.validateCreate, adminsController.createAdmin)
+  .put('/:id', authMiddleware(['SUPER_ADMIN', 'ADMIN']), validations.validateUpdate, adminsController.updateAdmin)
+  .delete('/:id', authMiddleware(['SUPER_ADMIN']), adminsController.deleteAdmin);
 
 module.exports = router;
