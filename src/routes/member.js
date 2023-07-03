@@ -9,7 +9,7 @@ const router = express.Router();
 router
   .put('/:id', authMiddleware(['ADMIN', 'MEMBER']), validateMember.validateMembersUpdate, memberController.updateMember)
   .delete('/:id', authMiddleware(['ADMIN', 'MEMBER']), memberController.deleteMember)
-  .get('/', authMiddleware(['ADMIN', 'MEMBER']), memberController.getAllMembers)
+  .get('/', authMiddleware(['ADMIN', 'MEMBER', 'TRAINER']), memberController.getAllMembers)
   .get('/:id', authMiddleware(['ADMIN', 'MEMBER']), memberController.getMembersById)
   .post('/', authMiddleware(['ADMIN']), validateMember.validateMembersCreation, memberController.createMembers);
 
