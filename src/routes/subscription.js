@@ -7,7 +7,7 @@ const authMiddleware = require('../middlewares/authMiddleware').default;
 const router = express.Router();
 
 router
-  .get('/', authMiddleware(['ADMIN', 'MEMBER']), subscriptionControllers.getAllSubscriptions)
+  .get('/', authMiddleware(['ADMIN', 'MEMBER', 'TRAINER']), subscriptionControllers.getAllSubscriptions)
   .get('/:id', authMiddleware(['ADMIN', 'MEMBER']), subscriptionControllers.getSubscriptionById)
   .post('/', authMiddleware(['ADMIN', 'MEMBER']), validateSubscription.validateCreation, subscriptionControllers.createSubscription)
   .put('/:id?', authMiddleware(['ADMIN']), validateSubscription.validateUpdate, subscriptionControllers.updateSubscription)
