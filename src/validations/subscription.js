@@ -17,6 +17,7 @@ const validateCreation = (req, res, next) => {
       invalid: 'The member id must be a valid ObjectId',
     }).required(),
     date: Joi.date().max(Date.now()).min('1923-01-01').required(),
+    isActive: Joi.boolean(),
   });
 
   const validation = subscriptionValidation.validate({ ...req.body });
@@ -47,6 +48,7 @@ const validateUpdate = (req, res, next) => {
       invalid: 'The member id must be a valid ObjectId',
     }),
     date: Joi.date().max(Date.now()).min('1923-01-01'),
+    isActive: Joi.boolean(),
   });
 
   const validation = subscriptionUpdateValidation.validate({ ...req.body });

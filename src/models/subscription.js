@@ -17,6 +17,10 @@ const subscriptionSchema = new Schema({
     type: Date,
     required: true,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model('Subscription', subscriptionSchema);

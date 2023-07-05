@@ -78,10 +78,12 @@ const getSubscriptionById = async (req, res) => {
 };
 
 const createSubscription = async (req, res) => {
-  const { classes, member, date } = req.body;
+  const {
+    classes, member, date, isActive,
+  } = req.body;
 
   try {
-    const existingSubscription = await Subscription.findOne({ classes, member });
+    const existingSubscription = await Subscription.findOne({ classes, member, isActive });
 
     if (existingSubscription) {
       return res.status(400).json({
@@ -115,7 +117,9 @@ const applyResponse = (res, status, message, data, error) => {
 
 const updateSubscription = async (req, res) => {
   const { id } = req.params;
-  const { classes, member, date } = req.body;
+  const {
+    classes, member, date, isActive,
+  } = req.body;
 
   try {
     if (!mongoose.isValidObjectId(id)) {
@@ -128,7 +132,9 @@ const updateSubscription = async (req, res) => {
       return applyResponse(res, 404, 'Subscription was not found', undefined, true);
     }
 
-    const noChanges = await Subscription.findOne({ classes, member, date });
+    const noChanges = await Subscription.findOne({
+      classes, member, date, isActive,
+    });
 
     if (noChanges) {
       return applyResponse(
@@ -140,21 +146,11 @@ const updateSubscription = async (req, res) => {
       );
     }
 
-    const alreadySub = await Subscription.findOne({ classes, member });
-
-    if (alreadySub) {
-      return applyResponse(
-        res,
-        400,
-        'This member is already subscribed to this class',
-        undefined,
-        true,
-      );
-    }
-
     const subUpdate = await Subscription.findByIdAndUpdate(
       id,
-      { classes, member, date },
+      {
+        classes, member, date, isActive,
+      },
       { new: true },
     );
 
