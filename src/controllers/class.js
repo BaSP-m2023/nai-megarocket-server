@@ -134,13 +134,14 @@ const updateClass = async (req, res) => {
       });
     }
 
-    const sameHourClass = await Class.findOne({
+    const sameHourClasses = await Class.find({
       hour, _id: { $ne: id },
     });
 
-    if (sameHourClass && sameHourClass.day.some((sameDay) => day.includes(sameDay))) {
+    if (sameHourClasses.some((classItem) => classItem.day
+      .some((sameDay) => day.includes(sameDay)))) {
       return res.status(400).json({
-        message: `There is already a class in this day at ${sameHourClass.hour}.`,
+        message: `There is already a class in this day at ${hour}.`,
         data: undefined,
         error: true,
       });
