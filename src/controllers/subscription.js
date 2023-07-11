@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Subscription = require('../models/subscription');
+const Class = require('../models/class');
 
 const getAllSubscriptions = async (req, res) => {
   try {
@@ -92,7 +93,24 @@ const createSubscription = async (req, res) => {
       });
     }
 
+    const classToSubscribe = await Class.findOne({ _id: classes });
+    const classSubs = classToSubscribe.subscriptions.length;
+    const classSlots = classToSubscribe.slots;
+
+    if (classSubs >= classSlots) {
+      return res.status(400).json({
+        message: 'This class is full',
+        data: undefined,
+        error: true,
+      });
+    }
+
     const result = await Subscription.create({ classes, member, date });
+
+    await classToSubscribe.updateOne(
+      // eslint-disable-next-line no-underscore-dangle
+      { $push: { subscriptions: result._id } },
+    );
 
     return res.status(201).json({
       message: 'Subscription successfully created',
@@ -146,6 +164,12 @@ const updateSubscription = async (req, res) => {
       );
     }
 
+    const classToUpdate = await Class.findOne({ subscriptions: { $in: [id] } });
+    await classToUpdate.updateOne(
+      // eslint-disable-next-line no-underscore-dangle
+      { $pull: { subscriptions: sub._id } },
+    );
+
     const subUpdate = await Subscription.findByIdAndUpdate(
       id,
       {
@@ -172,6 +196,15 @@ const deleteSubscription = async (req, res) => {
 
     if (!deleteSub) {
       return applyResponse(res, 404, 'Subscription was not found', undefined, true);
+    }
+
+    const classToUpdate = await Class.findOne({ subscriptions: { $in: [id] } });
+
+    if (classToUpdate) {
+      await classToUpdate.updateOne(
+        // eslint-disable-next-line no-underscore-dangle
+        { $pull: { subscriptions: deleteSub._id } },
+      );
     }
 
     return applyResponse(res, 200, 'Subscription was succesfully deleted', deleteSub, false);

@@ -31,6 +31,10 @@ const classSchema = new Schema(
       min: 5,
       max: 15,
     },
+    subscriptions: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Subscription',
+    }],
   },
   {
     timestamps: true,
