@@ -3,7 +3,7 @@ const Class = require('../models/class');
 
 const getAllClasses = async (req, res) => {
   try {
-    const classes = await Class.find().populate('trainer').populate('activity');
+    const classes = await Class.find().populate('trainer').populate('activity').populate('subscriptions');
     if (classes.length > 0) {
       return res.status(200).json({
         message: 'Classes list',
@@ -30,7 +30,8 @@ const getClassId = async (req, res) => {
     const { id } = req.params;
     const classes = await Class.findById(id)
       .populate('trainer')
-      .populate('activity');
+      .populate('activity')
+      .populate('subscriptions');
 
     if (classes) {
       return res.status(200).json({
