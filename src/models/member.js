@@ -54,12 +54,12 @@ const membersSchema = new Schema(
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     membership: {
       type: String,
-      default: 'Only Classes',
-      enum: ['Black', 'Classic', 'Gold', 'Only Classes', 'Silver'],
+      default: 'None',
+      enum: ['Black', 'Classic', 'Only Classes', 'None'],
     },
   },
   {
