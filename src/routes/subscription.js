@@ -11,6 +11,6 @@ router
   .get('/:id', authMiddleware(['ADMIN', 'MEMBER']), subscriptionControllers.getSubscriptionById)
   .post('/', authMiddleware(['ADMIN', 'MEMBER']), validateSubscription.validateCreation, subscriptionControllers.createSubscription)
   .put('/:id?', authMiddleware(['ADMIN', 'MEMBER']), validateSubscription.validateUpdate, subscriptionControllers.updateSubscription)
-  .delete('/:id?', authMiddleware(['ADMIN']), subscriptionControllers.deleteSubscription);
+  .delete('/:id?', authMiddleware(['ADMIN', 'MEMBER']), subscriptionControllers.deleteSubscription);
 
 module.exports = router;
