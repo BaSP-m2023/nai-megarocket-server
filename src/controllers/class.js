@@ -3,7 +3,12 @@ const Class = require('../models/class');
 
 const getAllClasses = async (req, res) => {
   try {
-    const classes = await Class.find().populate('trainer').populate('activity').populate('subscriptions');
+    const classes = await Class.find().populate('trainer').populate('activity').populate({
+      path: 'subscriptions',
+      populate: {
+        path: 'member',
+      },
+    });
     if (classes.length > 0) {
       return res.status(200).json({
         message: 'Classes list',
