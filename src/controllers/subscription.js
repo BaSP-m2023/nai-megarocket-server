@@ -164,12 +164,6 @@ const updateSubscription = async (req, res) => {
       );
     }
 
-    const classToUpdate = await Class.findOne({ subscriptions: { $in: [id] } });
-    await classToUpdate.updateOne(
-      // eslint-disable-next-line no-underscore-dangle
-      { $pull: { subscriptions: sub._id } },
-    );
-
     const subUpdate = await Subscription.findByIdAndUpdate(
       id,
       {
@@ -177,6 +171,14 @@ const updateSubscription = async (req, res) => {
       },
       { new: true },
     );
+
+    if (subUpdate.isActive !== sub.isActive) {
+      const classToUpdate = await Class.findOne({ subscriptions: { $in: [id] } });
+      await classToUpdate.updateOne(
+        // eslint-disable-next-line no-underscore-dangle
+        { $pull: { subscriptions: sub._id } },
+      );
+    }
 
     return applyResponse(res, 200, 'Subscription was successfully updated', subUpdate, false);
   } catch (error) {
